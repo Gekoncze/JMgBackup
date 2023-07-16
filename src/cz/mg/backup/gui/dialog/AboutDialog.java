@@ -12,13 +12,13 @@ import cz.mg.panel.settings.Fill;
 import javax.swing.*;
 
 public @Component class AboutDialog extends JDialog {
-    private static final int BORDER = 8;
+    private static final int MARGIN = 8;
     private static final int PADDING = 8;
 
     public AboutDialog(@Mandatory MainWindow window) {
         super(window, false);
         setTitle("About");
-        Panel panel = new Panel(BORDER, PADDING);
+        Panel panel = new Panel(MARGIN, PADDING);
         panel.addVertical(new JLabel(Info.NAME), 0, 0, Alignment.MIDDLE, Fill.NONE);
         panel.addVertical(new JLabel("Version " + Info.VERSION), 0, 0, Alignment.MIDDLE, Fill.NONE);
         panel.addVertical(new UrlLabel(Info.URL), 0, 0, Alignment.MIDDLE, Fill.NONE);
