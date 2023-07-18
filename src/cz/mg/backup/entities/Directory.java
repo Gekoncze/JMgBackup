@@ -5,11 +5,10 @@ import cz.mg.annotations.requirement.Required;
 import cz.mg.annotations.storage.Part;
 import cz.mg.collections.list.List;
 
-import java.io.File;
 
 public @Entity class Directory extends Node {
-    private List<Directory> directories;
-    private List<File> files;
+    private List<Directory> directories = new List<>();
+    private List<File> files = new List<>();
 
     public Directory() {
     }

@@ -2,12 +2,15 @@ package cz.mg.backup.entities;
 
 import cz.mg.annotations.classes.Entity;
 import cz.mg.annotations.requirement.Required;
+import cz.mg.annotations.storage.Part;
 import cz.mg.annotations.storage.Value;
+import cz.mg.collections.list.List;
 
 import java.nio.file.Path;
 
 public @Entity class Node {
     private Path path;
+    private List<Exception> errors = new List<>();
 
     public Node() {
     }
@@ -19,5 +22,14 @@ public @Entity class Node {
 
     public void setPath(Path path) {
         this.path = path;
+    }
+
+    @Required @Part
+    public List<Exception> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<Exception> errors) {
+        this.errors = errors;
     }
 }
