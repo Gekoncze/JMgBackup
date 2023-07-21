@@ -3,6 +3,7 @@ package cz.mg.backup.gui;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.Info;
+import cz.mg.backup.entities.Settings;
 import cz.mg.backup.gui.components.DirectoryView;
 import cz.mg.backup.gui.menu.MainMenuBar;
 import cz.mg.panel.Panel;
@@ -19,6 +20,8 @@ public @Component class MainWindow extends JFrame {
     private final @Mandatory DirectoryView leftView = new DirectoryView();
     private final @Mandatory DirectoryView rightView = new DirectoryView();
 
+    private final @Mandatory Settings settings = new Settings();
+
     public MainWindow() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle(TITLE);
@@ -32,6 +35,10 @@ public @Component class MainWindow extends JFrame {
         splitPane.setResizeWeight(0.5);
         panel.addVertical(splitPane, 1, 1);
         getContentPane().add(panel);
+    }
+
+    public @Mandatory Settings getSettings() {
+        return settings;
     }
 
     public static void main(String[] args) {
