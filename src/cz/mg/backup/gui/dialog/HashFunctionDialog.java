@@ -17,6 +17,7 @@ public @Component class HashFunctionDialog extends JDialog {
 
     private final @Mandatory MainWindow window;
     private final @Mandatory JTextField nameField = new JTextField();
+    private final @Mandatory JButton chooserButton = new JButton("...");
 
     public HashFunctionDialog(@Mandatory MainWindow window) {
         super(window, false);
@@ -28,7 +29,6 @@ public @Component class HashFunctionDialog extends JDialog {
         nameField.setColumns(NAME_FIELD_SIZE);
         nameField.setText(nameToRaw(window.getSettings().getHashAlgorithm()));
         namePanel.addHorizontal(nameField, 1, 0);
-        JButton chooserButton = new JButton("...");
         chooserButton.addActionListener(new UserActionListener(this::choose));
         namePanel.addHorizontal(chooserButton);
         Panel buttonsPanel = new Panel(0, PADDING, Alignment.RIGHT);
@@ -47,7 +47,11 @@ public @Component class HashFunctionDialog extends JDialog {
     }
 
     private void choose() {
-        //todo;
+        JPopupMenu menu = new JPopupMenu();
+        menu.add(createOptionItem("MD5"));
+        menu.add(createOptionItem("SHA-1"));
+        menu.add(createOptionItem("SHA-256"));
+        menu.show(chooserButton, 0, 0);
     }
 
     private void cancel() {
@@ -66,5 +70,12 @@ public @Component class HashFunctionDialog extends JDialog {
 
     private @Mandatory String nameToRaw(@Optional String name) {
         return name == null ? "" : name;
+    }
+
+    private @Mandatory JMenuItem createOptionItem(@Mandatory String value) {
+        JMenuItem item = new JMenuItem();
+        item.setText(value);
+        item.addActionListener(new UserActionListener(() -> nameField.setText(value)));
+        return item;
     }
 }
