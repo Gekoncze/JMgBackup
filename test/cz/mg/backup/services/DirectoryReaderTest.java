@@ -26,7 +26,7 @@ public @Test class DirectoryReaderTest {
         Directory test = reader.read(Path.of("test", "cz", "mg", "backup", "test"), new Settings());
         Assert.assertEquals(true, test.getErrors().isEmpty());
         Assert.assertEquals("test", test.getPath().getFileName().toString());
-        Assert.assertEquals(2, test.getFiles().count());
+        Assert.assertEquals(1, test.getFiles().count());
         Assert.assertEquals(2, test.getDirectories().count());
 
         Directory one = test.getDirectories().get(0);
@@ -41,19 +41,11 @@ public @Test class DirectoryReaderTest {
         Directory two = test.getDirectories().get(1);
         Assert.assertEquals(true, two.getErrors().isEmpty());
         Assert.assertEquals("two", two.getPath().getFileName().toString());
-        Assert.assertEquals(1, two.getFiles().count());
-
-        File fileLink = two.getFiles().get(0);
-        Assert.assertEquals(true, fileLink.getErrors().isEmpty());
-        Assert.assertEquals("fileLink", fileLink.getPath().getFileName().toString());
-
-        File directoryLink = test.getFiles().get(0);
-        Assert.assertEquals(true, directoryLink.getErrors().isEmpty());
-        Assert.assertEquals("directoryLink", directoryLink.getPath().getFileName().toString());
+        Assert.assertEquals(0, two.getFiles().count());
     }
 
     private void testReadSymbolicLink() {
-        // this should be the only case where symbolic link is actually followed for convenience
+        // rare case where symbolic link is followed for convenience
         Directory directory = reader.read(
             Path.of("test", "cz", "mg", "backup", "test", "directoryLink"),
             new Settings()

@@ -6,6 +6,8 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Settings;
 
 import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -36,7 +38,12 @@ public @Service class FileHashReader {
         try {
             if (settings.getHashAlgorithm() != null) {
                 MessageDigest algorithm = MessageDigest.getInstance(settings.getHashAlgorithm());
-                try (DigestInputStream stream = new DigestInputStream(new FileInputStream(path.toFile()), algorithm)) {
+                try (
+                    DigestInputStream stream = new DigestInputStream(
+                        Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS),
+                        algorithm
+                    )
+                ) {
                     byte[] buffer = new byte[BUFFER_SIZE];
                     while (stream.read(buffer) > 0){}
                 }

@@ -14,7 +14,6 @@ public @Test class FileHashReaderTest {
 
         FileHashReaderTest test = new FileHashReaderTest();
         test.testRead();
-        test.testReadSymbolicLink();
 
         System.out.println("OK");
     }
@@ -25,14 +24,6 @@ public @Test class FileHashReaderTest {
         Assert.assertEquals(
             "357e9abbbe50922c6c0b31cb8f4371add40deaf39924e54acdbc691b7975f576",
             reader.read(Path.of("test", "cz", "mg", "backup", "test", "FlyingAki.png"), createSettings())
-        );
-    }
-
-    private void testReadSymbolicLink() {
-        Settings settings = createSettings();
-        Assert.assertNotEquals(
-            reader.read(Path.of("test", "cz", "mg", "backup", "test", "one", "file"), settings),
-            reader.read(Path.of("test", "cz", "mg", "backup", "test", "two", "fileLink"), settings)
         );
     }
 

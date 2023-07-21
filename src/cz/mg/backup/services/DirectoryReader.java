@@ -50,12 +50,12 @@ public @Service class DirectoryReader {
     }
 
     private void read(@Mandatory Directory directory, @Mandatory Path childPath, @Mandatory Settings settings) {
-        if (Files.isSymbolicLink(childPath)) {
-            directory.getFiles().addLast(fileReader.read(childPath, settings));
-        } else if (Files.isDirectory(childPath)) {
-            directory.getDirectories().addLast(read(childPath, settings));
-        } else {
-            directory.getFiles().addLast(fileReader.read(childPath, settings));
+        if (!Files.isSymbolicLink(childPath)) {
+            if (Files.isDirectory(childPath)) {
+                directory.getDirectories().addLast(read(childPath, settings));
+            } else {
+                directory.getFiles().addLast(fileReader.read(childPath, settings));
+            }
         }
     }
 }
