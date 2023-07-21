@@ -15,6 +15,7 @@ public @Test class DirectoryReaderTest {
 
         DirectoryReaderTest test = new DirectoryReaderTest();
         test.testRead();
+        test.testReadSymbolicLink();
 
         System.out.println("OK");
     }
@@ -49,5 +50,16 @@ public @Test class DirectoryReaderTest {
         File directoryLink = test.getFiles().get(0);
         Assert.assertEquals(true, directoryLink.getErrors().isEmpty());
         Assert.assertEquals("directoryLink", directoryLink.getPath().getFileName().toString());
+    }
+
+    private void testReadSymbolicLink() {
+        // this should be the only case where symbolic link is actually followed for convenience
+        Directory directory = reader.read(
+            Path.of("test", "cz", "mg", "backup", "test", "directoryLink"),
+            new Settings()
+        );
+
+        Assert.assertEquals("directoryLink", directory.getPath().getFileName().toString());
+        Assert.assertEquals(1, directory.getFiles().count());
     }
 }

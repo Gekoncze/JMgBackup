@@ -15,6 +15,7 @@ public @Test class FileReaderTest {
 
         FileReaderTest test = new FileReaderTest();
         test.testRead();
+        test.testReadSymbolicLink();
 
         System.out.println("OK");
     }
@@ -26,6 +27,24 @@ public @Test class FileReaderTest {
         Assert.assertEquals(true, file.getErrors().isEmpty());
         Assert.assertEquals(218128, file.getSize());
         Assert.assertEquals("357e9abbbe50922c6c0b31cb8f4371add40deaf39924e54acdbc691b7975f576", file.getHash());
+    }
+
+    private void testReadSymbolicLink() {
+        Assert.assertEquals(
+            "fileLink",
+            reader.read(Path.of("test", "cz", "mg", "backup", "test", "two", "fileLink"), new Settings())
+                .getPath()
+                .getFileName()
+                .toString()
+        );
+
+        Assert.assertEquals(
+            "directoryLink",
+            reader.read(Path.of("test", "cz", "mg", "backup", "test", "directoryLink"), new Settings())
+                .getPath()
+                .getFileName()
+                .toString()
+        );
     }
 
     private @Mandatory Settings createSettings() {
