@@ -12,6 +12,7 @@ public @Test class FileSizeReaderTest {
 
         FileSizeReaderTest test = new FileSizeReaderTest();
         test.testRead();
+        test.testReadSymbolicLink();
 
         System.out.println("OK");
     }
@@ -22,6 +23,13 @@ public @Test class FileSizeReaderTest {
         Assert.assertEquals(
             218128,
             reader.read(Path.of("test", "cz", "mg", "backup", "test", "FlyingAki.png"))
+        );
+    }
+
+    private void testReadSymbolicLink() {
+        Assert.assertNotEquals(
+            reader.read(Path.of("test", "cz", "mg", "backup", "test", "one", "file")),
+            reader.read(Path.of("test", "cz", "mg", "backup", "test", "two", "fileLink"))
         );
     }
 }
