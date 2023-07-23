@@ -21,11 +21,9 @@ public @Component class TaskDialog extends JDialog {
     private static final int PADDING = 8;
 
     private final @Mandatory Task task;
-    private final @Mandatory Runnable runnable;
 
     private TaskDialog(@Mandatory MainWindow window, @Mandatory String title, @Mandatory Runnable runnable) {
         super(window, true);
-        this.runnable = runnable;
         setTitle(title);
         Panel panel = new Panel(MARGIN, PADDING);
         panel.addVertical(new JLabel("Task processing in progress ..."));
@@ -39,11 +37,11 @@ public @Component class TaskDialog extends JDialog {
         addWindowListener(new UserWindowClosingListener(this::cancel));
         addWindowListener(new UserWindowClosedListener(this::rethrow));
         addKeyListener(new UserKeyPressListener(this::onKeyPressed));
-        task = new Task(this::run);
+        task = new Task(() -> run(runnable));
         task.start();
     }
 
-    private void run() {
+    private void run(@Mandatory Runnable runnable) {
         try {
             runnable.run();
         } catch (RuntimeException e) {
