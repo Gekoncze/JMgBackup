@@ -17,6 +17,7 @@ public @Service class DirectorySort {
                 if (instance == null) {
                     instance = new DirectorySort();
                     instance.listSort = MergeListSort.getInstance();
+                    instance.cancelService = CancelService.getInstance();
                 }
             }
         }
@@ -24,6 +25,7 @@ public @Service class DirectorySort {
     }
 
     private @Service ListSort listSort;
+    private @Service CancelService cancelService;
 
     private DirectorySort() {
     }
@@ -34,6 +36,7 @@ public @Service class DirectorySort {
     }
 
     private int order(@Mandatory Node n1, @Mandatory Node n2) {
+        cancelService.check();
         String first = n1.getPath().getFileName().toString();
         String second = n2.getPath().getFileName().toString();
         return first.toLowerCase().compareTo(second.toLowerCase());

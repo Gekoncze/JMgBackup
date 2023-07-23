@@ -1,6 +1,5 @@
 ### NOW ###
     run potentially long running task on background with dialog
-        + add listener for interrupt signal
 
 ### SOON ###
     add tree model entry renderer
