@@ -1,3 +1,7 @@
-add directory loading in ui
+run potentially long running task on background with dialog
+    + add listener for interrupt signal
+
 add directory compare service
 add support for symbolic links
+add component to reload directory
+add test for opening file as directory

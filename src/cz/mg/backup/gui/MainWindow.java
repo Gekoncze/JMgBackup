@@ -17,8 +17,8 @@ public @Component class MainWindow extends JFrame {
     private static final int MARGIN = 0;
     private static final int PADDING = 8;
 
-    private final @Mandatory DirectoryView leftView = new DirectoryView();
-    private final @Mandatory DirectoryView rightView = new DirectoryView();
+    private final @Mandatory DirectoryView leftView = new DirectoryView(this);
+    private final @Mandatory DirectoryView rightView = new DirectoryView(this);
 
     private final @Mandatory Settings settings = new Settings();
 
