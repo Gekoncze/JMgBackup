@@ -4,7 +4,7 @@ import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Task;
 import cz.mg.backup.event.UserActionListener;
-import cz.mg.backup.event.UserKeyPressListener;
+import cz.mg.backup.event.UserCancelKeyPressListener;
 import cz.mg.backup.event.UserWindowClosedListener;
 import cz.mg.backup.event.UserWindowClosingListener;
 import cz.mg.backup.exceptions.CancelException;
@@ -29,14 +29,14 @@ public @Component class TaskDialog extends JDialog {
         panel.addVertical(new JLabel("Task processing in progress ..."));
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(new UserActionListener(this::cancel));
-        cancelButton.addKeyListener(new UserKeyPressListener(this::onKeyPressed));
+        cancelButton.addKeyListener(new UserCancelKeyPressListener(this::cancel));
         panel.addVertical(cancelButton, 0, 0, Alignment.MIDDLE, Fill.NONE);
         getContentPane().add(panel);
         pack();
         setLocationRelativeTo(null);
         addWindowListener(new UserWindowClosingListener(this::cancel));
         addWindowListener(new UserWindowClosedListener(this::rethrow));
-        addKeyListener(new UserKeyPressListener(this::onKeyPressed));
+        addKeyListener(new UserCancelKeyPressListener(this::cancel));
         task = new Task(() -> run(runnable));
         task.start();
     }
@@ -50,12 +50,6 @@ public @Component class TaskDialog extends JDialog {
             }
         }
         SwingUtilities.invokeLater(this::dispose);
-    }
-
-    private void onKeyPressed(int key) {
-        if (key == KeyEvent.VK_ESCAPE) {
-            cancel();
-        }
     }
 
     private void cancel() {

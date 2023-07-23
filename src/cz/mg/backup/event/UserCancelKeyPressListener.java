@@ -6,10 +6,10 @@ import cz.mg.annotations.requirement.Mandatory;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public @Component class UserKeyPressListener implements UserListener, KeyListener {
+public @Component class UserCancelKeyPressListener implements UserListener, KeyListener {
     private final @Mandatory Handler handler;
 
-    public UserKeyPressListener(@Mandatory Handler handler) {
+    public UserCancelKeyPressListener(@Mandatory Handler handler) {
         this.handler = handler;
     }
 
@@ -19,7 +19,9 @@ public @Component class UserKeyPressListener implements UserListener, KeyListene
 
     @Override
     public void keyPressed(@Mandatory KeyEvent event) {
-        handleExceptions(() -> handler.run(event.getKeyCode()));
+        if (event.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            handleExceptions(handler::run);
+        }
     }
 
     @Override
@@ -27,6 +29,6 @@ public @Component class UserKeyPressListener implements UserListener, KeyListene
     }
 
     public interface Handler {
-        void run(int key);
+        void run();
     }
 }
