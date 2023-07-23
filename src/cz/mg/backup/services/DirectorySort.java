@@ -8,8 +8,6 @@ import cz.mg.collections.components.Direction;
 import cz.mg.collections.services.sort.ListSort;
 import cz.mg.collections.services.sort.MergeListSort;
 
-import java.util.Locale;
-
 public @Service class DirectorySort {
     private static volatile @Service DirectorySort instance;
 

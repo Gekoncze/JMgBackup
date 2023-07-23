@@ -64,7 +64,7 @@ public @Component class HashFunctionDialog extends JDialog {
     }
 
     private @Optional String rawToName(@Mandatory String text) {
-        String raw = nameField.getText().trim();
+        String raw = text.trim();
         return raw.isEmpty() ? null : raw;
     }
 

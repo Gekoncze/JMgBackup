@@ -1,4 +1,4 @@
-package cz.mg.backup.gui.menu;
+package cz.mg.backup.gui.menu.edit;
 
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.event.UserActionListener;
