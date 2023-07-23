@@ -6,10 +6,10 @@ import cz.mg.annotations.requirement.Mandatory;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public @Component class UserCancelKeyPressListener implements UserListener, KeyListener {
+public @Component class UserEscapeKeyPressListener implements UserListener, KeyListener {
     private final @Mandatory Handler handler;
 
-    public UserCancelKeyPressListener(@Mandatory Handler handler) {
+    public UserEscapeKeyPressListener(@Mandatory Handler handler) {
         this.handler = handler;
     }
 

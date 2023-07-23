@@ -4,13 +4,14 @@ import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.event.UserActionListener;
+import cz.mg.backup.event.UserEscapeKeyPressListener;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.panel.Panel;
 import cz.mg.panel.settings.Alignment;
 
 import javax.swing.*;
 
-public @Component class HashFunctionDialog extends JDialog {
+public @Component class HashFunctionDialog extends Dialog {
     private static final int MARGIN = 8;
     private static final int PADDING = 8;
     private static final int NAME_FIELD_SIZE = 24;
@@ -20,7 +21,7 @@ public @Component class HashFunctionDialog extends JDialog {
     private final @Mandatory JButton chooserButton = new JButton("...");
 
     private HashFunctionDialog(@Mandatory MainWindow window) {
-        super(window, true);
+        super(window);
         this.window = window;
         setTitle("Hash algorithm");
         Panel namePanel = new Panel(0, PADDING);
@@ -42,6 +43,7 @@ public @Component class HashFunctionDialog extends JDialog {
         panel.addVertical(namePanel, 1, 1);
         panel.addVertical(buttonsPanel, 1, 0);
         getContentPane().add(panel);
+        addKeyListenerRecursive(this, new UserEscapeKeyPressListener(this::cancel));
         pack();
         setLocationRelativeTo(null);
     }
