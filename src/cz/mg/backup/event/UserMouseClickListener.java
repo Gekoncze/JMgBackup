@@ -14,24 +14,24 @@ public @Component class UserMouseClickListener implements UserListener, MouseLis
     }
 
     @Override
-    public void mouseClicked(MouseEvent event) {
+    public void mouseClicked(@Mandatory MouseEvent event) {
         handleExceptions(() -> handler.run(event));
     }
 
     @Override
-    public void mousePressed(MouseEvent event) {
+    public void mousePressed(@Mandatory MouseEvent event) {
     }
 
     @Override
-    public void mouseReleased(MouseEvent event) {
+    public void mouseReleased(@Mandatory MouseEvent event) {
     }
 
     @Override
-    public void mouseEntered(MouseEvent event) {
+    public void mouseEntered(@Mandatory MouseEvent event) {
     }
 
     @Override
-    public void mouseExited(MouseEvent event) {
+    public void mouseExited(@Mandatory MouseEvent event) {
     }
 
     public interface Handler {

@@ -14,7 +14,7 @@ public @Component class UserActionListener implements UserListener, ActionListen
     }
 
     @Override
-    public void actionPerformed(ActionEvent actionEvent) {
+    public void actionPerformed(@Mandatory ActionEvent actionEvent) {
         handleExceptions(handler::run);
     }
 
