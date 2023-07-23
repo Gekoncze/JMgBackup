@@ -1,7 +1,13 @@
-run potentially long running task on background with dialog
-    + add listener for interrupt signal
+### NOW ###
+    run potentially long running task on background with dialog
+        + add listener for interrupt signal
 
-add directory compare service
-add support for symbolic links
-add component to reload directory
-add test for opening file as directory
+### SOON ###
+    add tree model entry renderer
+        show error icon for nodes with errors
+
+    add directory compare service
+    add component to reload directory
+
+### LATER ###
+    add support for symbolic links
