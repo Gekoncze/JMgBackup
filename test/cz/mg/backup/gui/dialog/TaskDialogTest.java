@@ -23,14 +23,14 @@ public @Test class TaskDialogTest {
         window.setVisible(true);
     }
 
-    @SuppressWarnings("InfiniteLoopStatement")
     private void testTask() {
         try {
-            while (true) {
+            for (int i = 0; i < 5; i++) {
                 cancelService.check();
                 System.out.println(System.currentTimeMillis());
                 sleep();
             }
+            System.out.println("DONE!");
         } catch (CancelException e) {
             System.out.println("CANCELED!");
         }

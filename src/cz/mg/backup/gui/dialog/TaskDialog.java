@@ -34,8 +34,13 @@ public @Component class TaskDialog extends JDialog {
         setLocationRelativeTo(null);
         addWindowListener(new UserWindowClosingListener(this::cancel));
         addKeyListener(new UserKeyPressListener(this::onKeyPressed));
-        task = new Task(runnable);
+        task = new Task(() -> run(runnable));
         task.start();
+    }
+
+    private void run(@Mandatory Runnable runnable) {
+        runnable.run();
+        SwingUtilities.invokeLater(this::dispose);
     }
 
     private void onKeyPressed(int key) {
