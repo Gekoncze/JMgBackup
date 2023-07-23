@@ -3,20 +3,21 @@ package cz.mg.backup.gui.components.model;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.collections.array.Array;
 
 public @Component class ObjectTreeEntry {
     private final @Mandatory Object object;
     private final @Mandatory String name;
     private final int index;
     private final boolean isLeaf;
-    private final @Optional ObjectTreeEntry[] children;
+    private final @Optional Array<ObjectTreeEntry> children;
 
     public ObjectTreeEntry(
         @Mandatory Object object,
         @Mandatory String name,
         int index,
         boolean isLeaf,
-        @Mandatory ObjectTreeEntry[] children
+        @Optional Array<ObjectTreeEntry> children
     ) {
         this.object = object;
         this.name = name;
@@ -37,7 +38,7 @@ public @Component class ObjectTreeEntry {
         return isLeaf;
     }
 
-    public @Optional ObjectTreeEntry[] getChildren() {
+    public @Optional Array<ObjectTreeEntry> getChildren() {
         return children;
     }
 

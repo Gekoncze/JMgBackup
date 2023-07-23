@@ -6,6 +6,7 @@ import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.components.model.ObjectTreeEntry;
+import cz.mg.collections.array.Array;
 
 public @Service class DirectoryTreeFactory {
     private static volatile @Service DirectoryTreeFactory instance;
@@ -28,20 +29,20 @@ public @Service class DirectoryTreeFactory {
         return create(directory, 0);
     }
 
-    public @Mandatory ObjectTreeEntry create(@Mandatory Directory directory, int index) {
-        ObjectTreeEntry[] children = new ObjectTreeEntry[
+    private @Mandatory ObjectTreeEntry create(@Mandatory Directory directory, int index) {
+        Array<ObjectTreeEntry> children = new Array<>(
             directory.getDirectories().count() + directory.getFiles().count()
-        ];
+        );
 
         int i = 0;
 
         for (Directory child : directory.getDirectories()) {
-            children[i] = create(child, i);
+            children.set(i, create(child, i));
             i++;
         }
 
         for (File child : directory.getFiles()) {
-            children[i] = create(child, i);
+            children.set(i, create(child, i));
             i++;
         }
 

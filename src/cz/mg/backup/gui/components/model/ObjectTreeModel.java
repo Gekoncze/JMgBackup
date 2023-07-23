@@ -25,13 +25,21 @@ public @Component class ObjectTreeModel implements TreeModel {
     @Override
     public @Mandatory Object getChild(@Mandatory Object object, int i) {
         ObjectTreeEntry entry = (ObjectTreeEntry) object;
-        return entry.getChildren()[i];
+        if (entry.getChildren() != null) {
+            return entry.getChildren().get(i);
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
     @Override
     public int getChildCount(@Mandatory Object object) {
         ObjectTreeEntry entry = (ObjectTreeEntry) object;
-        return entry.getChildren().length;
+        if (entry.getChildren() != null) {
+            return entry.getChildren().count();
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
     @Override
