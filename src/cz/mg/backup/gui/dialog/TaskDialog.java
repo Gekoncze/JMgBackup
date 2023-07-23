@@ -2,6 +2,7 @@ package cz.mg.backup.gui.dialog;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.backup.components.Task;
 import cz.mg.backup.event.UserActionListener;
 import cz.mg.backup.event.UserKeyPressListener;
 import cz.mg.backup.event.UserWindowClosingListener;
@@ -17,9 +18,9 @@ public @Component class TaskDialog extends JDialog {
     private static final int MARGIN = 8;
     private static final int PADDING = 8;
 
-    private final @Mandatory Thread thread;
+    private final @Mandatory Task task;
 
-    public TaskDialog(@Mandatory MainWindow window, @Mandatory String title, @Mandatory Runnable task) {
+    public TaskDialog(@Mandatory MainWindow window, @Mandatory String title, @Mandatory Runnable runnable) {
         super(window, true);
         setTitle(title);
         Panel panel = new Panel(MARGIN, PADDING);
@@ -33,8 +34,8 @@ public @Component class TaskDialog extends JDialog {
         setLocationRelativeTo(null);
         addWindowListener(new UserWindowClosingListener(this::cancel));
         addKeyListener(new UserKeyPressListener(this::onKeyPressed));
-        thread = new Thread(task);
-        thread.start();
+        task = new Task(runnable);
+        task.start();
     }
 
     private void onKeyPressed(int key) {
@@ -45,8 +46,8 @@ public @Component class TaskDialog extends JDialog {
 
     private void cancel() {
         try {
-            thread.interrupt();
-            thread.join();
+            task.setCanceled(true);
+            task.join();
             SwingUtilities.invokeLater(this::dispose);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

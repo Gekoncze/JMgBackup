@@ -28,16 +28,19 @@ public @Test class TaskDialogTest {
         try {
             while (true) {
                 cancelService.check();
-                try {
-                    System.out.println(System.currentTimeMillis());
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    cancelService.check();
-                }
+                System.out.println(System.currentTimeMillis());
+                sleep();
             }
         } catch (CancelException e) {
             System.out.println("CANCELED!");
+        }
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            System.out.println(e.getClass().getSimpleName());
         }
     }
 }

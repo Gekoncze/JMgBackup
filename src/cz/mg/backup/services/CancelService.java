@@ -1,6 +1,7 @@
 package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
+import cz.mg.backup.components.Task;
 import cz.mg.backup.exceptions.CancelException;
 
 public @Service class CancelService {
@@ -21,8 +22,12 @@ public @Service class CancelService {
     }
 
     public void check() {
-        if (Thread.interrupted()) {
-            throw new CancelException();
+        Thread thread = Thread.currentThread();
+        if (thread instanceof Task) {
+            Task task = (Task) thread;
+            if (task.isCanceled()) {
+                throw new CancelException();
+            }
         }
     }
 }
