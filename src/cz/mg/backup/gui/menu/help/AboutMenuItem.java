@@ -15,10 +15,6 @@ public @Component class AboutMenuItem extends JMenuItem {
         this.window = window;
         setText("About");
         setMnemonic('A');
-        addActionListener(new UserActionListener(this::showDialog));
-    }
-
-    private void showDialog() {
-        new AboutDialog(window).setVisible(true);
+        addActionListener(new UserActionListener(() -> AboutDialog.show(window)));
     }
 }

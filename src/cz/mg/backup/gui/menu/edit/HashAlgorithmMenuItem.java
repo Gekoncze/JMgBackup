@@ -14,10 +14,6 @@ public class HashAlgorithmMenuItem extends JMenuItem {
         this.window = window;
         setText("Hash algorithm");
         setMnemonic('H');
-        addActionListener(new UserActionListener(this::showDialog));
-    }
-
-    private void showDialog() {
-        new HashFunctionDialog(window).setVisible(true);
+        addActionListener(new UserActionListener(() -> HashFunctionDialog.show(window)));
     }
 }

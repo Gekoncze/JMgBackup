@@ -19,8 +19,8 @@ public @Component class HashFunctionDialog extends JDialog {
     private final @Mandatory JTextField nameField = new JTextField();
     private final @Mandatory JButton chooserButton = new JButton("...");
 
-    public HashFunctionDialog(@Mandatory MainWindow window) {
-        super(window, false);
+    private HashFunctionDialog(@Mandatory MainWindow window) {
+        super(window, true);
         this.window = window;
         setTitle("Hash algorithm");
         Panel namePanel = new Panel(0, PADDING);
@@ -77,5 +77,9 @@ public @Component class HashFunctionDialog extends JDialog {
         item.setText(value);
         item.addActionListener(new UserActionListener(() -> nameField.setText(value)));
         return item;
+    }
+
+    public static void show(@Mandatory MainWindow window) {
+        new HashFunctionDialog(window).setVisible(true);
     }
 }

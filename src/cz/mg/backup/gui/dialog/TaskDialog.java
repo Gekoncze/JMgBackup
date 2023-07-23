@@ -20,7 +20,7 @@ public @Component class TaskDialog extends JDialog {
 
     private final @Mandatory Task task;
 
-    public TaskDialog(@Mandatory MainWindow window, @Mandatory String title, @Mandatory Runnable runnable) {
+    private TaskDialog(@Mandatory MainWindow window, @Mandatory String title, @Mandatory Runnable runnable) {
         super(window, true);
         setTitle(title);
         Panel panel = new Panel(MARGIN, PADDING);
@@ -57,5 +57,9 @@ public @Component class TaskDialog extends JDialog {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void show(@Mandatory MainWindow window, @Mandatory String title, @Mandatory Runnable runnable) {
+        new TaskDialog(window, title, runnable).setVisible(true);
     }
 }

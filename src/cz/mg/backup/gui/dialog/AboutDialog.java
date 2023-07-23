@@ -15,8 +15,8 @@ public @Component class AboutDialog extends JDialog {
     private static final int MARGIN = 8;
     private static final int PADDING = 8;
 
-    public AboutDialog(@Mandatory MainWindow window) {
-        super(window, false);
+    private AboutDialog(@Mandatory MainWindow window) {
+        super(window, true);
         setTitle("About");
         Panel panel = new Panel(MARGIN, PADDING);
         panel.addVertical(new JLabel(Info.NAME), 0, 0, Alignment.MIDDLE, Fill.NONE);
@@ -25,5 +25,9 @@ public @Component class AboutDialog extends JDialog {
         getContentPane().add(panel);
         pack();
         setLocationRelativeTo(null);
+    }
+
+    public static void show(@Mandatory MainWindow window) {
+        new AboutDialog(window).setVisible(true);
     }
 }

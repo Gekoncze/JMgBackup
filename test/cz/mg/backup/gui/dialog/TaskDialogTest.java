@@ -18,8 +18,7 @@ public @Test class TaskDialogTest {
 
     private void test() {
         MainWindow window = new MainWindow();
-        TaskDialog dialog = new TaskDialog(window, "Test Task", this::testTask);
-        SwingUtilities.invokeLater(() -> dialog.setVisible(true));
+        SwingUtilities.invokeLater(() -> TaskDialog.show(window, "Test Task", this::testTask));
         window.setVisible(true);
     }
 
