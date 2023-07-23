@@ -5,7 +5,9 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Task;
 import cz.mg.backup.event.UserActionListener;
 import cz.mg.backup.event.UserKeyPressListener;
+import cz.mg.backup.event.UserWindowClosedListener;
 import cz.mg.backup.event.UserWindowClosingListener;
+import cz.mg.backup.exceptions.CancelException;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.panel.Panel;
 import cz.mg.panel.settings.Alignment;
@@ -19,9 +21,11 @@ public @Component class TaskDialog extends JDialog {
     private static final int PADDING = 8;
 
     private final @Mandatory Task task;
+    private final @Mandatory Runnable runnable;
 
     private TaskDialog(@Mandatory MainWindow window, @Mandatory String title, @Mandatory Runnable runnable) {
         super(window, true);
+        this.runnable = runnable;
         setTitle(title);
         Panel panel = new Panel(MARGIN, PADDING);
         panel.addVertical(new JLabel("Task processing in progress ..."));
@@ -33,13 +37,20 @@ public @Component class TaskDialog extends JDialog {
         pack();
         setLocationRelativeTo(null);
         addWindowListener(new UserWindowClosingListener(this::cancel));
+        addWindowListener(new UserWindowClosedListener(this::rethrow));
         addKeyListener(new UserKeyPressListener(this::onKeyPressed));
-        task = new Task(() -> run(runnable));
+        task = new Task(this::run);
         task.start();
     }
 
-    private void run(@Mandatory Runnable runnable) {
-        runnable.run();
+    private void run() {
+        try {
+            runnable.run();
+        } catch (RuntimeException e) {
+            if (!(e instanceof CancelException)) {
+                task.setException(e);
+            }
+        }
         SwingUtilities.invokeLater(this::dispose);
     }
 
@@ -56,6 +67,12 @@ public @Component class TaskDialog extends JDialog {
             SwingUtilities.invokeLater(this::dispose);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void rethrow() {
+        if (task.getException() != null) {
+            throw task.getException();
         }
     }
 

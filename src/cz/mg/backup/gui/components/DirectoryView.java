@@ -8,6 +8,7 @@ import cz.mg.backup.entities.Directory;
 import cz.mg.backup.event.UserActionListener;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.components.model.ObjectTreeModel;
+import cz.mg.backup.gui.dialog.TaskDialog;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
 import cz.mg.backup.services.DirectoryReader;
 import cz.mg.panel.Panel;
@@ -69,7 +70,11 @@ public @Component class DirectoryView extends Panel {
 
     public void reload() {
         if (path != null) {
-            directory = directoryReader.read(path, window.getSettings());
+            TaskDialog.show(
+                window,
+                "Load Directory",
+                () -> directory = directoryReader.read(path, window.getSettings())
+            );
         } else {
             directory = null;
         }
