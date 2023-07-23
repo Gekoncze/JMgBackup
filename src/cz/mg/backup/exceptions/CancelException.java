@@ -1,4 +1,4 @@
-package cz.mg.backup.errors;
+package cz.mg.backup.exceptions;
 
 import cz.mg.annotations.classes.Error;
 

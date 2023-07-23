@@ -1,7 +1,7 @@
 package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
-import cz.mg.backup.errors.CancelException;
+import cz.mg.backup.exceptions.CancelException;
 
 public @Service class CancelService {
     private static volatile @Service CancelService instance;
