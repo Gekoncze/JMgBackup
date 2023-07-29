@@ -5,6 +5,10 @@
     add directory compare service
     add component to reload directory
     show node error content somewhere somehow
+    add context menu for tree entries
+        add option to show file or directory in file manager
+        add option to show file or directory details
+        add option to reload / refresh
 
 ### LATER ###
     consider different icons for different types of validation errors
