@@ -7,6 +7,7 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.event.UserActionListener;
 import cz.mg.backup.gui.MainWindow;
+import cz.mg.backup.gui.components.model.NodeCellRenderer;
 import cz.mg.backup.gui.components.model.ObjectTreeModel;
 import cz.mg.backup.gui.dialog.TaskDialog;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
@@ -87,5 +88,6 @@ public @Component class DirectoryView extends Panel {
         } else {
             treeView.setModel(new ObjectTreeModel(null));
         }
+        treeView.setCellRenderer(new NodeCellRenderer());
     }
 }

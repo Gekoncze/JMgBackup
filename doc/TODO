@@ -1,11 +1,10 @@
 ### NOW ###
-    ...
+    show error icon for nodes with errors
+       consider different icons for different types of validation errors
+
 
 ### SOON ###
-    add tree model entry renderer
-        show error icon for nodes with errors
-        consider different icons for different types of validation errors
-
+    add scroll pane for tree view
     add directory compare service
     add component to reload directory
 
