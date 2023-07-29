@@ -1,4 +1,4 @@
-package cz.mg.backup.gui.dialog;
+package cz.mg.backup.gui.components.dialog;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;

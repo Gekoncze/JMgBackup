@@ -1,4 +1,4 @@
-package cz.mg.backup.gui.menu.edit;
+package cz.mg.backup.gui.components.menu.edit;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;

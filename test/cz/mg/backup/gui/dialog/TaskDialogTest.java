@@ -3,6 +3,7 @@ package cz.mg.backup.gui.dialog;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.gui.MainWindow;
+import cz.mg.backup.gui.components.dialog.TaskDialog;
 import cz.mg.backup.services.CancelService;
 
 import javax.swing.*;

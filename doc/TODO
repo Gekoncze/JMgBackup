@@ -4,6 +4,7 @@
 ### SOON ###
     add directory compare service
     add component to reload directory
+    show node error content somewhere somehow
 
 ### LATER ###
     consider different icons for different types of validation errors

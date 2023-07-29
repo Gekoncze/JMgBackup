@@ -1,4 +1,4 @@
-package cz.mg.backup.gui.dialog;
+package cz.mg.backup.gui.components.dialog;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
@@ -19,10 +19,12 @@ public @Component class AboutDialog extends Dialog {
     private AboutDialog(@Mandatory MainWindow window) {
         super(window);
         setTitle("About");
+
         Panel panel = new Panel(MARGIN, PADDING);
         panel.addVertical(new JLabel(Info.NAME), 0, 0, Alignment.MIDDLE, Fill.NONE);
         panel.addVertical(new JLabel("Version " + Info.VERSION), 0, 0, Alignment.MIDDLE, Fill.NONE);
         panel.addVertical(new UrlLabel(Info.URL), 0, 0, Alignment.MIDDLE, Fill.NONE);
+
         getContentPane().add(panel);
         addKeyListenerRecursive(this, new UserEscapeKeyPressListener(this::dispose));
         pack();

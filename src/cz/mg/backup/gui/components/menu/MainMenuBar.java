@@ -1,11 +1,11 @@
-package cz.mg.backup.gui.menu;
+package cz.mg.backup.gui.components.menu;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.gui.MainWindow;
-import cz.mg.backup.gui.menu.edit.EditMenu;
-import cz.mg.backup.gui.menu.file.FileMenu;
-import cz.mg.backup.gui.menu.help.HelpMenu;
+import cz.mg.backup.gui.components.menu.edit.EditMenu;
+import cz.mg.backup.gui.components.menu.file.FileMenu;
+import cz.mg.backup.gui.components.menu.help.HelpMenu;
 
 import javax.swing.*;
 

@@ -5,7 +5,7 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.Info;
 import cz.mg.backup.entities.Settings;
 import cz.mg.backup.gui.components.DirectoryView;
-import cz.mg.backup.gui.menu.MainMenuBar;
+import cz.mg.backup.gui.components.menu.MainMenuBar;
 import cz.mg.panel.Panel;
 
 import javax.swing.*;
@@ -17,10 +17,9 @@ public @Component class MainWindow extends JFrame {
     private static final int MARGIN = 0;
     private static final int PADDING = 8;
 
-    private final @Mandatory DirectoryView leftView = new DirectoryView(this);
-    private final @Mandatory DirectoryView rightView = new DirectoryView(this);
-
     private final @Mandatory Settings settings = new Settings();
+    private final @Mandatory DirectoryView leftView;
+    private final @Mandatory DirectoryView rightView;
 
     public MainWindow() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -30,8 +29,8 @@ public @Component class MainWindow extends JFrame {
         setJMenuBar(new MainMenuBar(this));
         Panel panel = new Panel(MARGIN, PADDING);
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        splitPane.setLeftComponent(leftView);
-        splitPane.setRightComponent(rightView);
+        splitPane.setLeftComponent(leftView = new DirectoryView(this));
+        splitPane.setRightComponent(rightView = new DirectoryView(this));
         splitPane.setResizeWeight(0.5);
         panel.addVertical(splitPane, 1, 1);
         getContentPane().add(panel);
@@ -39,6 +38,14 @@ public @Component class MainWindow extends JFrame {
 
     public @Mandatory Settings getSettings() {
         return settings;
+    }
+
+    public @Mandatory DirectoryView getLeftView() {
+        return leftView;
+    }
+
+    public @Mandatory DirectoryView getRightView() {
+        return rightView;
     }
 
     public static void main(String[] args) {

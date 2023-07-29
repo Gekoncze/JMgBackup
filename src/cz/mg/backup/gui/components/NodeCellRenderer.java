@@ -1,9 +1,10 @@
-package cz.mg.backup.gui.components.model;
+package cz.mg.backup.gui.components;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
+import cz.mg.backup.gui.components.model.ObjectTreeEntry;
 import cz.mg.backup.gui.icons.Icons;
 import cz.mg.panel.Panel;
 import cz.mg.panel.settings.Alignment;
