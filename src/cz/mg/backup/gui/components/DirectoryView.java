@@ -45,7 +45,7 @@ public @Component class DirectoryView extends Panel {
         pathPanel.addHorizontal(selectButton);
         addVertical(pathPanel, 1, 0);
         treeView.setBorder(BorderFactory.createEtchedBorder());
-        addVertical(treeView, 1, 1);
+        addVertical(new JScrollPane(treeView), 1, 1);
         directoryChooser.setDialogType(JFileChooser.OPEN_DIALOG);
         directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         refresh();

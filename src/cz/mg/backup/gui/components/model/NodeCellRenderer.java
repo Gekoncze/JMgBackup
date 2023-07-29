@@ -50,6 +50,8 @@ public @Component class NodeCellRenderer implements TreeCellRenderer {
     }
 
     private @Mandatory Icon getIcon(@Mandatory Node node) {
-        return node instanceof Directory ? Icons.DIRECTORY_ICON : Icons.FILE_ICON;
+        return node.getErrors().isEmpty()
+            ? (node instanceof Directory ? Icons.DIRECTORY_ICON : Icons.FILE_ICON)
+            : (node instanceof Directory ? Icons.DIRECTORY_ERROR_ICON : Icons.FILE_ERROR_ICON);
     }
 }

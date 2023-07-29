@@ -1,12 +1,10 @@
 ### NOW ###
-    show error icon for nodes with errors
-       consider different icons for different types of validation errors
-
+    ...
 
 ### SOON ###
-    add scroll pane for tree view
     add directory compare service
     add component to reload directory
 
 ### LATER ###
+    consider different icons for different types of validation errors
     add support for symbolic links
