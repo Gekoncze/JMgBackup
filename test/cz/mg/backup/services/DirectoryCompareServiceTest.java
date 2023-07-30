@@ -6,6 +6,7 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
+import cz.mg.backup.exceptions.CompareException;
 import cz.mg.collections.list.List;
 import cz.mg.test.Assert;
 import cz.mg.test.exceptions.AssertException;
@@ -24,6 +25,7 @@ public @Test class DirectoryCompareServiceTest {
         test.testRecursive();
         test.testCompareClearsPreviousErrors();
         test.testCompareDoesNotClearOtherErrors();
+        test.testClearCompareErrors();
 
         System.out.println("OK");
     }
@@ -251,6 +253,41 @@ public @Test class DirectoryCompareServiceTest {
         service.compare(first, second);
         Assert.assertEquals(0, first.getErrors().count());
         Assert.assertEquals(1, second.getErrors().count());
+    }
+
+    private void testClearCompareErrors() {
+        Directory subdirectory = createDirectory("subdirectory");
+        subdirectory.getErrors().addLast(new CompareException("0"));
+
+        Directory directory = createDirectory("directory", new List<>(subdirectory), new List<>());
+        directory.getErrors().addLast(new RuntimeException());
+        directory.getErrors().addLast(new CompareException("1"));
+        directory.getErrors().addLast(new CompareException("2"));
+        directory.getErrors().addLast(new IllegalArgumentException());
+
+        Assert.assertEquals(1, subdirectory.getErrors().count());
+        Assert.assertEquals(4, directory.getErrors().count());
+
+        service.compare(directory, null);
+
+        Assert.assertEquals(0, subdirectory.getErrors().count());
+        Assert.assertEquals(2, directory.getErrors().count());
+        Assert.assertEquals(RuntimeException.class, directory.getErrors().getFirst().getClass());
+        Assert.assertEquals(IllegalArgumentException.class, directory.getErrors().getLast().getClass());
+
+        subdirectory.getErrors().addLast(new CompareException("0"));
+        directory.getErrors().addLast(new CompareException("1"));
+        directory.getErrors().addLast(new CompareException("2"));
+
+        Assert.assertEquals(1, subdirectory.getErrors().count());
+        Assert.assertEquals(4, directory.getErrors().count());
+
+        service.compare(null, directory);
+
+        Assert.assertEquals(0, subdirectory.getErrors().count());
+        Assert.assertEquals(2, directory.getErrors().count());
+        Assert.assertEquals(RuntimeException.class, directory.getErrors().getFirst().getClass());
+        Assert.assertEquals(IllegalArgumentException.class, directory.getErrors().getLast().getClass());
     }
 
     private @Mandatory Directory createDirectory(@Mandatory String name) {

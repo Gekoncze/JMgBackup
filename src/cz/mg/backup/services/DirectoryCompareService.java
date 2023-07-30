@@ -2,8 +2,10 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
+import cz.mg.backup.entities.Node;
 import cz.mg.backup.exceptions.CompareException;
 import cz.mg.collections.components.Capacity;
 import cz.mg.collections.map.Map;
@@ -32,9 +34,19 @@ public @Service class DirectoryCompareService {
     private DirectoryCompareService() {
     }
 
-    public void compare(@Mandatory Directory first, @Mandatory Directory second) {
-        first.getErrors().removeIf(e -> e instanceof CompareException);
-        second.getErrors().removeIf(e -> e instanceof CompareException);
+    public void compare(@Optional Directory first, @Optional Directory second) {
+        if (first != null && second != null) {
+            compareExisting(first, second);
+        } else if (first != null) {
+            clearCompareErrors(first);
+        } else if (second != null) {
+            clearCompareErrors(second);
+        }
+    }
+
+    private void compareExisting(@Mandatory Directory first, @Mandatory Directory second) {
+        clearSingleCompareErrors(first);
+        clearSingleCompareErrors(second);
         compareDirectories(first, second);
         compareFiles(first, second);
         propagateErrors(first);
@@ -111,5 +123,21 @@ public @Service class DirectoryCompareService {
                 new CompareException("Child node has an error.", error)
             );
         }
+    }
+
+    private void clearCompareErrors(@Mandatory Directory directory) {
+        clearSingleCompareErrors(directory);
+
+        for (Directory child : directory.getDirectories()) {
+            clearCompareErrors(child);
+        }
+
+        for (File child : directory.getFiles()) {
+            clearSingleCompareErrors(child);
+        }
+    }
+
+    private void clearSingleCompareErrors(@Mandatory Node node) {
+        node.getErrors().removeIf(e -> e instanceof CompareException);
     }
 }

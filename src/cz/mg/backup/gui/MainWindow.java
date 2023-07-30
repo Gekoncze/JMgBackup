@@ -1,11 +1,14 @@
 package cz.mg.backup.gui;
 
 import cz.mg.annotations.classes.Component;
+import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.Info;
 import cz.mg.backup.entities.Settings;
 import cz.mg.backup.gui.components.DirectoryView;
+import cz.mg.backup.gui.components.dialog.TaskDialog;
 import cz.mg.backup.gui.components.menu.MainMenuBar;
+import cz.mg.backup.services.DirectoryCompareService;
 import cz.mg.panel.Panel;
 
 import javax.swing.*;
@@ -16,6 +19,8 @@ public @Component class MainWindow extends JFrame {
     private static final int DEFAULT_HEIGHT = 600;
     private static final int MARGIN = 0;
     private static final int PADDING = 8;
+
+    private final @Service DirectoryCompareService compareService = DirectoryCompareService.getInstance();
 
     private final @Mandatory Settings settings = new Settings();
     private final @Mandatory DirectoryView leftView;
@@ -46,6 +51,16 @@ public @Component class MainWindow extends JFrame {
 
     public @Mandatory DirectoryView getRightView() {
         return rightView;
+    }
+
+    public void compare() {
+        TaskDialog.show(this, "Compare", () -> compareService.compare(
+            leftView.getDirectory(),
+            rightView.getDirectory()
+        ));
+
+        leftView.refresh();
+        rightView.refresh();
     }
 
     public static void main(String[] args) {

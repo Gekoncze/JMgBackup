@@ -67,6 +67,15 @@ public @Component class DirectoryView extends Panel {
         pathField.setText(path == null ? "" : path.toString());
     }
 
+    public @Optional Directory getDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(@Optional Directory directory) {
+        this.directory = directory;
+        refresh();
+    }
+
     private void select() {
         directoryChooser.showOpenDialog(this);
         File file = directoryChooser.getSelectedFile();
@@ -81,15 +90,16 @@ public @Component class DirectoryView extends Panel {
             TaskDialog.show(
                 window,
                 "Load Directory",
-                () -> directory = directoryReader.read(path, window.getSettings())
+                () -> setDirectory(directoryReader.read(path, window.getSettings()))
             );
         } else {
-            directory = null;
+            setDirectory(null);
         }
-        refresh();
+
+        window.compare();
     }
 
-    private void refresh() {
+    public void refresh() {
         if (directory != null) {
             treeView.setModel(new ObjectTreeModel(directoryTreeFactory.create(directory)));
         } else {
