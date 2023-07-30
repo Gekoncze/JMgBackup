@@ -11,8 +11,8 @@
         add option to reload / refresh
         add option to show error details
 
-### LATER ###
     add duplicate detector
         show different icon for duplicates
 
+### LATER ###
     add support for symbolic links
