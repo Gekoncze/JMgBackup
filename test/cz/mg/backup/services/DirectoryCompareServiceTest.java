@@ -23,8 +23,7 @@ public @Test class DirectoryCompareServiceTest {
         test.testMissingFile();
         test.testDifferentFile();
         test.testRecursive();
-        test.testCompareClearsPreviousErrors();
-        test.testCompareDoesNotClearOtherErrors();
+        test.testCompareClearsCompareErrors();
         test.testClearCompareErrors();
 
         System.out.println("OK");
@@ -101,7 +100,7 @@ public @Test class DirectoryCompareServiceTest {
         service.compare(firstL1, secondL1);
         Assert.assertEquals(0, firstL1.getErrors().count());
         Assert.assertEquals(1, secondL2.getErrors().count());
-        Assert.assertEquals(1, secondL1.getErrors().count());
+        Assert.assertEquals(0, secondL1.getErrors().count());
     }
 
     private void testMissingSecondDirectory() {
@@ -110,7 +109,7 @@ public @Test class DirectoryCompareServiceTest {
         Directory secondL1 = createDirectory("L1", new List<>(), new List<>());
         service.compare(firstL1, secondL1);
         Assert.assertEquals(1, firstL2.getErrors().count());
-        Assert.assertEquals(1, firstL1.getErrors().count());
+        Assert.assertEquals(0, firstL1.getErrors().count());
         Assert.assertEquals(0, secondL1.getErrors().count());
     }
 
@@ -121,9 +120,9 @@ public @Test class DirectoryCompareServiceTest {
         Directory secondL1 = createDirectory("L1", new List<>(secondL2), new List<>());
         service.compare(firstL1, secondL1);
         Assert.assertEquals(1, firstL2.getErrors().count());
-        Assert.assertEquals(1, firstL1.getErrors().count());
+        Assert.assertEquals(0, firstL1.getErrors().count());
         Assert.assertEquals(1, secondL2.getErrors().count());
-        Assert.assertEquals(1, secondL1.getErrors().count());
+        Assert.assertEquals(0, secondL1.getErrors().count());
     }
 
     private void testMissingFile() {
@@ -139,7 +138,7 @@ public @Test class DirectoryCompareServiceTest {
         service.compare(firstL1, secondL1);
         Assert.assertEquals(0, firstL1.getErrors().count());
         Assert.assertEquals(1, secondL2.getErrors().count());
-        Assert.assertEquals(1, secondL1.getErrors().count());
+        Assert.assertEquals(0, secondL1.getErrors().count());
     }
 
     private void testMissingSecondFile() {
@@ -148,7 +147,7 @@ public @Test class DirectoryCompareServiceTest {
         Directory secondL1 = createDirectory("L1", new List<>(), new List<>());
         service.compare(firstL1, secondL1);
         Assert.assertEquals(1, firstL2.getErrors().count());
-        Assert.assertEquals(1, firstL1.getErrors().count());
+        Assert.assertEquals(0, firstL1.getErrors().count());
         Assert.assertEquals(0, secondL1.getErrors().count());
     }
 
@@ -159,20 +158,20 @@ public @Test class DirectoryCompareServiceTest {
         Directory secondL1 = createDirectory("L1", new List<>(), new List<>(secondL2));
         service.compare(firstL1, secondL1);
         Assert.assertEquals(1, firstL2.getErrors().count());
-        Assert.assertEquals(1, firstL1.getErrors().count());
+        Assert.assertEquals(0, firstL1.getErrors().count());
         Assert.assertEquals(1, secondL2.getErrors().count());
-        Assert.assertEquals(1, secondL1.getErrors().count());
+        Assert.assertEquals(0, secondL1.getErrors().count());
     }
 
     private void testDifferentFile() {
         File firstFile = createFile("foo", 1L, null);
         File secondFile = createFile("foo", 2L, null);
-        Directory first = createDirectory("root", new List<>(), new List<>(firstFile));
-        Directory second = createDirectory("root", new List<>(), new List<>(secondFile));
-        service.compare(first, second);
-        Assert.assertEquals(false, first.getErrors().isEmpty());
+        Directory firstDirectory = createDirectory("root", new List<>(), new List<>(firstFile));
+        Directory secondDirectory = createDirectory("root", new List<>(), new List<>(secondFile));
+        service.compare(firstDirectory, secondDirectory);
+        Assert.assertEquals(true, firstDirectory.getErrors().isEmpty());
         Assert.assertEquals(false, firstFile.getErrors().isEmpty());
-        Assert.assertEquals(false, second.getErrors().isEmpty());
+        Assert.assertEquals(true, secondDirectory.getErrors().isEmpty());
         Assert.assertEquals(false, secondFile.getErrors().isEmpty());
     }
 
@@ -213,46 +212,35 @@ public @Test class DirectoryCompareServiceTest {
 
         service.compare(firstL1, secondL1);
 
-        Assert.assertEquals(false, firstL1.getErrors().isEmpty());
+        Assert.assertEquals(true, firstL1.getErrors().isEmpty());
         Assert.assertEquals(true, firstL2a.getErrors().isEmpty());
-        Assert.assertEquals(false, firstL2.getErrors().isEmpty());
+        Assert.assertEquals(true, firstL2.getErrors().isEmpty());
         Assert.assertEquals(true, firstL2b.getErrors().isEmpty());
         Assert.assertEquals(false, firstL3.getErrors().isEmpty());
 
-        Assert.assertEquals(false, secondL1.getErrors().isEmpty());
+        Assert.assertEquals(true, secondL1.getErrors().isEmpty());
         Assert.assertEquals(true, secondL2a.getErrors().isEmpty());
-        Assert.assertEquals(false, secondL2.getErrors().isEmpty());
+        Assert.assertEquals(true, secondL2.getErrors().isEmpty());
         Assert.assertEquals(true, secondL2b.getErrors().isEmpty());
         Assert.assertEquals(false, secondL3.getErrors().isEmpty());
     }
 
-    private void testCompareClearsPreviousErrors() {
-        Directory first = createDirectory("root", new List<>(), new List<>(createFile("foo")));
-        Directory second = createDirectory("root", new List<>(), new List<>(createFile("bar")));
+    private void testCompareClearsCompareErrors() {
+        Directory first = createDirectory("root");
+        Directory second = createDirectory("root");
         Assert.assertEquals(0, first.getErrors().count());
         Assert.assertEquals(0, second.getErrors().count());
-        service.compare(first, second);
-        Assert.assertEquals(1, first.getErrors().count());
-        Assert.assertEquals(1, second.getErrors().count());
-        second.getFiles().getFirst().setPath(Path.of("foo"));
-        service.compare(first, second);
-        Assert.assertEquals(0, first.getErrors().count());
-        Assert.assertEquals(0, second.getErrors().count());
-    }
-
-    private void testCompareDoesNotClearOtherErrors() {
-        Directory first = createDirectory("root", new List<>(), new List<>(createFile("foo")));
-        Directory second = createDirectory("root", new List<>(), new List<>(createFile("bar")));
-        second.getErrors().addLast(new RuntimeException());
-        Assert.assertEquals(0, first.getErrors().count());
-        Assert.assertEquals(1, second.getErrors().count());
-        service.compare(first, second);
-        Assert.assertEquals(1, first.getErrors().count());
+        first.getErrors().addLast(new RuntimeException());
+        second.getErrors().addLast(new IllegalArgumentException());
+        first.getErrors().addLast(new CompareException("test"));
+        second.getErrors().addLast(new CompareException("test"));
+        Assert.assertEquals(2, first.getErrors().count());
         Assert.assertEquals(2, second.getErrors().count());
-        second.getFiles().getFirst().setPath(Path.of("foo"));
         service.compare(first, second);
-        Assert.assertEquals(0, first.getErrors().count());
+        Assert.assertEquals(1, first.getErrors().count());
         Assert.assertEquals(1, second.getErrors().count());
+        Assert.assertEquals(RuntimeException.class, first.getErrors().getFirst().getClass());
+        Assert.assertEquals(IllegalArgumentException.class, second.getErrors().getFirst().getClass());
     }
 
     private void testClearCompareErrors() {

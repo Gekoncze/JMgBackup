@@ -4,7 +4,10 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
+import cz.mg.backup.exceptions.CompareException;
+import cz.mg.collections.list.List;
 import cz.mg.test.Assert;
 
 public @Test class FileCompareServiceTest {
@@ -13,8 +16,7 @@ public @Test class FileCompareServiceTest {
 
         FileCompareServiceTest test = new FileCompareServiceTest();
         test.testCompare();
-        test.testCompareClearsPreviousErrors();
-        test.testCompareDoesNotClearOtherErrors();
+        test.testCompareClearsCompareErrors();
 
         System.out.println("OK");
     }
@@ -89,36 +91,22 @@ public @Test class FileCompareServiceTest {
         );
     }
 
-    private void testCompareClearsPreviousErrors() {
-        File first = createFile(7L, "77");
-        File second = createFile(88L, "8");
+    private void testCompareClearsCompareErrors() {
+        File first = new File();
+        File second = new File();
         Assert.assertEquals(0, first.getErrors().count());
         Assert.assertEquals(0, second.getErrors().count());
-        service.compare(first, second);
+        first.getErrors().addLast(new RuntimeException());
+        second.getErrors().addLast(new IllegalArgumentException());
+        first.getErrors().addLast(new CompareException("test"));
+        second.getErrors().addLast(new CompareException("test"));
         Assert.assertEquals(2, first.getErrors().count());
         Assert.assertEquals(2, second.getErrors().count());
-        second.setSize(first.getSize());
         service.compare(first, second);
         Assert.assertEquals(1, first.getErrors().count());
         Assert.assertEquals(1, second.getErrors().count());
-        second.setHash(first.getHash());
-        service.compare(first, second);
-        Assert.assertEquals(0, first.getErrors().count());
-        Assert.assertEquals(0, second.getErrors().count());
-    }
-
-    private void testCompareDoesNotClearOtherErrors() {
-        File first = createFile(7L, "77");
-        File second = createFile(7L, "8");
-        first.getErrors().addLast(new RuntimeException());
-        Assert.assertEquals(1, first.getErrors().count());
-        Assert.assertEquals(0, second.getErrors().count());
-        service.compare(first, second);
-        Assert.assertEquals(2, first.getErrors().count());
-        Assert.assertEquals(1, second.getErrors().count());
-        service.compare(first, second);
-        Assert.assertEquals(2, first.getErrors().count());
-        Assert.assertEquals(1, second.getErrors().count());
+        Assert.assertEquals(RuntimeException.class, first.getErrors().getFirst().getClass());
+        Assert.assertEquals(IllegalArgumentException.class, second.getErrors().getFirst().getClass());
     }
 
     private void testCompare(@Mandatory File first, @Mandatory File second, boolean fail) {

@@ -9,6 +9,7 @@ import cz.mg.backup.gui.components.DirectoryView;
 import cz.mg.backup.gui.components.dialog.TaskDialog;
 import cz.mg.backup.gui.components.menu.MainMenuBar;
 import cz.mg.backup.services.DirectoryCompareService;
+import cz.mg.backup.services.DirectoryErrorService;
 import cz.mg.panel.Panel;
 
 import javax.swing.*;
@@ -21,6 +22,7 @@ public @Component class MainWindow extends JFrame {
     private static final int PADDING = 8;
 
     private final @Service DirectoryCompareService compareService = DirectoryCompareService.getInstance();
+    private final @Service DirectoryErrorService errorService = DirectoryErrorService.getInstance();
 
     private final @Mandatory Settings settings = new Settings();
     private final @Mandatory DirectoryView leftView;
@@ -58,6 +60,16 @@ public @Component class MainWindow extends JFrame {
             leftView.getDirectory(),
             rightView.getDirectory()
         ));
+
+        TaskDialog.show(this, "Propagate", () -> {
+            if (leftView.getDirectory() != null) {
+                errorService.propagate(leftView.getDirectory());
+            }
+
+            if (rightView.getDirectory() != null) {
+                errorService.propagate(rightView.getDirectory());
+            }
+        });
 
         leftView.refresh();
         rightView.refresh();

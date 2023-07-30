@@ -10,6 +10,7 @@ public class AllTests {
 
         // cz.mg.backup.services
         DirectoryCompareServiceTest.main(args);
+        DirectoryErrorServiceTest.main(args);
         DirectoryReaderTest.main(args);
         DirectorySortTest.main(args);
         FileCompareServiceTest.main(args);

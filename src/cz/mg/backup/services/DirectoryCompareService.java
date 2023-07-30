@@ -7,7 +7,6 @@ import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.exceptions.CompareException;
-import cz.mg.backup.exceptions.PropagatedException;
 import cz.mg.collections.components.Capacity;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
@@ -50,8 +49,6 @@ public @Service class DirectoryCompareService {
         clearSingleCompareErrors(second);
         compareDirectories(first, second);
         compareFiles(first, second);
-        propagateErrors(first);
-        propagateErrors(second);
     }
 
     private void compareDirectories(@Mandatory Directory first, @Mandatory Directory second) {
@@ -101,28 +98,6 @@ public @Service class DirectoryCompareService {
             } else if (pair.getValue() != null) {
                 pair.getValue().getErrors().addLast(new CompareException("Missing corresponding file."));
             }
-        }
-    }
-
-    private void propagateErrors(@Mandatory Directory directory) {
-        Exception error = null;
-
-        for (Directory child : directory.getDirectories()) {
-            if (error == null && !child.getErrors().isEmpty()) {
-                error = child.getErrors().getFirst();
-            }
-        }
-
-        for (File child : directory.getFiles()) {
-            if (error == null && !child.getErrors().isEmpty()) {
-                error = child.getErrors().getFirst();
-            }
-        }
-
-        if (error != null) {
-            directory.getErrors().addLast(
-                new PropagatedException(error)
-            );
         }
     }
 
