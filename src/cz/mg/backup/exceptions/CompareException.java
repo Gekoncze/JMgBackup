@@ -7,4 +7,8 @@ public @Error class CompareException extends RuntimeException {
     public CompareException(@Mandatory String message) {
         super(message);
     }
+
+    public CompareException(@Mandatory String message, @Mandatory Exception cause) {
+        super(message, cause);
+    }
 }

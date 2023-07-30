@@ -1,5 +1,6 @@
 ### NOW ###
-    add directory compare service
+    call directory compare service after loading directory
+        but only when both directories are provided
 
 ### SOON ###
     add component to reload directory
@@ -10,5 +11,10 @@
         add option to reload / refresh
 
 ### LATER ###
+    show task progress
+        x out of y
+        percentage
+        y might be optional when total number of items is unknown
+
     consider different icons for different types of validation errors
     add support for symbolic links
