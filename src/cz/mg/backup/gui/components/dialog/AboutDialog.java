@@ -3,7 +3,7 @@ package cz.mg.backup.gui.components.dialog;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.Info;
-import cz.mg.backup.event.UserEscapeKeyPressListener;
+import cz.mg.backup.gui.event.UserEscapeKeyPressListener;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.components.UrlLabel;
 import cz.mg.panel.Panel;

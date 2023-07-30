@@ -2,7 +2,7 @@ package cz.mg.backup.gui.components;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.backup.event.UserMouseClickListener;
+import cz.mg.backup.gui.event.UserMouseClickListener;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package cz.mg.backup.event;
+package cz.mg.backup.gui.event;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;

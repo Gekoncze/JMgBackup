@@ -2,7 +2,7 @@ package cz.mg.backup.gui.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.backup.event.UserActionListener;
+import cz.mg.backup.gui.event.UserActionListener;
 
 import javax.swing.*;
 

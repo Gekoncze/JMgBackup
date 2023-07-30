@@ -1,7 +1,7 @@
 package cz.mg.backup.gui.components.menu.edit;
 
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.backup.event.UserActionListener;
+import cz.mg.backup.gui.event.UserActionListener;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.components.dialog.HashFunctionDialog;
 
