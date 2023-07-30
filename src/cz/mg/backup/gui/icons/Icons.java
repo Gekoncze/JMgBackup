@@ -11,6 +11,7 @@ import java.util.Objects;
 public @Static class Icons {
     public static final Icon DIRECTORY_ICON = load("directory.png");
     public static final Icon DIRECTORY_ERROR_ICON = load("directoryError.png");
+    public static final Icon DIRECTORY_ERROR_ICON_2 = load("directoryError2.png");
     public static final Icon FILE_ICON = load("file.png");
     public static final Icon FILE_ERROR_ICON = load("fileError.png");
 

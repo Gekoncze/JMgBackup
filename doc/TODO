@@ -14,5 +14,7 @@
         percentage
         y might be optional when total number of items is unknown
 
-    show different icons for different types of errors
+    add duplicate detector
+        show different icon for duplicates
+
     add support for symbolic links

@@ -7,6 +7,7 @@ import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.exceptions.CompareException;
+import cz.mg.backup.exceptions.PropagatedException;
 import cz.mg.collections.components.Capacity;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
@@ -120,7 +121,7 @@ public @Service class DirectoryCompareService {
 
         if (error != null) {
             directory.getErrors().addLast(
-                new CompareException("Child node has an error.", error)
+                new PropagatedException(error)
             );
         }
     }

@@ -3,7 +3,9 @@ package cz.mg.backup.gui.components;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.Directory;
+import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
+import cz.mg.backup.exceptions.PropagatedException;
 import cz.mg.backup.gui.components.model.ObjectTreeEntry;
 import cz.mg.backup.gui.icons.Icons;
 import cz.mg.panel.Panel;
@@ -51,8 +53,36 @@ public @Component class NodeCellRenderer implements TreeCellRenderer {
     }
 
     private @Mandatory Icon getIcon(@Mandatory Node node) {
-        return node.getErrors().isEmpty()
-            ? (node instanceof Directory ? Icons.DIRECTORY_ICON : Icons.FILE_ICON)
-            : (node instanceof Directory ? Icons.DIRECTORY_ERROR_ICON : Icons.FILE_ERROR_ICON);
+        if (node instanceof Directory) {
+            return getDirectoryIcon((Directory) node);
+        } else if (node instanceof File) {
+            return getFileIcon((File) node);
+        } else {
+            throw new UnsupportedOperationException("Unsupported node type " + node.getClass().getSimpleName() + ".");
+        }
+    }
+
+    private @Mandatory Icon getDirectoryIcon(@Mandatory Directory directory) {
+        boolean hasError = false;
+        boolean hasInnerError = false;
+        for (Exception exception : directory.getErrors()) {
+            if (exception instanceof PropagatedException) {
+                hasInnerError = true;
+            } else {
+                hasError = true;
+            }
+        }
+
+        if (hasError) {
+            return Icons.DIRECTORY_ERROR_ICON;
+        } else if (hasInnerError) {
+            return Icons.DIRECTORY_ERROR_ICON_2;
+        } else {
+            return Icons.DIRECTORY_ICON;
+        }
+    }
+
+    private @Mandatory Icon getFileIcon(@Mandatory File file) {
+        return file.getErrors().isEmpty() ? Icons.FILE_ICON : Icons.FILE_ERROR_ICON;
     }
 }
