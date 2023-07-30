@@ -7,6 +7,7 @@ public class AllTests {
     public static void main(String[] args) {
         // cz.mg.backup.gui.services
         DirectoryTreeFactoryTest.main(args);
+        FileCompareServiceTest.main(args);
 
         // cz.mg.backup.services
         DirectoryReaderTest.main(args);
