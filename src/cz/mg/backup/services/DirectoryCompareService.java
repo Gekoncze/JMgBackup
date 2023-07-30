@@ -23,6 +23,7 @@ public @Service class DirectoryCompareService {
                 if (instance == null) {
                     instance = new DirectoryCompareService();
                     instance.fileCompareService = FileCompareService.getInstance();
+                    instance.taskService = TaskService.getInstance();
                 }
             }
         }
@@ -30,6 +31,7 @@ public @Service class DirectoryCompareService {
     }
 
     private @Service FileCompareService fileCompareService;
+    private @Service TaskService taskService;
 
     private DirectoryCompareService() {
     }
@@ -55,16 +57,19 @@ public @Service class DirectoryCompareService {
         Map<Path, Pair<Directory, Directory>> map = new Map<>(new Capacity(100));
 
         for (Directory child : first.getDirectories()) {
+            taskService.update();
             Pair<Directory, Directory> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
             pair.setKey(child);
         }
 
         for (Directory child : second.getDirectories()) {
+            taskService.update();
             Pair<Directory, Directory> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
             pair.setValue(child);
         }
 
         for (ReadablePair<Path, Pair<Directory, Directory>> entry : map) {
+            taskService.update();
             Pair<Directory, Directory> pair = entry.getValue();
             if (pair.getKey() != null && pair.getValue() != null) {
                 compare(pair.getKey(), pair.getValue());
@@ -80,16 +85,19 @@ public @Service class DirectoryCompareService {
         Map<Path, Pair<File, File>> map = new Map<>(new Capacity(100));
 
         for (File child : first.getFiles()) {
+            taskService.update();
             Pair<File, File> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
             pair.setKey(child);
         }
 
         for (File child : second.getFiles()) {
+            taskService.update();
             Pair<File, File> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
             pair.setValue(child);
         }
 
         for (ReadablePair<Path, Pair<File, File>> entry : map) {
+            taskService.update();
             Pair<File, File> pair = entry.getValue();
             if (pair.getKey() != null && pair.getValue() != null) {
                 fileCompareService.compare(pair.getKey(), pair.getValue());
@@ -105,10 +113,12 @@ public @Service class DirectoryCompareService {
         clearSingleCompareErrors(directory);
 
         for (Directory child : directory.getDirectories()) {
+            taskService.update();
             clearCompareErrors(child);
         }
 
         for (File child : directory.getFiles()) {
+            taskService.update();
             clearSingleCompareErrors(child);
         }
     }

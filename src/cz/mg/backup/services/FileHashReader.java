@@ -22,7 +22,7 @@ public @Service class FileHashReader {
                 if (instance == null) {
                     instance = new FileHashReader();
                     instance.fileHashConverter = FileHashConverter.getInstance();
-                    instance.cancelService = CancelService.getInstance();
+                    instance.taskService = TaskService.getInstance();
                 }
             }
         }
@@ -30,7 +30,7 @@ public @Service class FileHashReader {
     }
 
     private @Service FileHashConverter fileHashConverter;
-    private @Service CancelService cancelService;
+    private @Service TaskService taskService;
 
     private FileHashReader() {
     }
@@ -47,7 +47,7 @@ public @Service class FileHashReader {
                 ) {
                     byte[] buffer = new byte[BUFFER_SIZE];
                     while (stream.read(buffer) > 0) {
-                        cancelService.check();
+                        taskService.update();
                     }
                 }
                 return fileHashConverter.convert(algorithm.digest());

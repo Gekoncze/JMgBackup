@@ -4,7 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.components.dialog.TaskDialog;
-import cz.mg.backup.services.CancelService;
+import cz.mg.backup.services.TaskService;
 
 import javax.swing.*;
 
@@ -16,7 +16,7 @@ public @Test class TaskDialogTest {
         test.test();
     }
 
-    private final @Service CancelService cancelService = CancelService.getInstance();
+    private final @Service TaskService taskService = TaskService.getInstance();
 
     private void test() {
         MainWindow window = new MainWindow();
@@ -26,7 +26,7 @@ public @Test class TaskDialogTest {
 
     private void testTask() {
         for (int i = 0; i < 5; i++) {
-            cancelService.check();
+            taskService.update();
             System.out.println(System.currentTimeMillis());
             sleep();
         }

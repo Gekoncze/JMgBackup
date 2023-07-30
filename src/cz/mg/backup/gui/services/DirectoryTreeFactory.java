@@ -6,7 +6,7 @@ import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.components.model.ObjectTreeEntry;
-import cz.mg.backup.services.CancelService;
+import cz.mg.backup.services.TaskService;
 import cz.mg.collections.array.Array;
 
 public @Service class DirectoryTreeFactory {
@@ -17,14 +17,14 @@ public @Service class DirectoryTreeFactory {
             synchronized (Service.class) {
                 if (instance == null) {
                     instance = new DirectoryTreeFactory();
-                    instance.cancelService = CancelService.getInstance();
+                    instance.taskService = TaskService.getInstance();
                 }
             }
         }
         return instance;
     }
 
-    private @Service CancelService cancelService;
+    private @Service TaskService taskService;
 
     private DirectoryTreeFactory() {
     }
@@ -41,13 +41,13 @@ public @Service class DirectoryTreeFactory {
         int i = 0;
 
         for (Directory child : directory.getDirectories()) {
-            cancelService.check();
+            taskService.update();
             children.set(i, create(child, i));
             i++;
         }
 
         for (File child : directory.getFiles()) {
-            cancelService.check();
+            taskService.update();
             children.set(i, create(child, i));
             i++;
         }

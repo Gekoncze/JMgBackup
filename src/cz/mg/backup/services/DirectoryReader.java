@@ -19,7 +19,7 @@ public @Service class DirectoryReader {
                     instance = new DirectoryReader();
                     instance.fileReader = FileReader.getInstance();
                     instance.sort = DirectorySort.getInstance();
-                    instance.cancelService = CancelService.getInstance();
+                    instance.taskService = TaskService.getInstance();
                 }
             }
         }
@@ -28,7 +28,7 @@ public @Service class DirectoryReader {
 
     private @Service FileReader fileReader;
     private @Service DirectorySort sort;
-    private @Service CancelService cancelService;
+    private @Service TaskService taskService;
 
     private DirectoryReader() {
     }
@@ -38,7 +38,7 @@ public @Service class DirectoryReader {
         directory.setPath(path);
         try (DirectoryStream<Path> childPaths = Files.newDirectoryStream(path)) {
             for (Path childPath : childPaths) {
-                cancelService.check();
+                taskService.update();
                 try {
                     read(directory, childPath, settings);
                 } catch (Exception e) {

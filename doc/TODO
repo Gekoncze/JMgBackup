@@ -1,5 +1,8 @@
 ### NOW ###
-    ...
+    show task progress
+        show multiple progress bars for each nesting level
+        show regular progress bar when limit is > 0
+        show indeterminate progress bar when limit is 0
 
 ### SOON ###
     add context menu for tree entries
@@ -9,11 +12,6 @@
         add option to show error details
 
 ### LATER ###
-    show task progress
-        x out of y
-        percentage
-        y might be optional when total number of items is unknown
-
     add duplicate detector
         show different icon for duplicates
 

@@ -14,11 +14,14 @@ public @Service class DirectoryErrorService {
             synchronized (Service.class) {
                 if (instance == null) {
                     instance = new DirectoryErrorService();
+                    instance.taskService = TaskService.getInstance();
                 }
             }
         }
         return instance;
     }
+
+    private @Service TaskService taskService;
 
     private DirectoryErrorService() {
     }
@@ -29,6 +32,7 @@ public @Service class DirectoryErrorService {
         Exception error = null;
 
         for (Directory child : directory.getDirectories()) {
+            taskService.update();
             propagate(child);
             if (error == null && !child.getErrors().isEmpty()) {
                 error = child.getErrors().getFirst();
@@ -36,6 +40,7 @@ public @Service class DirectoryErrorService {
         }
 
         for (File child : directory.getFiles()) {
+            taskService.update();
             if (error == null && !child.getErrors().isEmpty()) {
                 error = child.getErrors().getFirst();
             }

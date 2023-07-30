@@ -6,11 +6,20 @@ import cz.mg.annotations.requirement.Optional;
 
 public @Component class Task extends Thread {
     private final @Mandatory UnsafeRunnable runnable;
+    private @Mandatory Progress progress = new Progress();
     private boolean canceled = false;
 
     private Task(@Mandatory UnsafeRunnable runnable) {
         super(runnable);
         this.runnable = runnable;
+    }
+
+    public @Mandatory Progress getProgress() {
+        return progress;
+    }
+
+    public void setProgress(@Mandatory Progress progress) {
+        this.progress = progress;
     }
 
     public boolean isCanceled() {

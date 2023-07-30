@@ -18,7 +18,6 @@ public @Service class FileReader {
                     instance = new FileReader();
                     instance.fileSizeReader = FileSizeReader.getInstance();
                     instance.fileHashReader = FileHashReader.getInstance();
-                    instance.cancelService = CancelService.getInstance();
                 }
             }
         }
@@ -27,7 +26,6 @@ public @Service class FileReader {
 
     private @Service FileSizeReader fileSizeReader;
     private @Service FileHashReader fileHashReader;
-    private @Service CancelService cancelService;
 
     private FileReader() {
     }
@@ -46,7 +44,6 @@ public @Service class FileReader {
         @Mandatory Reader<V> reader
     ) {
         try {
-            cancelService.check();
             setter.set(reader.read());
         } catch (Exception e) {
             file.getErrors().addLast(e);
