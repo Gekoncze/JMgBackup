@@ -54,7 +54,6 @@ public @Component class TaskDialog extends Dialog {
         try {
             task.setCanceled(true);
             task.join();
-            SwingUtilities.invokeLater(this::dispose);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
