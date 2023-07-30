@@ -2,12 +2,12 @@
     ...
 
 ### SOON ###
-    add component to reload directory
-    show node error content somewhere somehow
+    show error message as tooltip over error icon
     add context menu for tree entries
         add option to show file or directory in file manager
         add option to show file or directory details
         add option to reload / refresh
+        add option to show error details
 
 ### LATER ###
     show task progress
@@ -15,5 +15,5 @@
         percentage
         y might be optional when total number of items is unknown
 
-    consider different icons for different types of validation errors
+    show different icons for different types of errors
     add support for symbolic links
