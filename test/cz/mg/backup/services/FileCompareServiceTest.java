@@ -14,6 +14,7 @@ public @Test class FileCompareServiceTest {
         FileCompareServiceTest test = new FileCompareServiceTest();
         test.testCompare();
         test.testCompareClearsPreviousErrors();
+        test.testCompareDoesNotClearOtherErrors();
 
         System.out.println("OK");
     }
@@ -104,6 +105,20 @@ public @Test class FileCompareServiceTest {
         service.compare(first, second);
         Assert.assertEquals(0, first.getErrors().count());
         Assert.assertEquals(0, second.getErrors().count());
+    }
+
+    private void testCompareDoesNotClearOtherErrors() {
+        File first = createFile(7L, "77");
+        File second = createFile(7L, "8");
+        first.getErrors().addLast(new RuntimeException());
+        Assert.assertEquals(1, first.getErrors().count());
+        Assert.assertEquals(0, second.getErrors().count());
+        service.compare(first, second);
+        Assert.assertEquals(2, first.getErrors().count());
+        Assert.assertEquals(1, second.getErrors().count());
+        service.compare(first, second);
+        Assert.assertEquals(2, first.getErrors().count());
+        Assert.assertEquals(1, second.getErrors().count());
     }
 
     private void testCompare(@Mandatory File first, @Mandatory File second, boolean fail) {
