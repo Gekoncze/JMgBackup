@@ -39,19 +39,15 @@ public @Component class TaskDialog extends Dialog {
         addWindowListener(new UserWindowClosedListener(this::rethrow));
         addKeyListenerRecursive(this, new UserEscapeKeyPressListener(this::cancel));
 
-        task = new Task(() -> run(runnable));
-        task.start();
+        task = Task.run(() -> run(runnable));
     }
 
     private void run(@Mandatory Runnable runnable) {
         try {
             runnable.run();
-        } catch (RuntimeException e) {
-            if (!(e instanceof CancelException)) {
-                task.setException(e);
-            }
+        } finally {
+            SwingUtilities.invokeLater(this::dispose);
         }
-        SwingUtilities.invokeLater(this::dispose);
     }
 
     private void cancel() {
@@ -65,7 +61,7 @@ public @Component class TaskDialog extends Dialog {
     }
 
     private void rethrow() {
-        if (task.getException() != null) {
+        if (task.getException() != null && !(task.getException() instanceof CancelException)) {
             throw task.getException();
         }
     }

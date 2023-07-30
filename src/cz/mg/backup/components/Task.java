@@ -5,11 +5,12 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 
 public @Component class Task extends Thread {
+    private final @Mandatory UnsafeRunnable runnable;
     private boolean canceled = false;
-    private @Optional RuntimeException exception;
 
-    public Task(@Mandatory Runnable runnable) {
+    private Task(@Mandatory UnsafeRunnable runnable) {
         super(runnable);
+        this.runnable = runnable;
     }
 
     public boolean isCanceled() {
@@ -21,10 +22,42 @@ public @Component class Task extends Thread {
     }
 
     public @Optional RuntimeException getException() {
-        return exception;
+        return runnable.getException();
     }
 
     public void setException(@Optional RuntimeException exception) {
-        this.exception = exception;
+        runnable.setException(exception);
+    }
+
+    public static @Mandatory Task run(@Mandatory Runnable runnable) {
+        Task task = new Task(new UnsafeRunnable(runnable));
+        task.start();
+        return task;
+    }
+
+    private static class UnsafeRunnable implements Runnable {
+        private final @Mandatory Runnable runnable;
+        private @Optional RuntimeException exception;
+
+        public UnsafeRunnable(@Mandatory Runnable runnable) {
+            this.runnable = runnable;
+        }
+
+        public @Optional RuntimeException getException() {
+            return exception;
+        }
+
+        public void setException(@Optional RuntimeException exception) {
+            this.exception = exception;
+        }
+
+        @Override
+        public void run() {
+            try {
+                runnable.run();
+            } catch (RuntimeException e) {
+                setException(e);
+            }
+        }
     }
 }
