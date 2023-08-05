@@ -75,6 +75,11 @@ public @Component class MainWindow extends JFrame {
         rightView.refresh();
     }
 
+    public void reload() {
+        leftView.reload();
+        rightView.reload();
+    }
+
     public static void main(String[] args) {
         new MainWindow().setVisible(true);
     }
