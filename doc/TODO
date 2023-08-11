@@ -14,5 +14,7 @@
     add duplicate detector
         show different icon for duplicates
 
+    add support for drag and drop
+
 ### LATER ###
     add support for symbolic links
