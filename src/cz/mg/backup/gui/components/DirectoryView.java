@@ -5,9 +5,12 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Directory;
+import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.components.dialog.TaskDialog;
+import cz.mg.backup.gui.components.model.ObjectTreeEntry;
 import cz.mg.backup.gui.components.model.ObjectTreeModel;
+import cz.mg.backup.gui.event.UserTreeSelectionListener;
 import cz.mg.backup.gui.services.ButtonFactory;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
 import cz.mg.backup.services.DirectoryReader;
@@ -47,6 +50,7 @@ public @Component class DirectoryView extends Panel {
 
         treeView = new JTree();
         treeView.setBorder(BorderFactory.createEtchedBorder());
+        treeView.addTreeSelectionListener(new UserTreeSelectionListener(this::onItemSelected));
 
         addVertical(pathPanel, 1, 0);
         addVertical(new JScrollPane(treeView), 1, 1);
@@ -76,6 +80,22 @@ public @Component class DirectoryView extends Panel {
         refresh();
     }
 
+    private void onItemSelected() {
+        window.getDetailsView().setNode(getSelectedNode());
+    }
+
+    private @Optional Node getSelectedNode() {
+        if (treeView.getSelectionPath() != null) {
+            ObjectTreeEntry entry = (ObjectTreeEntry) treeView.getSelectionPath().getPathComponent(
+                treeView.getSelectionPath().getPathCount() - 1
+            );
+
+            return (Node) entry.get();
+        }
+
+        return null;
+    }
+
     private void select() {
         directoryChooser.showOpenDialog(this);
         File file = directoryChooser.getSelectedFile();
@@ -97,6 +117,7 @@ public @Component class DirectoryView extends Panel {
         }
 
         window.compare();
+        window.getDetailsView().setNode(null);
     }
 
     public void refresh() {
