@@ -7,7 +7,6 @@ import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.exceptions.CompareException;
-import cz.mg.collections.components.Capacity;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 import cz.mg.collections.pair.ReadablePair;
@@ -54,7 +53,7 @@ public @Service class DirectoryCompareService {
     }
 
     private void compareDirectories(@Mandatory Directory first, @Mandatory Directory second) {
-        Map<Path, Pair<Directory, Directory>> map = new Map<>(new Capacity(100));
+        Map<Path, Pair<Directory, Directory>> map = new Map<>();
 
         for (Directory child : first.getDirectories()) {
             taskService.update();
@@ -82,7 +81,7 @@ public @Service class DirectoryCompareService {
     }
 
     private void compareFiles(@Mandatory Directory first, @Mandatory Directory second) {
-        Map<Path, Pair<File, File>> map = new Map<>(new Capacity(100));
+        Map<Path, Pair<File, File>> map = new Map<>();
 
         for (File child : first.getFiles()) {
             taskService.update();
