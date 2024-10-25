@@ -9,7 +9,7 @@ import cz.mg.backup.services.TaskService;
 import javax.swing.*;
 
 public @Test class ProgressDialogTest {
-    private static final boolean ERROR = true;
+    private static final boolean SIMULATE_FAILED_TASK = false;
 
     public static void main(String[] args) {
         ProgressDialogTest test = new ProgressDialogTest();
@@ -31,7 +31,7 @@ public @Test class ProgressDialogTest {
             sleep();
         }
 
-        if (ERROR) {
+        if (SIMULATE_FAILED_TASK) {
             throw new RuntimeException("ERROR!");
         } else {
             System.out.println("DONE!");
