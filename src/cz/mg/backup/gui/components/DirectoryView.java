@@ -7,7 +7,7 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
-import cz.mg.backup.gui.components.dialog.TaskDialog;
+import cz.mg.backup.gui.components.dialog.ProgressDialog;
 import cz.mg.backup.gui.components.model.ObjectTreeEntry;
 import cz.mg.backup.gui.components.model.ObjectTreeModel;
 import cz.mg.backup.gui.event.UserTreeSelectionListener;
@@ -107,7 +107,7 @@ public @Component class DirectoryView extends Panel {
 
     public void reload() {
         if (path != null) {
-            TaskDialog.show(
+            ProgressDialog.show(
                 window,
                 "Load Directory",
                 () -> setDirectory(directoryReader.read(path, window.getSettings()))

@@ -3,16 +3,16 @@ package cz.mg.backup.gui.dialog;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.gui.MainWindow;
-import cz.mg.backup.gui.components.dialog.TaskDialog;
+import cz.mg.backup.gui.components.dialog.ProgressDialog;
 import cz.mg.backup.services.TaskService;
 
 import javax.swing.*;
 
-public @Test class TaskDialogTest {
+public @Test class ProgressDialogTest {
     private static final boolean ERROR = true;
 
     public static void main(String[] args) {
-        TaskDialogTest test = new TaskDialogTest();
+        ProgressDialogTest test = new ProgressDialogTest();
         test.test();
     }
 
@@ -20,7 +20,7 @@ public @Test class TaskDialogTest {
 
     private void test() {
         MainWindow window = new MainWindow();
-        SwingUtilities.invokeLater(() -> TaskDialog.show(window, "Test Task", this::testTask));
+        SwingUtilities.invokeLater(() -> ProgressDialog.show(window, "Test Task", this::testTask));
         window.setVisible(true);
     }
 

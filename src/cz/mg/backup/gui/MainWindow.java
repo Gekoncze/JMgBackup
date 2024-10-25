@@ -7,7 +7,7 @@ import cz.mg.backup.Info;
 import cz.mg.backup.entities.Settings;
 import cz.mg.backup.gui.components.details.DetailsView;
 import cz.mg.backup.gui.components.DirectoryView;
-import cz.mg.backup.gui.components.dialog.TaskDialog;
+import cz.mg.backup.gui.components.dialog.ProgressDialog;
 import cz.mg.backup.gui.components.menu.MainMenuBar;
 import cz.mg.backup.services.DirectoryCompareService;
 import cz.mg.backup.services.DirectoryErrorService;
@@ -73,12 +73,12 @@ public @Component class MainWindow extends JFrame {
     }
 
     public void compare() {
-        TaskDialog.show(this, "Compare", () -> compareService.compare(
+        ProgressDialog.show(this, "Compare", () -> compareService.compare(
             leftView.getDirectory(),
             rightView.getDirectory()
         ));
 
-        TaskDialog.show(this, "Propagate", () -> {
+        ProgressDialog.show(this, "Propagate", () -> {
             if (leftView.getDirectory() != null) {
                 errorService.propagate(leftView.getDirectory());
             }

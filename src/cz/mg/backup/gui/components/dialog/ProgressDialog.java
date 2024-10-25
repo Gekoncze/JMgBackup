@@ -17,7 +17,7 @@ import cz.mg.panel.settings.Fill;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public @Component class TaskDialog extends Dialog {
+public @Component class ProgressDialog extends Dialog {
     private static final int MARGIN = 8;
     private static final int PADDING = 8;
 
@@ -26,7 +26,7 @@ public @Component class TaskDialog extends Dialog {
     private final @Mandatory Task task;
     private final @Mandatory Timer timer;
 
-    private TaskDialog(@Mandatory MainWindow window, @Mandatory String title, @Mandatory Runnable runnable) {
+    private ProgressDialog(@Mandatory MainWindow window, @Mandatory String title, @Mandatory Runnable runnable) {
         super(window);
         setTitle(title);
 
@@ -82,6 +82,6 @@ public @Component class TaskDialog extends Dialog {
     }
 
     public static void show(@Mandatory MainWindow window, @Mandatory String title, @Mandatory Runnable runnable) {
-        new TaskDialog(window, title, runnable).setVisible(true);
+        new ProgressDialog(window, title, runnable).setVisible(true);
     }
 }
