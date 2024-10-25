@@ -62,7 +62,7 @@ public @Component class ProgressDialog extends Dialog {
     }
 
     private void rethrow() {
-        if (task.getException() != null && task.getStatus() != Status.CANCELLED) {
+        if (task.getException() != null) {
             throw task.getException();
         }
     }

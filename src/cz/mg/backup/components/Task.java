@@ -3,6 +3,7 @@ package cz.mg.backup.components;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.exceptions.CancelException;
 
 public @Component class Task {
     private static final ThreadLocal<Task> currentTask = new ThreadLocal<>();
@@ -47,8 +48,10 @@ public @Component class Task {
             runnable.run();
             setStatus(Status.COMPLETED);
         } catch (RuntimeException e) {
-            setException(e);
-            setStatus(Status.FAILED);
+            if (!(e instanceof CancelException)) {
+                setException(e);
+                setStatus(Status.FAILED);
+            }
         }
     }
 
