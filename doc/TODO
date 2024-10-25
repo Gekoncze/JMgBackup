@@ -7,6 +7,10 @@
         2) compute file properties (size, hash, etc.)
         3) compare trees
         for each display progress bar and short description
+        ... the idea is to always compare what is available
+            ... what properties will be computed will be available in main menu bar
+                ... so not only file properties themselves will be nullable
+                ... but also each property
 
     show task progress
         show multiple progress bars for each nesting level
