@@ -11,6 +11,12 @@
             ... what properties will be computed will be set by user in main menu bar
                 ... so not only file properties themselves will be nullable
                 ... but also each property
+            ... and then user will choose in main menu bar which kinds of errors he wants to see and which to hide
+                * missing file or directory
+                * hash does not match
+                * possible duplicate of a file
+                * property not computed
+
 
     show task progress
         show multiple progress bars for each nesting level
@@ -24,7 +30,8 @@
         add option to show error details
 
     add duplicate detector
-        show different icon for duplicates
+        show different icon for duplicates ?
+        allow user to configure duplicate detection (specify key properties)
 
     add support for drag and drop
 
