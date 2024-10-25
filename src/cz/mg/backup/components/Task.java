@@ -4,69 +4,69 @@ import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 
-public @Component class Task extends Thread {
-    private final @Mandatory UnsafeRunnable runnable;
-    private @Mandatory Progress progress = new Progress();
-    private boolean canceled = false;
+public @Component class Task {
+    private static final ThreadLocal<Task> currentTask = new ThreadLocal<>();
 
-    private Task(@Mandatory UnsafeRunnable runnable) {
-        super(runnable);
+    private final @Mandatory Runnable runnable;
+    private @Optional Thread thread;
+    private volatile @Optional RuntimeException exception;
+    private volatile @Mandatory Status status;
+
+    public Task(@Mandatory Runnable runnable) {
         this.runnable = runnable;
+        this.status = Status.PENDING;
     }
 
-    public @Mandatory Progress getProgress() {
-        return progress;
+    public synchronized @Mandatory Status getStatus() {
+        return status;
     }
 
-    public void setProgress(@Mandatory Progress progress) {
-        this.progress = progress;
+    private synchronized void setStatus(@Mandatory Status status) {
+        this.status = status;
     }
 
-    public boolean isCanceled() {
-        return canceled;
+    public synchronized @Optional RuntimeException getException() {
+        return exception;
     }
 
-    public void setCanceled(boolean canceled) {
-        this.canceled = canceled;
+    public synchronized void setException(@Optional RuntimeException exception) {
+        this.exception = exception;
     }
 
-    public @Optional RuntimeException getException() {
-        return runnable.getException();
-    }
-
-    public void setException(@Optional RuntimeException exception) {
-        runnable.setException(exception);
-    }
-
-    public static @Mandatory Task run(@Mandatory Runnable runnable) {
-        Task task = new Task(new UnsafeRunnable(runnable));
-        task.start();
-        return task;
-    }
-
-    private static class UnsafeRunnable implements Runnable {
-        private final @Mandatory Runnable runnable;
-        private @Optional RuntimeException exception;
-
-        public UnsafeRunnable(@Mandatory Runnable runnable) {
-            this.runnable = runnable;
+    public synchronized void start() {
+        if (status == Status.PENDING) {
+            thread = new Thread(this::compute);
+            setStatus(Status.RUNNING);
+            thread.start();
         }
+    }
 
-        public @Optional RuntimeException getException() {
-            return exception;
+    private void compute() {
+        try {
+            currentTask.set(this);
+            runnable.run();
+            setStatus(Status.COMPLETED);
+        } catch (RuntimeException e) {
+            setException(e);
+            setStatus(Status.FAILED);
         }
+    }
 
-        public void setException(@Optional RuntimeException exception) {
-            this.exception = exception;
-        }
+    public synchronized void cancel() {
+        setStatus(Status.CANCELLED);
+    }
 
-        @Override
-        public void run() {
-            try {
-                runnable.run();
-            } catch (RuntimeException e) {
-                setException(e);
+    public void join() {
+        try {
+            if (thread != null) {
+                thread.join();
             }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    public static @Optional Task getCurrentTask() {
+        return currentTask.get();
     }
 }

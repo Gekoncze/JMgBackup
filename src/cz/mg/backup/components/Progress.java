@@ -1,12 +1,10 @@
 package cz.mg.backup.components;
 
 import cz.mg.annotations.classes.Component;
-import cz.mg.annotations.requirement.Optional;
 
 public @Component class Progress {
     private long value;
     private long limit;
-    private @Optional Progress parent;
 
     public Progress() {
     }
@@ -27,11 +25,7 @@ public @Component class Progress {
         this.limit = limit;
     }
 
-    public @Optional Progress getParent() {
-        return parent;
-    }
-
-    public void setParent(@Optional Progress parent) {
-        this.parent = parent;
+    public void increment() {
+        value++;
     }
 }
