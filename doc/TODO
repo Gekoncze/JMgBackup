@@ -1,10 +1,18 @@
 ### NOW ###
+    ...
+
+### SOON ###
+    split compare task in 3 phases:
+        1) load tree of directories and files
+        2) compute file properties (size, hash, etc.)
+        3) compare trees
+        for each display progress bar and short description
+
     show task progress
         show multiple progress bars for each nesting level
         show regular progress bar when limit is > 0
         show indeterminate progress bar when limit is 0
 
-### SOON ###
     add context menu for tree entries
         add option to show file or directory in file manager
         add option to show file or directory details
