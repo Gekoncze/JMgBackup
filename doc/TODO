@@ -17,6 +17,13 @@
                 * possible duplicate of a file
                 * property not computed
 
+        ensure that compare is called only if both directories are reloaded / up to date
+            such as, comparing when we know that we will be reloading second directory is wasteful
+
+        add support for loading of created and modified date
+
+        consider optimizing reloading, specifically for hashes
+            recomputing it is expensive, so it should be done only when necessary (soft vs hard reload)
 
     show task progress
         show multiple progress bars for each nesting level
