@@ -10,8 +10,14 @@ import javax.swing.*;
 public @Component class FileDetailsView extends Panel {
     public FileDetailsView(@Mandatory File file) {
         addVertical(new JLabel("Path: " + file.getPath()));
-        addVertical(new JLabel("Size: " + file.getSize()));
-        addVertical(new JLabel("Hash: " + file.getHash()));
+
+        if (file.getProperties() != null) {
+            addVertical(new JLabel("Size: " + file.getProperties().getSize()));
+            addVertical(new JLabel("Created: " + file.getProperties().getHash()));
+            addVertical(new JLabel("Modified: " + file.getProperties().getHash()));
+            addVertical(new JLabel("Hash: " + file.getProperties().getHash()));
+        }
+
         addVertical(new JLabel("Errors:"));
         for (Exception error : file.getErrors()) {
             addVertical(new JLabel("    " + error.getClass().getSimpleName() + ": " + error.getMessage()));

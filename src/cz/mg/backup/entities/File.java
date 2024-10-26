@@ -2,30 +2,20 @@ package cz.mg.backup.entities;
 
 import cz.mg.annotations.classes.Entity;
 import cz.mg.annotations.requirement.Optional;
-import cz.mg.annotations.storage.Value;
+import cz.mg.annotations.storage.Part;
 
 public @Entity class File extends Node {
-    private Long size;
-    private String hash;
+    private Properties properties;
 
     public File() {
     }
 
-    @Optional @Value
-    public Long getSize() {
-        return size;
+    @Optional @Part
+    public Properties getProperties() {
+        return properties;
     }
 
-    public void setSize(Long size) {
-        this.size = size;
-    }
-
-    @Optional @Value
-    public String getHash() {
-        return hash;
-    }
-
-    public void setHash(String hash) {
-        this.hash = hash;
+    public void setProperties(Properties properties) {
+        this.properties = properties;
     }
 }

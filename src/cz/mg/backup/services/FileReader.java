@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.File;
+import cz.mg.backup.entities.Properties;
 import cz.mg.backup.entities.Settings;
 
 import java.nio.file.Path;
@@ -33,8 +34,9 @@ public @Service class FileReader {
     public @Mandatory File read(@Mandatory Path path, @Mandatory Settings settings) {
         File file = new File();
         file.setPath(path);
-        read(file, file::setSize, () -> fileSizeReader.read(path));
-        read(file, file::setHash, () -> fileHashReader.read(path, settings));
+        file.setProperties(new Properties());
+        read(file, size -> file.getProperties().setSize(size), () -> fileSizeReader.read(path));
+        read(file, hash -> file.getProperties().setHash(hash), () -> fileHashReader.read(path, settings));
         return file;
     }
 

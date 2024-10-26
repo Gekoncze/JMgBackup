@@ -6,6 +6,7 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
+import cz.mg.backup.entities.Properties;
 import cz.mg.backup.exceptions.CompareException;
 import cz.mg.collections.list.List;
 import cz.mg.test.Assert;
@@ -305,8 +306,9 @@ public @Test class DirectoryCompareServiceTest {
     ) {
         File file = new File();
         file.setPath(Path.of(name));
-        file.setSize(size);
-        file.setHash(hash);
+        file.setProperties(new Properties());
+        file.getProperties().setSize(size);
+        file.getProperties().setHash(hash);
         return file;
     }
 }

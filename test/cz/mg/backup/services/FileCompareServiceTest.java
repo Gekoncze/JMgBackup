@@ -4,10 +4,9 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
-import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
+import cz.mg.backup.entities.Properties;
 import cz.mg.backup.exceptions.CompareException;
-import cz.mg.collections.list.List;
 import cz.mg.test.Assert;
 
 public @Test class FileCompareServiceTest {
@@ -93,7 +92,9 @@ public @Test class FileCompareServiceTest {
 
     private void testCompareClearsCompareErrors() {
         File first = new File();
+        first.setProperties(new Properties());
         File second = new File();
+        second.setProperties(new Properties());
         Assert.assertEquals(0, first.getErrors().count());
         Assert.assertEquals(0, second.getErrors().count());
         first.getErrors().addLast(new RuntimeException());
@@ -117,8 +118,9 @@ public @Test class FileCompareServiceTest {
 
     private @Mandatory File createFile(@Optional Long size, @Optional String hash) {
         File file = new File();
-        file.setSize(size);
-        file.setHash(hash);
+        file.setProperties(new Properties());
+        file.getProperties().setSize(size);
+        file.getProperties().setHash(hash);
         return file;
     }
 }

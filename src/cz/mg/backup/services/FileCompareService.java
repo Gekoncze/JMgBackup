@@ -28,20 +28,38 @@ public @Service class FileCompareService {
         first.getErrors().removeIf(e -> e instanceof CompareException);
         second.getErrors().removeIf(e -> e instanceof CompareException);
 
-        if (!Objects.equals(first.getSize(), second.getSize())) {
+        if (first.getProperties() == null) {
             CompareException exception = new CompareException(
-                "Expected size " + first.getSize() + ", but got " + second.getSize() + "."
+                "Missing file properties."
             );
             first.getErrors().addLast(exception);
+        }
+
+        if (second.getProperties() == null) {
+            CompareException exception = new CompareException(
+                "Missing file properties."
+            );
             second.getErrors().addLast(exception);
         }
 
-        if (!Objects.equals(first.getHash(), second.getHash())) {
-            CompareException exception = new CompareException(
-                "Expected hash " + first.getHash() + ", but got " + second.getHash() + "."
-            );
-            first.getErrors().addLast(exception);
-            second.getErrors().addLast(exception);
+        if (first.getProperties() != null && second.getProperties() != null) {
+            if (!Objects.equals(first.getProperties().getSize(), second.getProperties().getSize())) {
+                CompareException exception = new CompareException(
+                    "Expected size " + first.getProperties().getSize() + ", " +
+                        "but got " + second.getProperties().getSize() + "."
+                );
+                first.getErrors().addLast(exception);
+                second.getErrors().addLast(exception);
+            }
+
+            if (!Objects.equals(first.getProperties().getHash(), second.getProperties().getHash())) {
+                CompareException exception = new CompareException(
+                    "Expected hash " + first.getProperties().getHash() + ", " +
+                        "but got " + second.getProperties().getHash() + "."
+                );
+                first.getErrors().addLast(exception);
+                second.getErrors().addLast(exception);
+            }
         }
     }
 }

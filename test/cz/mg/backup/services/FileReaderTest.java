@@ -25,8 +25,12 @@ public @Test class FileReaderTest {
     private void testRead() {
         File file = reader.read(Path.of("test", "cz", "mg", "backup", "test", "FlyingAki.png"), createSettings());
         Assert.assertEquals(true, file.getErrors().isEmpty());
-        Assert.assertEquals(218128, file.getSize());
-        Assert.assertEquals("357e9abbbe50922c6c0b31cb8f4371add40deaf39924e54acdbc691b7975f576", file.getHash());
+        Assert.assertNotNull(file.getProperties());
+        Assert.assertEquals(218128, file.getProperties().getSize());
+        Assert.assertEquals(
+            "357e9abbbe50922c6c0b31cb8f4371add40deaf39924e54acdbc691b7975f576",
+            file.getProperties().getHash()
+        );
     }
 
     private void testReadSymbolicLink() {
