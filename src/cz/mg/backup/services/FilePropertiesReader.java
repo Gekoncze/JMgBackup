@@ -2,10 +2,13 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.annotations.requirement.Optional;
-import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Properties;
-import cz.mg.backup.entities.Settings;
+import cz.mg.backup.exceptions.FileSystemException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Date;
 
 public @Service class FilePropertiesReader {
     private static volatile @Service FilePropertiesReader instance;
@@ -15,44 +18,25 @@ public @Service class FilePropertiesReader {
             synchronized (Service.class) {
                 if (instance == null) {
                     instance = new FilePropertiesReader();
-                    instance.fileSizeReader = FileSizeReader.getInstance();
-                    instance.fileHashReader = FileHashReader.getInstance();
                 }
             }
         }
         return instance;
     }
 
-    private @Service FileSizeReader fileSizeReader;
-    private @Service FileHashReader fileHashReader;
-
     private FilePropertiesReader() {
     }
 
-    public @Mandatory Properties read(@Mandatory File file, @Mandatory Settings settings) {
-        Properties properties = new Properties();
-        read(file, size -> properties.setSize(size), () -> fileSizeReader.read(file.getPath()));
-        read(file, hash -> properties.setHash(hash), () -> fileHashReader.read(file.getPath(), settings));
-        return properties;
-    }
-
-    private <V> void read(
-        @Mandatory File file,
-        @Mandatory Setter<V> setter,
-        @Mandatory Reader<V> reader
-    ) {
+    public @Mandatory Properties read(@Mandatory Path path) {
         try {
-            setter.set(reader.read());
+            BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
+            Properties properties = new Properties();
+            properties.setSize(attributes.size());
+            properties.setCreated(new Date(attributes.creationTime().toMillis()));
+            properties.setModified(new Date(attributes.lastModifiedTime().toMillis()));
+            return properties;
         } catch (Exception e) {
-            file.getErrors().addLast(e);
+            throw new FileSystemException(e);
         }
-    }
-
-    private interface Reader<V> {
-        V read() throws Exception;
-    }
-
-    private interface Setter<V> {
-        void set(@Optional V value);
     }
 }

@@ -3,7 +3,6 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.File;
-import cz.mg.backup.entities.Settings;
 
 import java.nio.file.Path;
 
@@ -27,10 +26,18 @@ public @Service class FileReader {
     private FileReader() {
     }
 
-    public @Mandatory File read(@Mandatory Path path, @Mandatory Settings settings) {
+    public @Mandatory File read(@Mandatory Path path) {
         File file = new File();
         file.setPath(path);
-        file.setProperties(propertiesReader.read(file, settings));
+        loadProperties(file);
         return file;
+    }
+
+    private void loadProperties(@Mandatory File file) {
+        try {
+            file.setProperties(propertiesReader.read(file.getPath()));
+        } catch (RuntimeException e) {
+            file.getErrors().addLast(e);
+        }
     }
 }

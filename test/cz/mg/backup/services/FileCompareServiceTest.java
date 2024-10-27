@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Properties;
 import cz.mg.backup.exceptions.CompareException;
@@ -120,7 +121,8 @@ public @Test class FileCompareServiceTest {
         File file = new File();
         file.setProperties(new Properties());
         file.getProperties().setSize(size);
-        file.getProperties().setHash(hash);
+        file.setChecksum(new Checksum());
+        file.getChecksum().setHash(hash);
         return file;
     }
 }

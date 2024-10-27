@@ -17,6 +17,6 @@ public class AllTests {
         FileHashConverterTest.main(args);
         FileHashReaderTest.main(args);
         FileReaderTest.main(args);
-        FileSizeReaderTest.main(args);
+        FilePropertiesReaderTest.main(args);
     }
 }

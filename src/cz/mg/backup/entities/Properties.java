@@ -10,7 +10,6 @@ public @Entity class Properties {
     private Long size;
     private Date created;
     private Date modified;
-    private String hash;
 
     public Properties() {
     }
@@ -40,14 +39,5 @@ public @Entity class Properties {
 
     public void setModified(Date modified) {
         this.modified = modified;
-    }
-
-    @Optional @Value
-    public String getHash() {
-        return hash;
-    }
-
-    public void setHash(String hash) {
-        this.hash = hash;
     }
 }

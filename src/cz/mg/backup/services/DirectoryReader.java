@@ -57,7 +57,7 @@ public @Service class DirectoryReader {
             if (Files.isDirectory(childPath)) {
                 directory.getDirectories().addLast(read(childPath, settings));
             } else {
-                directory.getFiles().addLast(fileReader.read(childPath, settings));
+                directory.getFiles().addLast(fileReader.read(childPath));
             }
         }
     }

@@ -25,6 +25,8 @@
         consider optimizing reloading, specifically for hashes
             recomputing it is expensive, so it should be done only when necessary (soft vs hard reload)
 
+    implement back hash reader
+
     show task progress
         show multiple progress bars for each nesting level
         show regular progress bar when limit is > 0
@@ -43,8 +45,11 @@
     add support for drag and drop
     add support for 3 views
     keep opened folders (if still exist) after refresh
+    consider adding support to compare last created and last modified date
 
 ### LATER ###
+    improve display of last modified and created date
+
     improve sorting
         current sorting is wrong:
             Example 2
