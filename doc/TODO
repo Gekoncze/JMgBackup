@@ -41,6 +41,8 @@
         allow user to configure duplicate detection (specify key properties)
 
     add support for drag and drop
+    add support for 3 views
+    keep opened folders (if still exist) after refresh
 
 ### LATER ###
     improve sorting
@@ -49,3 +51,5 @@
             Example
 
     add support for symbolic links
+    add support for automatic copying files
+        have it also use duplicate detection to skip possible duplicates
