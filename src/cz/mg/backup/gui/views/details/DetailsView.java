@@ -23,7 +23,7 @@ public @Component class DetailsView extends JScrollPane {
         refresh();
     }
 
-    private void refresh() {
+    public void refresh() {
         getViewport().removeAll();
 
         if (node != null) {

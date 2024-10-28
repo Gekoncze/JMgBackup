@@ -8,13 +8,19 @@ import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
+import cz.mg.backup.gui.event.UserActionListener;
+import cz.mg.backup.gui.event.UserMouseClickListener;
 import cz.mg.backup.gui.event.UserTreeSelectionListener;
 import cz.mg.backup.gui.services.ButtonFactory;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
+import cz.mg.backup.services.ChecksumService;
 import cz.mg.backup.services.DirectoryReader;
+import cz.mg.collections.list.List;
 import cz.mg.panel.Panel;
 
 import javax.swing.*;
+import javax.swing.tree.TreePath;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Path;
 
@@ -25,11 +31,13 @@ public @Component class DirectoryView extends Panel {
     private final @Service DirectoryReader directoryReader = DirectoryReader.getInstance();
     private final @Service DirectoryTreeFactory directoryTreeFactory = DirectoryTreeFactory.getInstance();
     private final @Service ButtonFactory buttonFactory = ButtonFactory.getInstance();
+    private final @Service ChecksumService checksumService = ChecksumService.getInstance();
 
     private final @Mandatory MainWindow window;
     private final @Mandatory JTextField pathField;
     private final @Mandatory JTree treeView;
     private final @Mandatory JFileChooser directoryChooser;
+    private final @Mandatory JPopupMenu popupMenu;
 
     private @Optional Path path;
     private @Optional Directory directory;
@@ -56,6 +64,18 @@ public @Component class DirectoryView extends Panel {
         directoryChooser = new JFileChooser();
         directoryChooser.setDialogType(JFileChooser.OPEN_DIALOG);
         directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        popupMenu = new JPopupMenu();
+
+        JMenuItem computeChecksumMenuItem = new JMenuItem("Compute checksum");
+        computeChecksumMenuItem.addActionListener(new UserActionListener(this::computeChecksum));
+        popupMenu.add(computeChecksumMenuItem);
+
+        JMenuItem clearChecksumMenuItem = new JMenuItem("Clear checksum");
+        clearChecksumMenuItem.addActionListener(new UserActionListener(this::clearChecksum));
+        popupMenu.add(clearChecksumMenuItem);
+
+        treeView.addMouseListener(new UserMouseClickListener(this::onMouseClicked));
 
         refresh();
     }
@@ -125,5 +145,56 @@ public @Component class DirectoryView extends Panel {
             treeView.setModel(new ObjectTreeModel(null));
         }
         treeView.setCellRenderer(new NodeCellRenderer());
+    }
+
+    private void onMouseClicked(@Mandatory MouseEvent event) {
+        if (event.getButton() == MouseEvent.BUTTON3) {
+            if (isRowSelectedAt(event)) {
+                popupMenu.show(treeView, event.getX(), event.getY());
+            }
+        }
+    }
+
+    private boolean isRowSelectedAt(@Mandatory MouseEvent event) {
+        int row = treeView.getRowForLocation(event.getX(), event.getY());
+        int[] selectedRows = treeView.getSelectionRows();
+        if (row != -1 && selectedRows != null) {
+            for (int selectedRow : selectedRows) {
+                if (selectedRow == row) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void computeChecksum() {
+        ProgressDialog.show(window, "Compute checksum", () -> {
+            for (Node node : getSelectedNodes()) {
+                checksumService.compute(node, window.getSettings().getAlgorithm());
+            }
+        });
+        window.compare();
+    }
+
+    private void clearChecksum() {
+        ProgressDialog.show(window, "Clear checksum", () -> {
+            for (Node node : getSelectedNodes()) {
+                checksumService.clear(node);
+            }
+        });
+        window.compare();
+    }
+
+    private List<Node> getSelectedNodes() {
+        List<Node> selectedNodes = new List<>();
+        TreePath[] paths = treeView.getSelectionPaths();
+        if (paths != null) {
+            for (TreePath path : paths) {
+                Node node = (Node) ((ObjectTreeEntry) path.getLastPathComponent()).get();
+                selectedNodes.addLast(node);
+            }
+        }
+        return selectedNodes;
     }
 }

@@ -91,6 +91,7 @@ public @Component class MainWindow extends JFrame {
 
         leftView.refresh();
         rightView.refresh();
+        detailsView.refresh();
     }
 
     public void reload() {

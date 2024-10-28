@@ -7,9 +7,10 @@
         2) compute checksums
         3) compare trees
 
-        create a right click menu for files and directories and add following items:
-            * compute checksum
-            * clear checksum (consider question dialog)
+        include compare operation in background task
+        keep checksums after reload
+        keep opened nodes after reload
+        keep opened and selected nodes after refresh
 
         for each display progress bar and short description
         the idea is to compare everything that is available
@@ -25,6 +26,9 @@
 
         consider optimizing reloading, specifically for hashes
             recomputing it is expensive, so it should be done only when necessary (soft vs hard reload)
+
+    add more keyboard shortcuts to menu
+        consider adding icons too
 
     show task progress
         show multiple progress bars for each nesting level
