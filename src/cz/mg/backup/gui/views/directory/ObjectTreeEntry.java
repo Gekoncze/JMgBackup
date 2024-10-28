@@ -7,6 +7,8 @@ import cz.mg.collections.array.Array;
 import cz.mg.collections.components.CompareFunction;
 import cz.mg.collections.components.HashFunction;
 
+import java.util.Objects;
+
 @SuppressWarnings({"rawtypes", "unchecked"})
 public @Component class ObjectTreeEntry {
     private final @Mandatory Object object;
@@ -59,14 +61,19 @@ public @Component class ObjectTreeEntry {
     @Override
     public boolean equals(Object o) {
         if (o instanceof ObjectTreeEntry e) {
-            return compareFunction.equals(object, e.object);
-        } else {
-            return false;
+            if (Objects.equals(getClass(object), getClass(e.object))) {
+                return compareFunction.equals(object, e.object);
+            }
         }
+        return false;
     }
 
     @Override
     public int hashCode() {
         return hashFunction.hash(object);
+    }
+
+    private @Optional Class getClass(@Optional Object o) {
+        return o == null ? null : o.getClass();
     }
 }
