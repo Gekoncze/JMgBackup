@@ -66,7 +66,6 @@ public @Service class DirectoryTreeFactory {
     }
 
     private boolean compare(@Mandatory Node a, @Mandatory Node b) {
-        System.out.println("COMPARING " + Objects.equals(a.getPath(), b.getPath()) + " OF " + a.getPath() + " AND " + b.getPath());
         return Objects.equals(a.getPath(), b.getPath());
     }
 

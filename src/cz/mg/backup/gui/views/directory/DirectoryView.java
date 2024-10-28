@@ -142,13 +142,11 @@ public @Component class DirectoryView extends Panel {
 
     public void refresh() {
         if (directory != null) {
-            System.out.println("REFRESH BEGIN");
             List<TreePath> expandedPaths = TreeUtils.getExpandedPaths(treeView);
             List<TreePath> selectedPaths = TreeUtils.getSelectedPaths(treeView);
             treeView.setModel(new ObjectTreeModel(directoryTreeFactory.create(directory)));
             restoreExpandedPaths(expandedPaths);
             restoreSelectedPaths(selectedPaths);
-            System.out.println("REFRESH END " + expandedPaths.count() + " " + selectedPaths.count());
         } else {
             treeView.setModel(new ObjectTreeModel(null));
         }
