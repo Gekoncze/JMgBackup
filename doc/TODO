@@ -7,8 +7,7 @@
         2) compute checksums
         3) compare trees
 
-        include compare operation in background task
-        keep checksums after reload
+        keep checksums after reload (unless modified date changed)
         keep opened nodes after reload
         keep opened and selected nodes after refresh
 
