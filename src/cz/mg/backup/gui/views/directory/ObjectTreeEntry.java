@@ -4,28 +4,35 @@ import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.collections.array.Array;
+import cz.mg.collections.components.CompareFunction;
+import cz.mg.collections.components.HashFunction;
 
-import java.util.Objects;
-
+@SuppressWarnings({"rawtypes", "unchecked"})
 public @Component class ObjectTreeEntry {
     private final @Mandatory Object object;
     private final @Mandatory String name;
     private final int index;
     private final boolean isLeaf;
     private final @Optional Array<ObjectTreeEntry> children;
+    private final @Mandatory CompareFunction compareFunction;
+    private final @Mandatory HashFunction hashFunction;
 
-    public ObjectTreeEntry(
-        @Mandatory Object object,
+    public <T> ObjectTreeEntry(
+        @Mandatory T object,
         @Mandatory String name,
         int index,
         boolean isLeaf,
-        @Optional Array<ObjectTreeEntry> children
+        @Optional Array<ObjectTreeEntry> children,
+        @Mandatory CompareFunction<T> compareFunction,
+        @Mandatory HashFunction<T> HashFunction
     ) {
         this.object = object;
         this.name = name;
         this.index = index;
         this.isLeaf = isLeaf;
         this.children = children;
+        this.compareFunction = compareFunction;
+        this.hashFunction = HashFunction;
     }
 
     public @Mandatory Object get() {
@@ -52,7 +59,7 @@ public @Component class ObjectTreeEntry {
     @Override
     public boolean equals(Object o) {
         if (o instanceof ObjectTreeEntry e) {
-            return Objects.equals(object, e.object);
+            return compareFunction.equals(object, e.object);
         } else {
             return false;
         }
@@ -60,6 +67,6 @@ public @Component class ObjectTreeEntry {
 
     @Override
     public int hashCode() {
-        return Objects.hash(object);
+        return hashFunction.hash(object);
     }
 }

@@ -9,6 +9,8 @@ import cz.mg.backup.gui.views.directory.ObjectTreeEntry;
 import cz.mg.backup.services.TaskService;
 import cz.mg.collections.array.Array;
 
+import java.util.Objects;
+
 public @Service class DirectoryTreeFactory {
     private static volatile @Service DirectoryTreeFactory instance;
 
@@ -52,14 +54,23 @@ public @Service class DirectoryTreeFactory {
             i++;
         }
 
-        return new ObjectTreeEntry(directory, getName(directory), index, false, children);
+        return new ObjectTreeEntry(directory, getName(directory), index, false, children, this::compare, this::hash);
     }
 
     private @Mandatory ObjectTreeEntry create(@Mandatory File file, int index) {
-        return new ObjectTreeEntry(file, getName(file), index, true, null);
+        return new ObjectTreeEntry(file, getName(file), index, true, null, this::compare, this::hash);
     }
 
     private @Mandatory String getName(@Mandatory Node node) {
         return node.getPath().getFileName().toString();
+    }
+
+    private boolean compare(@Mandatory Node a, @Mandatory Node b) {
+        System.out.println("COMPARING " + Objects.equals(a.getPath(), b.getPath()) + " OF " + a.getPath() + " AND " + b.getPath());
+        return Objects.equals(a.getPath(), b.getPath());
+    }
+
+    private int hash(@Mandatory Node n) {
+        return Objects.hash(n.getPath());
     }
 }
