@@ -1,9 +1,9 @@
-package cz.mg.backup.gui.components.menu.edit;
+package cz.mg.backup.gui.menu.edit;
 
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.gui.event.UserActionListener;
 import cz.mg.backup.gui.MainWindow;
-import cz.mg.backup.gui.components.dialog.HashFunctionDialog;
+import cz.mg.backup.gui.dialogs.HashFunctionDialog;
 
 import javax.swing.*;
 

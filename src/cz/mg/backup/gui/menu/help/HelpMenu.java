@@ -1,4 +1,4 @@
-package cz.mg.backup.gui.components.menu.help;
+package cz.mg.backup.gui.menu.help;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;

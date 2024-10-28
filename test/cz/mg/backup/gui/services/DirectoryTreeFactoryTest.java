@@ -4,7 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
-import cz.mg.backup.gui.components.model.ObjectTreeEntry;
+import cz.mg.backup.gui.views.directory.ObjectTreeEntry;
 import cz.mg.test.Assert;
 
 import java.nio.file.Path;

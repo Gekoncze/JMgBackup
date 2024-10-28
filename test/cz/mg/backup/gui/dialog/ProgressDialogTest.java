@@ -3,7 +3,7 @@ package cz.mg.backup.gui.dialog;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.gui.MainWindow;
-import cz.mg.backup.gui.components.dialog.ProgressDialog;
+import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.services.TaskService;
 
 import javax.swing.*;

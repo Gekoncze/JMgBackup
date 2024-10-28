@@ -1,4 +1,4 @@
-package cz.mg.backup.gui.components.model;
+package cz.mg.backup.gui.views.directory;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;

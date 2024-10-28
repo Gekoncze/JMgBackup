@@ -1,4 +1,4 @@
-package cz.mg.backup.gui.components;
+package cz.mg.backup.gui.views.directory;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.classes.Service;
@@ -7,9 +7,7 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
-import cz.mg.backup.gui.components.dialog.ProgressDialog;
-import cz.mg.backup.gui.components.model.ObjectTreeEntry;
-import cz.mg.backup.gui.components.model.ObjectTreeModel;
+import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.event.UserTreeSelectionListener;
 import cz.mg.backup.gui.services.ButtonFactory;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;

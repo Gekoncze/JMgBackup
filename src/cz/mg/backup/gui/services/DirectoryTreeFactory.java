@@ -5,7 +5,7 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
-import cz.mg.backup.gui.components.model.ObjectTreeEntry;
+import cz.mg.backup.gui.views.directory.ObjectTreeEntry;
 import cz.mg.backup.services.TaskService;
 import cz.mg.collections.array.Array;
 

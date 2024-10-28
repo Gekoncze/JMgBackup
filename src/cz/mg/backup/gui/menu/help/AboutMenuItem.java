@@ -1,10 +1,10 @@
-package cz.mg.backup.gui.components.menu.help;
+package cz.mg.backup.gui.menu.help;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.gui.event.UserActionListener;
 import cz.mg.backup.gui.MainWindow;
-import cz.mg.backup.gui.components.dialog.AboutDialog;
+import cz.mg.backup.gui.dialogs.AboutDialog;
 
 import javax.swing.*;
 

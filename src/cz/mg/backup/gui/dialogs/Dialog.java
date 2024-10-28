@@ -1,4 +1,4 @@
-package cz.mg.backup.gui.components.dialog;
+package cz.mg.backup.gui.dialogs;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
@@ -14,8 +14,7 @@ public @Component class Dialog extends JDialog {
 
     protected void addKeyListenerRecursive(@Mandatory java.awt.Component component, @Mandatory KeyListener listener) {
         component.addKeyListener(listener);
-        if (component instanceof Container) {
-            Container container = (Container) component;
+        if (component instanceof Container container) {
             for (java.awt.Component child : container.getComponents()) {
                 addKeyListenerRecursive(child, listener);
             }

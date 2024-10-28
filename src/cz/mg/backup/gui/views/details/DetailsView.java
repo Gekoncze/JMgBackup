@@ -1,4 +1,4 @@
-package cz.mg.backup.gui.components.details;
+package cz.mg.backup.gui.views.details;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Optional;
