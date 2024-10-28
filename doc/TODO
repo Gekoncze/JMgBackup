@@ -7,6 +7,10 @@
         2) compute checksums
         3) compare trees
 
+        create a right click menu for files and directories and add following items:
+            * compute checksum
+            * clear checksum (consider question dialog)
+
         for each display progress bar and short description
         the idea is to compare everything that is available
             and then user will choose in main menu bar which kinds of errors he wants to see and which to hide
