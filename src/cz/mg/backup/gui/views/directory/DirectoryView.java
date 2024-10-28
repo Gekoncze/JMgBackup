@@ -125,10 +125,12 @@ public @Component class DirectoryView extends Panel {
 
     public void reload() {
         if (path != null) {
-            ProgressDialog.show(
-                window,
-                "Load Directory",
-                () -> setDirectory(directoryReader.read(path, window.getSettings()))
+            setDirectory(
+                ProgressDialog.show(
+                    window,
+                    "Load Directory",
+                    () -> directoryReader.read(path, window.getSettings())
+                )
             );
         } else {
             setDirectory(null);

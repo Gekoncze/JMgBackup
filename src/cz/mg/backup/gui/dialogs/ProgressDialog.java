@@ -16,6 +16,7 @@ import cz.mg.panel.settings.Fill;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.function.Supplier;
 
 public @Component class ProgressDialog extends Dialog {
     private static final int MARGIN = 8;
@@ -79,10 +80,28 @@ public @Component class ProgressDialog extends Dialog {
         }
     }
 
-    public static void show(@Mandatory MainWindow window, @Mandatory String title, @Mandatory Runnable runnable) {
+    public static void show(
+        @Mandatory MainWindow window,
+        @Mandatory String title,
+        @Mandatory Runnable runnable
+    ) {
         ProgressDialog dialog = new ProgressDialog(window, title, runnable);
         dialog.start();
         dialog.setVisible(true);
         dialog.rethrow();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T show(
+        @Mandatory MainWindow window,
+        @Mandatory String title,
+        @Mandatory Supplier<T> function
+    ) {
+        Object[] captor = new Object[1];
+        ProgressDialog dialog = new ProgressDialog(window, title, () -> captor[0] = function.get());
+        dialog.start();
+        dialog.setVisible(true);
+        dialog.rethrow();
+        return (T) captor[0];
     }
 }
