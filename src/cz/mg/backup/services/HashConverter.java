@@ -5,23 +5,23 @@ import cz.mg.annotations.requirement.Mandatory;
 
 import java.nio.charset.StandardCharsets;
 
-public @Service class FileHashConverter {
+public @Service class HashConverter {
     private static final byte[] MAP = "0123456789abcdef".getBytes(StandardCharsets.US_ASCII);
 
-    private static volatile @Service FileHashConverter instance;
+    private static volatile @Service HashConverter instance;
 
-    public static @Service FileHashConverter getInstance() {
+    public static @Service HashConverter getInstance() {
         if (instance == null) {
             synchronized (Service.class) {
                 if (instance == null) {
-                    instance = new FileHashConverter();
+                    instance = new HashConverter();
                 }
             }
         }
         return instance;
     }
 
-    private FileHashConverter() {
+    private HashConverter() {
     }
 
     public @Mandatory String convert(byte[] bytes) {

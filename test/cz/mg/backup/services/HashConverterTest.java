@@ -4,11 +4,11 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.test.Assert;
 
-public @Test class FileHashConverterTest {
+public @Test class HashConverterTest {
     public static void main(String[] args) {
-        System.out.print("Running " + FileHashConverterTest.class.getSimpleName() + " ... ");
+        System.out.print("Running " + HashConverterTest.class.getSimpleName() + " ... ");
 
-        FileHashConverterTest test = new FileHashConverterTest();
+        HashConverterTest test = new HashConverterTest();
         test.testConvertEmpty();
         test.testConvertSingle();
         test.testConvertMultiple();
@@ -16,7 +16,7 @@ public @Test class FileHashConverterTest {
         System.out.println("OK");
     }
 
-    private final @Service FileHashConverter converter = FileHashConverter.getInstance();
+    private final @Service HashConverter converter = HashConverter.getInstance();
 
     private void testConvertEmpty() {
         Assert.assertEquals("", converter.convert(new byte[]{}));

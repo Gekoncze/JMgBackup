@@ -21,7 +21,7 @@ public @Service class FileHashReader {
             synchronized (Service.class) {
                 if (instance == null) {
                     instance = new FileHashReader();
-                    instance.fileHashConverter = FileHashConverter.getInstance();
+                    instance.hashConverter = HashConverter.getInstance();
                     instance.taskService = TaskService.getInstance();
                 }
             }
@@ -29,7 +29,7 @@ public @Service class FileHashReader {
         return instance;
     }
 
-    private @Service FileHashConverter fileHashConverter;
+    private @Service HashConverter hashConverter;
     private @Service TaskService taskService;
 
     private FileHashReader() {
@@ -50,7 +50,7 @@ public @Service class FileHashReader {
                         taskService.update();
                     }
                 }
-                return fileHashConverter.convert(algorithm.digest());
+                return hashConverter.convert(algorithm.digest());
             } else {
                 return null;
             }
