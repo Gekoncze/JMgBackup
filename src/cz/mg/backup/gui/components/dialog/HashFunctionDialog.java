@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.gui.event.UserActionListener;
 import cz.mg.backup.gui.event.UserEscapeKeyPressListener;
 import cz.mg.backup.gui.MainWindow;
@@ -54,9 +55,9 @@ public @Component class HashFunctionDialog extends Dialog {
 
     private void choose() {
         JPopupMenu menu = new JPopupMenu();
-        menu.add(createOptionItem("MD5"));
-        menu.add(createOptionItem("SHA-1"));
-        menu.add(createOptionItem("SHA-256"));
+        for (Algorithm algorithm : Algorithm.values()) {
+            menu.add(createOptionItem(algorithm.getCode()));
+        }
         menu.show(chooserButton, 0, 0);
     }
 

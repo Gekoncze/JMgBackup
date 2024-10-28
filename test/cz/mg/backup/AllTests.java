@@ -9,6 +9,7 @@ public class AllTests {
         DirectoryTreeFactoryTest.main(args);
 
         // cz.mg.backup.services
+        ChecksumServiceTest.main(args);
         DirectoryCompareServiceTest.main(args);
         DirectoryErrorServiceTest.main(args);
         DirectoryReaderTest.main(args);

@@ -10,6 +10,10 @@ public @Entity class Checksum {
     public Checksum() {
     }
 
+    public Checksum(String hash) {
+        this.hash = hash;
+    }
+
     @Required @Value
     public String getHash() {
         return hash;

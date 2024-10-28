@@ -27,6 +27,8 @@
 
     implement back hash reader
 
+    add unit test for checksum service
+
     show task progress
         show multiple progress bars for each nesting level
         show regular progress bar when limit is > 0
