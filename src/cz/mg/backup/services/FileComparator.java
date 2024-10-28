@@ -7,21 +7,21 @@ import cz.mg.backup.exceptions.CompareException;
 
 import java.util.Objects;
 
-public @Service class FileCompareService {
-    private static volatile @Service FileCompareService instance;
+public @Service class FileComparator {
+    private static volatile @Service FileComparator instance;
 
-    public static @Service FileCompareService getInstance() {
+    public static @Service FileComparator getInstance() {
         if (instance == null) {
             synchronized (Service.class) {
                 if (instance == null) {
-                    instance = new FileCompareService();
+                    instance = new FileComparator();
                 }
             }
         }
         return instance;
     }
 
-    private FileCompareService() {
+    private FileComparator() {
     }
 
     public void compare(@Mandatory File first, @Mandatory File second) {

@@ -13,15 +13,15 @@ import cz.mg.collections.pair.ReadablePair;
 
 import java.nio.file.Path;
 
-public @Service class DirectoryCompareService {
-    private static volatile @Service DirectoryCompareService instance;
+public @Service class DirectoryComparator {
+    private static volatile @Service DirectoryComparator instance;
 
-    public static @Service DirectoryCompareService getInstance() {
+    public static @Service DirectoryComparator getInstance() {
         if (instance == null) {
             synchronized (Service.class) {
                 if (instance == null) {
-                    instance = new DirectoryCompareService();
-                    instance.fileCompareService = FileCompareService.getInstance();
+                    instance = new DirectoryComparator();
+                    instance.fileComparator = FileComparator.getInstance();
                     instance.taskService = TaskService.getInstance();
                 }
             }
@@ -29,10 +29,10 @@ public @Service class DirectoryCompareService {
         return instance;
     }
 
-    private @Service FileCompareService fileCompareService;
+    private @Service FileComparator fileComparator;
     private @Service TaskService taskService;
 
-    private DirectoryCompareService() {
+    private DirectoryComparator() {
     }
 
     public void compare(@Optional Directory first, @Optional Directory second) {
@@ -99,7 +99,7 @@ public @Service class DirectoryCompareService {
             taskService.update();
             Pair<File, File> pair = entry.getValue();
             if (pair.getKey() != null && pair.getValue() != null) {
-                fileCompareService.compare(pair.getKey(), pair.getValue());
+                fileComparator.compare(pair.getKey(), pair.getValue());
             } else if (pair.getKey() != null) {
                 pair.getKey().getErrors().addLast(new CompareException("Missing corresponding file."));
             } else if (pair.getValue() != null) {

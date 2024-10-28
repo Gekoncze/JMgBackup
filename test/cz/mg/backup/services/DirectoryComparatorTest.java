@@ -15,11 +15,11 @@ import cz.mg.test.exceptions.AssertException;
 
 import java.nio.file.Path;
 
-public @Test class DirectoryCompareServiceTest {
+public @Test class DirectoryComparatorTest {
     public static void main(String[] args) {
-        System.out.print("Running " + DirectoryCompareServiceTest.class.getSimpleName() + " ... ");
+        System.out.print("Running " + DirectoryComparatorTest.class.getSimpleName() + " ... ");
 
-        DirectoryCompareServiceTest test = new DirectoryCompareServiceTest();
+        DirectoryComparatorTest test = new DirectoryComparatorTest();
         test.testEqual();
         test.testMissingDirectory();
         test.testMissingFile();
@@ -31,7 +31,7 @@ public @Test class DirectoryCompareServiceTest {
         System.out.println("OK");
     }
 
-    private final @Service DirectoryCompareService service = DirectoryCompareService.getInstance();
+    private final @Service DirectoryComparator service = DirectoryComparator.getInstance();
 
     private void testEqual() {
         testEqual(createDirectory("foo"), createDirectory("foo"));
@@ -309,8 +309,7 @@ public @Test class DirectoryCompareServiceTest {
         file.setPath(Path.of(name));
         file.setProperties(new Properties());
         file.getProperties().setSize(size);
-        file.setChecksum(new Checksum());
-        file.getChecksum().setHash(hash);
+        file.setChecksum(new Checksum(hash));
         return file;
     }
 }

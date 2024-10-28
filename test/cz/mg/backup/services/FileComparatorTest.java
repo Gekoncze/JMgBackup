@@ -10,18 +10,18 @@ import cz.mg.backup.entities.Properties;
 import cz.mg.backup.exceptions.CompareException;
 import cz.mg.test.Assert;
 
-public @Test class FileCompareServiceTest {
+public @Test class FileComparatorTest {
     public static void main(String[] args) {
-        System.out.print("Running " + FileCompareServiceTest.class.getSimpleName() + " ... ");
+        System.out.print("Running " + FileComparatorTest.class.getSimpleName() + " ... ");
 
-        FileCompareServiceTest test = new FileCompareServiceTest();
+        FileComparatorTest test = new FileComparatorTest();
         test.testCompare();
         test.testCompareClearsCompareErrors();
 
         System.out.println("OK");
     }
 
-    private final @Service FileCompareService service = FileCompareService.getInstance();
+    private final @Service FileComparator service = FileComparator.getInstance();
 
     private void testCompare() {
         testCompare(

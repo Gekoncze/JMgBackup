@@ -10,7 +10,7 @@ import cz.mg.backup.gui.views.details.DetailsView;
 import cz.mg.backup.gui.views.directory.DirectoryView;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.menu.MainMenuBar;
-import cz.mg.backup.services.DirectoryCompareService;
+import cz.mg.backup.services.DirectoryComparator;
 import cz.mg.backup.services.DirectoryErrorService;
 import cz.mg.panel.Panel;
 
@@ -24,7 +24,7 @@ public @Component class MainWindow extends JFrame {
     private static final int MARGIN = 0;
     private static final int PADDING = 8;
 
-    private final @Service DirectoryCompareService compareService = DirectoryCompareService.getInstance();
+    private final @Service DirectoryComparator compareService = DirectoryComparator.getInstance();
     private final @Service DirectoryErrorService errorService = DirectoryErrorService.getInstance();
 
     private final @Mandatory Settings settings = new Settings(Algorithm.SHA256);
