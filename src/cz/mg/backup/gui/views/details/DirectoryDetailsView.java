@@ -3,18 +3,22 @@ package cz.mg.backup.gui.views.details;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.Directory;
+import cz.mg.backup.gui.components.PlainLabel;
+import cz.mg.backup.gui.components.TitleLabel;
 import cz.mg.panel.Panel;
-
-import javax.swing.*;
 
 public @Component class DirectoryDetailsView extends Panel {
     public DirectoryDetailsView(@Mandatory Directory directory) {
-        addVertical(new JLabel("Path: " + directory.getPath()));
-        addVertical(new JLabel("Directory count: " + directory.getDirectories().count()));
-        addVertical(new JLabel("File count: " + directory.getFiles().count()));
-        addVertical(new JLabel("Errors:"));
-        for (Exception error : directory.getErrors()) {
-            addVertical(new JLabel("    " + error.getClass().getSimpleName() + ": " + error.getMessage()));
+        addVertical(new TitleLabel(directory.getPath().getFileName().toString()));
+        addVertical(new PlainLabel("Path: " + directory.getPath()));
+        addVertical(new PlainLabel("Directory count: " + directory.getDirectories().count()));
+        addVertical(new PlainLabel("File count: " + directory.getFiles().count()));
+
+        if (!directory.getErrors().isEmpty()) {
+            addVertical(new PlainLabel("Errors:"));
+            for (Exception error : directory.getErrors()) {
+                addVertical(new PlainLabel("    " + error.getClass().getSimpleName() + ": " + error.getMessage()));
+            }
         }
     }
 }

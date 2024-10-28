@@ -1,7 +1,7 @@
 package cz.mg.backup.entities;
 
 import cz.mg.annotations.classes.Entity;
-import cz.mg.annotations.requirement.Optional;
+import cz.mg.annotations.requirement.Required;
 import cz.mg.annotations.storage.Value;
 
 import java.util.Date;
@@ -14,7 +14,7 @@ public @Entity class Properties {
     public Properties() {
     }
 
-    @Optional @Value
+    @Required @Value
     public Long getSize() {
         return size;
     }
@@ -23,7 +23,7 @@ public @Entity class Properties {
         this.size = size;
     }
 
-    @Optional @Value
+    @Required @Value
     public Date getCreated() {
         return created;
     }
@@ -32,7 +32,7 @@ public @Entity class Properties {
         this.created = created;
     }
 
-    @Optional @Value
+    @Required @Value
     public Date getModified() {
         return modified;
     }
