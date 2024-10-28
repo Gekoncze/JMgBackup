@@ -7,8 +7,6 @@
         2) compute checksums
         3) compare trees
 
-        restore details view content after reload
-
         for each display progress bar and short description
         the idea is to compare everything that is available
             and then user will choose in main menu bar which kinds of errors he wants to see and which to hide
@@ -26,6 +24,8 @@
 
     add more keyboard shortcuts to menu
         consider adding icons too
+
+    add unit test for directory service
 
     show task progress
         show multiple progress bars for each nesting level
@@ -46,6 +46,7 @@
     add support for 3 views
     keep opened folders (if still exist) after refresh
     consider adding support to compare last created and last modified date
+    minor bug - after restoring tree node expansion, if all was closed then root is still expanded
 
 ### LATER ###
     improve sorting

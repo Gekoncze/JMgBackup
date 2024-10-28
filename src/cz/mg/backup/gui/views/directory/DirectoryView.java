@@ -11,7 +11,6 @@ import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.event.UserActionListener;
 import cz.mg.backup.gui.event.UserMouseClickListener;
-import cz.mg.backup.gui.event.UserTreeSelectionListener;
 import cz.mg.backup.gui.services.ButtonFactory;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
 import cz.mg.backup.services.ChecksumService;
@@ -63,7 +62,6 @@ public @Component class DirectoryView extends Panel {
 
         treeView = new JTree();
         treeView.setBorder(BorderFactory.createEtchedBorder());
-        treeView.addTreeSelectionListener(new UserTreeSelectionListener(this::onItemSelected));
 
         addVertical(pathPanel, 1, 0);
         addVertical(new JScrollPane(treeView), 1, 1);
@@ -105,22 +103,6 @@ public @Component class DirectoryView extends Panel {
         refresh();
     }
 
-    private void onItemSelected() {
-        window.getDetailsView().setNode(getSelectedNode());
-    }
-
-    private @Optional Node getSelectedNode() {
-        if (treeView.getSelectionPath() != null) {
-            ObjectTreeEntry entry = (ObjectTreeEntry) treeView.getSelectionPath().getPathComponent(
-                treeView.getSelectionPath().getPathCount() - 1
-            );
-
-            return (Node) entry.get();
-        }
-
-        return null;
-    }
-
     private void select() {
         directoryChooser.showOpenDialog(this);
         File file = directoryChooser.getSelectedFile();
@@ -131,6 +113,8 @@ public @Component class DirectoryView extends Panel {
     }
 
     public void reload() {
+        Path displayedPath = getDisplayedPath();
+
         if (path != null) {
             Map<Path, Pair<Checksum, Date>> checksums = collectChecksums();
             setDirectory(
@@ -146,7 +130,8 @@ public @Component class DirectoryView extends Panel {
         }
 
         window.compare();
-        window.getDetailsView().setNode(null);
+
+        restoreDisplayedPath(displayedPath);
     }
 
     public void refresh() {
@@ -186,7 +171,7 @@ public @Component class DirectoryView extends Panel {
         return checksums;
     }
 
-    public void restoreChecksums(@Mandatory Map<Path, Pair<Checksum, Date>> map) {
+    private void restoreChecksums(@Mandatory Map<Path, Pair<Checksum, Date>> map) {
         directoryService.forEachFile(
             directory,
             file -> {
@@ -200,11 +185,49 @@ public @Component class DirectoryView extends Panel {
         );
     }
 
+    private @Optional Path getDisplayedPath() {
+        Node node = window.getDetailsView().getNode();
+        if (node != null && directory != null && node.getPath().startsWith(directory.getPath())) {
+            return node.getPath();
+        } else {
+            return null;
+        }
+    }
+
+    private void restoreDisplayedPath(@Optional Path path) {
+        if (path != null && directory != null) {
+            window.getDetailsView().setNode(directoryService.find(directory, path));
+        }
+    }
+
     private void onMouseClicked(@Mandatory MouseEvent event) {
+        if (event.getButton() == MouseEvent.BUTTON1) {
+            updateDetails(event);
+        }
+
         if (event.getButton() == MouseEvent.BUTTON3) {
-            if (isRowSelectedAt(event)) {
-                popupMenu.show(treeView, event.getX(), event.getY());
-            }
+            showPopupMenu(event);
+        }
+    }
+
+    private void updateDetails(@Mandatory MouseEvent event) {
+        window.getDetailsView().setNode(getNodeAt(event));
+        window.getDetailsView().repaint();
+    }
+
+    private @Optional Node getNodeAt(@Mandatory MouseEvent event) {
+        TreePath treePath = treeView.getPathForLocation(event.getX(), event.getY());
+        if (treePath != null) {
+            ObjectTreeEntry entry = (ObjectTreeEntry) treePath.getLastPathComponent();
+            return (Node) entry.get();
+        } else {
+            return null;
+        }
+    }
+
+    private void showPopupMenu(@Mandatory MouseEvent event) {
+        if (isRowSelectedAt(event)) {
+            popupMenu.show(treeView, event.getX(), event.getY());
         }
     }
 
