@@ -121,8 +121,7 @@ public @Test class FileComparatorTest {
         File file = new File();
         file.setProperties(new Properties());
         file.getProperties().setSize(size);
-        file.setChecksum(new Checksum());
-        file.getChecksum().setHash(hash);
+        file.setChecksum(new Checksum(hash));
         return file;
     }
 }
