@@ -2,10 +2,7 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.backup.entities.Checksum;
-import cz.mg.backup.entities.Directory;
-import cz.mg.backup.entities.File;
-import cz.mg.backup.entities.Settings;
+import cz.mg.backup.entities.*;
 
 public @Service class ChecksumService {
     private static volatile @Service ChecksumService instance;
@@ -15,33 +12,31 @@ public @Service class ChecksumService {
             synchronized (Service.class) {
                 if (instance == null) {
                     instance = new ChecksumService();
-                    instance.fileHashReader = FileHashReader.getInstance();
+                    instance.checksumReader = ChecksumReader.getInstance();
                 }
             }
         }
         return instance;
     }
 
-    private @Service FileHashReader fileHashReader;
+    private @Service ChecksumReader checksumReader;
 
     private ChecksumService() {
     }
 
-    public void compute(@Mandatory Directory directory, @Mandatory Settings settings, boolean force) {
+    public void compute(@Mandatory Directory directory, @Mandatory Algorithm algorithm, boolean force) {
         for (File file : directory.getFiles()) {
-            compute(file, settings, force);
+            compute(file, algorithm, force);
         }
 
         for (Directory subdirectory : directory.getDirectories()) {
-            compute(subdirectory, settings, force);
+            compute(subdirectory, algorithm, force);
         }
     }
 
-    public void compute(@Mandatory File file, @Mandatory Settings settings, boolean force) {
+    public void compute(@Mandatory File file, @Mandatory Algorithm algorithm, boolean force) {
         if (force || file.getChecksum() == null) {
-            Checksum checksum = new Checksum();
-            checksum.setHash(fileHashReader.read(file.getPath(), settings));
-            file.setChecksum(checksum);
+            file.setChecksum(checksumReader.read(file.getPath(), algorithm));
         }
     }
 

@@ -2,7 +2,6 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
-import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.Configuration;
 import cz.mg.backup.entities.*;
 import cz.mg.test.Assert;
@@ -30,7 +29,7 @@ public @Test class ChecksumServiceTest {
         File file = new File();
         file.setPath(Configuration.FLYING_AKI_PATH);
 
-        service.compute(file, createSettings(), false);
+        service.compute(file, Algorithm.SHA256, false);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
@@ -41,7 +40,7 @@ public @Test class ChecksumServiceTest {
         file.setPath(Configuration.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(FAKESUM));
 
-        service.compute(file, createSettings(), false);
+        service.compute(file, Algorithm.SHA256, false);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(FAKESUM, file.getChecksum().getHash());
@@ -52,7 +51,7 @@ public @Test class ChecksumServiceTest {
         file.setPath(Configuration.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(FAKESUM));
 
-        service.compute(file, createSettings(), true);
+        service.compute(file, Algorithm.SHA256, true);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
@@ -65,7 +64,7 @@ public @Test class ChecksumServiceTest {
         Directory directory = new Directory();
         directory.getFiles().addLast(file);
 
-        service.compute(directory, createSettings(), false);
+        service.compute(directory, Algorithm.SHA256, false);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
@@ -92,11 +91,5 @@ public @Test class ChecksumServiceTest {
         service.clear(directory);
 
         Assert.assertNull(file.getChecksum());
-    }
-
-    private @Mandatory Settings createSettings() {
-        Settings settings = new Settings();
-        settings.setAlgorithm(Algorithm.SHA256);
-        return settings;
     }
 }
