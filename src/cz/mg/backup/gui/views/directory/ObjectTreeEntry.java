@@ -5,6 +5,8 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.collections.array.Array;
 
+import java.util.Objects;
+
 public @Component class ObjectTreeEntry {
     private final @Mandatory Object object;
     private final @Mandatory String name;
@@ -45,5 +47,19 @@ public @Component class ObjectTreeEntry {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ObjectTreeEntry e) {
+            return Objects.equals(object, e.object);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(object);
     }
 }

@@ -9,7 +9,6 @@
 
         keep checksums after reload (unless modified date changed)
         keep opened nodes after reload
-        keep opened and selected nodes after refresh
 
         for each display progress bar and short description
         the idea is to compare everything that is available

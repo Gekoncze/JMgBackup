@@ -140,11 +140,27 @@ public @Component class DirectoryView extends Panel {
 
     public void refresh() {
         if (directory != null) {
+            List<TreePath> expandedPaths = TreeUtils.getExpandedPaths(treeView);
+            List<TreePath> selectedPaths = TreeUtils.getSelectedPaths(treeView);
             treeView.setModel(new ObjectTreeModel(directoryTreeFactory.create(directory)));
+            restoreExpandedPaths(expandedPaths);
+            restoreSelectedPaths(selectedPaths);
         } else {
             treeView.setModel(new ObjectTreeModel(null));
         }
         treeView.setCellRenderer(new NodeCellRenderer());
+    }
+
+    private void restoreExpandedPaths(@Mandatory List<TreePath> expandedPaths) {
+        for (TreePath expandedPath : expandedPaths) {
+            treeView.expandPath(expandedPath);
+        }
+    }
+
+    private void restoreSelectedPaths(@Mandatory List<TreePath> selectedPaths) {
+        for (TreePath selectedPath : selectedPaths) {
+            treeView.addSelectionPath(selectedPath);
+        }
     }
 
     private void onMouseClicked(@Mandatory MouseEvent event) {
