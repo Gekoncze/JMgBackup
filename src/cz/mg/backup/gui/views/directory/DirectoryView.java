@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
@@ -15,7 +16,10 @@ import cz.mg.backup.gui.services.ButtonFactory;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
 import cz.mg.backup.services.ChecksumService;
 import cz.mg.backup.services.DirectoryReader;
+import cz.mg.backup.services.DirectoryService;
 import cz.mg.collections.list.List;
+import cz.mg.collections.map.Map;
+import cz.mg.collections.pair.Pair;
 import cz.mg.panel.Panel;
 
 import javax.swing.*;
@@ -23,6 +27,8 @@ import javax.swing.tree.TreePath;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Date;
+import java.util.Objects;
 
 public @Component class DirectoryView extends Panel {
     private static final int MARGIN = 4;
@@ -32,6 +38,7 @@ public @Component class DirectoryView extends Panel {
     private final @Service DirectoryTreeFactory directoryTreeFactory = DirectoryTreeFactory.getInstance();
     private final @Service ButtonFactory buttonFactory = ButtonFactory.getInstance();
     private final @Service ChecksumService checksumService = ChecksumService.getInstance();
+    private final @Service DirectoryService directoryService = DirectoryService.getInstance();
 
     private final @Mandatory MainWindow window;
     private final @Mandatory JTextField pathField;
@@ -125,6 +132,7 @@ public @Component class DirectoryView extends Panel {
 
     public void reload() {
         if (path != null) {
+            Map<Path, Pair<Checksum, Date>> checksums = collectChecksums();
             setDirectory(
                 ProgressDialog.show(
                     window,
@@ -132,6 +140,7 @@ public @Component class DirectoryView extends Panel {
                     () -> directoryReader.read(path, window.getSettings())
                 )
             );
+            restoreChecksums(checksums);
         } else {
             setDirectory(null);
         }
@@ -163,6 +172,32 @@ public @Component class DirectoryView extends Panel {
         for (TreePath selectedPath : selectedPaths) {
             treeView.addSelectionPath(selectedPath);
         }
+    }
+
+    private @Mandatory Map<Path, Pair<Checksum, Date>> collectChecksums() {
+        Map<Path, Pair<Checksum, Date>> checksums = new Map<>();
+        directoryService.forEachFile(
+            directory,
+            file -> checksums.set(
+                file.getPath(),
+                new Pair<>(file.getChecksum(), file.getProperties().getModified())
+            )
+        );
+        return checksums;
+    }
+
+    public void restoreChecksums(@Mandatory Map<Path, Pair<Checksum, Date>> map) {
+        directoryService.forEachFile(
+            directory,
+            file -> {
+                Pair<Checksum, Date> pair = map.getOptional(file.getPath());
+                if (pair != null) {
+                    if (Objects.equals(file.getProperties().getModified(), pair.getValue())) {
+                        file.setChecksum(pair.getKey());
+                    }
+                }
+            }
+        );
     }
 
     private void onMouseClicked(@Mandatory MouseEvent event) {

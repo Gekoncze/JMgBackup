@@ -7,7 +7,7 @@
         2) compute checksums
         3) compare trees
 
-        keep checksums after reload (unless modified date changed)
+        restore details view content after reload
 
         for each display progress bar and short description
         the idea is to compare everything that is available
