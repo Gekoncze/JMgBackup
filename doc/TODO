@@ -2,35 +2,27 @@
     ...
 
 ### SOON ###
-    split compare task in 3 phases:
-        1) load tree of directories and files (with properties)
-        2) compute checksums
-        3) compare trees
+    display better progress bar with an actual progress
+        display number of processed items
+            * as percentage if number of unprocessed items is available
+            * as absolute number if number of unprocessed items is not available
 
-        for each display progress bar and short description
-        the idea is to compare everything that is available
-            and then user will choose in main menu bar which kinds of errors he wants to see and which to hide
-                * missing file or directory
-                * hash does not match
-                * possible duplicate of a file
-                * property not computed
-                * file system error
+        consider showing multiple progress bars when there are sub-tasks
 
-        ensure that compare is called only if both directories are reloaded / up to date
-            such as, comparing when we know that we will be reloading second directory is wasteful
+    allow users to choose in main menu bar which kinds of errors they want to see and which to hide
+        * missing file or directory
+        * hash does not match
+        * possible duplicate of a file
+        * property not computed
+        * file system error
 
-        consider optimizing reloading, specifically for hashes
-            recomputing it is expensive, so it should be done only when necessary (soft vs hard reload)
+    ensure that compare is called only if both directories are reloaded / up to date
+        such as, comparing when we know that we will be reloading second directory is wasteful
 
     add more keyboard shortcuts to menu
         consider adding icons too
 
     add unit test for directory service
-
-    show task progress
-        show multiple progress bars for each nesting level
-        show regular progress bar when limit is > 0
-        show indeterminate progress bar when limit is 0
 
     add context menu for tree entries
         add option to show file or directory in file manager
@@ -38,17 +30,14 @@
         add option to reload / refresh
         add option to show error details
 
+    add support for drag and drop
+    minor bug - after restoring tree node expansion, if all was closed then root is still expanded
+
+### LATER ###
     add duplicate detector
         show different icon for duplicates ?
         allow user to configure duplicate detection (specify key properties)
 
-    add support for drag and drop
-    add support for 3 views
-    keep opened folders (if still exist) after refresh
-    consider adding support to compare last created and last modified date
-    minor bug - after restoring tree node expansion, if all was closed then root is still expanded
-
-### LATER ###
     improve sorting
         current sorting is wrong:
             Example 2
