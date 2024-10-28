@@ -29,7 +29,7 @@ public @Test class FileHashReaderTest {
 
     private @Mandatory Settings createSettings() {
         Settings settings = new Settings();
-        settings.setHashAlgorithm(Algorithm.SHA256.getCode());
+        settings.setAlgorithm(Algorithm.SHA256);
         return settings;
     }
 }

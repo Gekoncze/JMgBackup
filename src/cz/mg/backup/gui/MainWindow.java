@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.Info;
+import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Settings;
 import cz.mg.backup.gui.components.details.DetailsView;
 import cz.mg.backup.gui.components.DirectoryView;
@@ -26,7 +27,7 @@ public @Component class MainWindow extends JFrame {
     private final @Service DirectoryCompareService compareService = DirectoryCompareService.getInstance();
     private final @Service DirectoryErrorService errorService = DirectoryErrorService.getInstance();
 
-    private final @Mandatory Settings settings = new Settings();
+    private final @Mandatory Settings settings = new Settings(Algorithm.SHA256);
     private final @Mandatory DirectoryView leftView;
     private final @Mandatory DirectoryView rightView;
     private final @Mandatory DetailsView detailsView;

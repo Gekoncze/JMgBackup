@@ -38,8 +38,8 @@ public @Service class FileHashReader {
 
     public @Optional String read(@Mandatory Path path, @Mandatory Settings settings) {
         try {
-            if (settings.getHashAlgorithm() != null) {
-                MessageDigest algorithm = MessageDigest.getInstance(settings.getHashAlgorithm());
+            if (settings.getAlgorithm() != null) {
+                MessageDigest algorithm = MessageDigest.getInstance(settings.getAlgorithm().getCode());
                 try (
                     DigestInputStream stream = new DigestInputStream(
                         Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS),

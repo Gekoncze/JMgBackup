@@ -1,21 +1,25 @@
 package cz.mg.backup.entities;
 
 import cz.mg.annotations.classes.Entity;
-import cz.mg.annotations.requirement.Optional;
+import cz.mg.annotations.requirement.Required;
 import cz.mg.annotations.storage.Value;
 
 public @Entity class Settings {
-    private String hashAlgorithm;
+    private Algorithm algorithm;
 
     public Settings() {
     }
 
-    @Optional @Value
-    public String getHashAlgorithm() {
-        return hashAlgorithm;
+    public Settings(Algorithm algorithm) {
+        this.algorithm = algorithm;
     }
 
-    public void setHashAlgorithm(String hashAlgorithm) {
-        this.hashAlgorithm = hashAlgorithm;
+    @Required @Value
+    public Algorithm getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(Algorithm algorithm) {
+        this.algorithm = algorithm;
     }
 }
