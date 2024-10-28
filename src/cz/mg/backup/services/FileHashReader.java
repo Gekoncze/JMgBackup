@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Settings;
+import cz.mg.backup.exceptions.StorageException;
 
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -55,7 +56,7 @@ public @Service class FileHashReader {
                 return null;
             }
         } catch (Exception e) {
-            throw new RuntimeException("Could not compute file hash.", e);
+            throw new StorageException("Could not compute file hash.", e);
         }
     }
 }

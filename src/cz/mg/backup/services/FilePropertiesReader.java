@@ -3,7 +3,7 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.Properties;
-import cz.mg.backup.exceptions.FileSystemException;
+import cz.mg.backup.exceptions.StorageException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +36,7 @@ public @Service class FilePropertiesReader {
             properties.setModified(new Date(attributes.lastModifiedTime().toMillis()));
             return properties;
         } catch (Exception e) {
-            throw new FileSystemException(e);
+            throw new StorageException(e);
         }
     }
 }
