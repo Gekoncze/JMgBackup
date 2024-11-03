@@ -23,6 +23,16 @@
 
     display directory properties in detail view
 
+    ensure that compare is called only if both directories are reloaded / up to date
+        such as, comparing when we know that we will be reloading second directory is wasteful
+
+### LATER ###
+    add context menu for tree entries
+        add option to show file or directory in file manager
+        add option to show file or directory details
+        add option to reload / refresh
+        add option to show error details
+
     allow users to choose in main menu bar which kinds of errors they want to see and which to hide
         * missing file or directory
         * hash does not match
@@ -30,16 +40,6 @@
         * property not computed
         * file system error
 
-    ensure that compare is called only if both directories are reloaded / up to date
-        such as, comparing when we know that we will be reloading second directory is wasteful
-
-    add context menu for tree entries
-        add option to show file or directory in file manager
-        add option to show file or directory details
-        add option to reload / refresh
-        add option to show error details
-
-### LATER ###
     add more keyboard shortcuts to menu
     add icons to menu
     add support for drag and drop
