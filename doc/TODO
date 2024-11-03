@@ -2,8 +2,11 @@
     ...
 
 ### SOON ###
+    move progress object creation into progress dialog
     resolve to do in directory comparator
+    resolve to do in checksum service
 
+    add unit test for progress updates and estimates
     add unit test for directory service
     add unit test for directory properties
     add unit test for total error count after compare

@@ -2,9 +2,9 @@ package cz.mg.backup.gui.dialog;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
-import cz.mg.backup.services.TaskService;
 
 import javax.swing.*;
 
@@ -16,8 +16,6 @@ public @Test class ProgressDialogTest {
         test.test();
     }
 
-    private final @Service TaskService taskService = TaskService.getInstance();
-
     private void test() {
         MainWindow window = new MainWindow();
         SwingUtilities.invokeLater(() -> ProgressDialog.show(window, "Test Task", this::testTask));
@@ -25,8 +23,9 @@ public @Test class ProgressDialogTest {
     }
 
     private void testTask() {
+        Progress progress = new Progress("Test");
         for (int i = 0; i < 5; i++) {
-            taskService.update();
+            progress.step();
             System.out.println(System.currentTimeMillis());
             sleep();
         }

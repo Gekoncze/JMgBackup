@@ -3,6 +3,7 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
@@ -33,7 +34,7 @@ public @Test class DirectorySortTest {
         directory.getFiles().addLast(createFile(Path.of("y", "B")));
         directory.getFiles().addLast(createFile(Path.of("Z", "A")));
 
-        sort.sort(directory);
+        sort.sort(directory, new Progress("Test"));
 
         checkName("A", directory.getDirectories().get(0));
         checkName("AA", directory.getDirectories().get(1));

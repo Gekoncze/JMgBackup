@@ -3,6 +3,7 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.Configuration;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.test.Assert;
 
@@ -21,7 +22,7 @@ public @Test class ChecksumReaderTest {
     private void testRead() {
         Assert.assertEquals(
             Configuration.FLYING_AKI_HASH,
-            reader.read(Configuration.FLYING_AKI_PATH, Algorithm.SHA256).getHash()
+            reader.read(Configuration.FLYING_AKI_PATH, Algorithm.SHA256, new Progress("Test")).getHash()
         );
     }
 }

@@ -3,6 +3,7 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.Configuration;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.*;
 import cz.mg.test.Assert;
 
@@ -28,7 +29,7 @@ public @Test class ChecksumServiceTest {
         File file = new File();
         file.setPath(Configuration.FLYING_AKI_PATH);
 
-        service.compute(file, Algorithm.SHA256);
+        service.compute(file, Algorithm.SHA256, new Progress("Test"));
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
@@ -39,7 +40,7 @@ public @Test class ChecksumServiceTest {
         file.setPath(Configuration.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(FAKESUM));
 
-        service.compute(file, Algorithm.SHA256);
+        service.compute(file, Algorithm.SHA256, new Progress("Test"));
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(FAKESUM, file.getChecksum().getHash());
@@ -52,7 +53,7 @@ public @Test class ChecksumServiceTest {
         Directory directory = new Directory();
         directory.getFiles().addLast(file);
 
-        service.compute(directory, Algorithm.SHA256);
+        service.compute(directory, Algorithm.SHA256, new Progress("Test"));
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());

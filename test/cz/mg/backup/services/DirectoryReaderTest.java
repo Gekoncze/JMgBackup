@@ -2,6 +2,7 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Settings;
@@ -23,7 +24,11 @@ public @Test class DirectoryReaderTest {
     private final @Service DirectoryReader reader = DirectoryReader.getInstance();
 
     private void testRead() {
-        Directory test = reader.read(Path.of("test", "cz", "mg", "backup", "test"), new Settings());
+        Directory test = reader.read(
+            Path.of("test", "cz", "mg", "backup", "test"),
+            new Settings(),
+            new Progress("Test")
+        );
         Assert.assertEquals(true, test.getErrors().isEmpty());
         Assert.assertEquals("test", test.getPath().getFileName().toString());
         Assert.assertEquals(1, test.getFiles().count());
@@ -48,7 +53,8 @@ public @Test class DirectoryReaderTest {
         // rare case where symbolic link is followed for convenience
         Directory directory = reader.read(
             Path.of("test", "cz", "mg", "backup", "test", "directoryLink"),
-            new Settings()
+            new Settings(),
+            new Progress("Test")
         );
 
         Assert.assertEquals("directoryLink", directory.getPath().getFileName().toString());

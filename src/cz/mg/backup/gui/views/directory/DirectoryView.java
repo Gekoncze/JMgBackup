@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
@@ -121,7 +122,7 @@ public @Component class DirectoryView extends Panel {
                 ProgressDialog.show(
                     window,
                     "Load Directory",
-                    () -> directoryReader.read(path, window.getSettings())
+                    () -> directoryReader.read(path, window.getSettings(), new Progress("Load Directory"))
                 )
             );
             restoreChecksums(checksums);
@@ -138,7 +139,9 @@ public @Component class DirectoryView extends Panel {
         if (directory != null) {
             List<TreePath> expandedPaths = TreeUtils.getExpandedPaths(treeView);
             List<TreePath> selectedPaths = TreeUtils.getSelectedPaths(treeView);
-            treeView.setModel(new ObjectTreeModel(directoryTreeFactory.create(directory)));
+            treeView.setModel(new ObjectTreeModel(
+                directoryTreeFactory.create(directory, new Progress("Build directory tree")))
+            );
             restoreExpandedPaths(expandedPaths);
             restoreSelectedPaths(selectedPaths);
         } else {
@@ -247,7 +250,11 @@ public @Component class DirectoryView extends Panel {
     private void computeChecksum() {
         ProgressDialog.show(window, "Compute checksum", () -> {
             for (Node node : getSelectedNodes()) {
-                checksumService.compute(node, window.getSettings().getAlgorithm());
+                checksumService.compute(
+                    node,
+                    window.getSettings().getAlgorithm(),
+                    new Progress("Checksum " + node.getPath().getFileName())
+                );
             }
         });
         window.compare();

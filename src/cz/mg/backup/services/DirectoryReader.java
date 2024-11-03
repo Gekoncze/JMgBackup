@@ -2,6 +2,7 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.DirectoryProperties;
 import cz.mg.backup.entities.File;
@@ -21,7 +22,6 @@ public @Service class DirectoryReader {
                     instance = new DirectoryReader();
                     instance.fileReader = FileReader.getInstance();
                     instance.sort = DirectorySort.getInstance();
-                    instance.taskService = TaskService.getInstance();
                 }
             }
         }
@@ -30,20 +30,24 @@ public @Service class DirectoryReader {
 
     private @Service FileReader fileReader;
     private @Service DirectorySort sort;
-    private @Service TaskService taskService;
 
     private DirectoryReader() {
     }
 
-    public @Mandatory Directory read(@Mandatory Path path, @Mandatory Settings settings) {
+    public @Mandatory Directory read(
+        @Mandatory Path path,
+        @Mandatory Settings settings,
+        @Mandatory Progress progress
+    ) {
         Directory directory = new Directory();
         directory.setProperties(new DirectoryProperties());
         directory.setPath(path);
+
         try (DirectoryStream<Path> childPaths = Files.newDirectoryStream(path)) {
             for (Path childPath : childPaths) {
-                taskService.update();
+                progress.step();
                 try {
-                    read(directory, childPath, settings);
+                    read(directory, childPath, settings, progress);
                 } catch (Exception e) {
                     directory.getErrors().addLast(e);
                 }
@@ -51,14 +55,21 @@ public @Service class DirectoryReader {
         } catch (Exception e) {
             directory.getErrors().addLast(e);
         }
-        sort.sort(directory);
+
+        sort.sort(directory, progress.nest("Sort directory"));
+
         return directory;
     }
 
-    private void read(@Mandatory Directory directory, @Mandatory Path childPath, @Mandatory Settings settings) {
+    private void read(
+        @Mandatory Directory directory,
+        @Mandatory Path childPath,
+        @Mandatory Settings settings,
+        @Mandatory Progress progress
+    ) {
         if (!Files.isSymbolicLink(childPath)) {
             if (Files.isDirectory(childPath)) {
-                Directory childDirectory = read(childPath, settings);
+                Directory childDirectory = read(childPath, settings, progress);
                 directory.getDirectories().addLast(childDirectory);
                 directory.getProperties().add(childDirectory.getProperties());
             } else {

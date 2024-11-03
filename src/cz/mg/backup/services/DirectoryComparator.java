@@ -1,7 +1,9 @@
 package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
+import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.exceptions.CompareException;
@@ -21,7 +23,6 @@ public @Service class DirectoryComparator {
                 if (instance == null) {
                     instance = new DirectoryComparator();
                     instance.fileComparator = FileComparator.getInstance();
-                    instance.taskService = TaskService.getInstance();
                 }
             }
         }
@@ -29,49 +30,56 @@ public @Service class DirectoryComparator {
     }
 
     private @Service FileComparator fileComparator;
-    private @Service TaskService taskService;
 
     private DirectoryComparator() {
     }
 
-    public void compare(@Optional Directory first, @Optional Directory second) {
-        comparePairedDirectories(first, second);
+    public void compare(
+        @Optional Directory first,
+        @Optional Directory second,
+        @Mandatory Progress progress
+    ) {
+        progress.setLimit(estimate(first, second));
+        comparePairedDirectories(first, second, progress);
     }
 
-    private void compareRecursively(@Optional Directory first, @Optional Directory second) {
-        compareDirectories(first, second);
-        compareFiles(first, second);
-    }
-
-    private void compareDirectories(@Optional Directory first, @Optional Directory second) {
+    private void compareDirectories(
+        @Optional Directory first,
+        @Optional Directory second,
+        @Mandatory Progress progress
+    ) {
         Map<Path, Pair<Directory, Directory>> map = new Map<>();
 
         if (first != null) {
             for (Directory child : first.getDirectories()) {
-                taskService.update();
                 Pair<Directory, Directory> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
                 pair.setKey(child);
+                progress.step();
             }
         }
 
         if (second != null) {
             for (Directory child : second.getDirectories()) {
-                taskService.update();
                 Pair<Directory, Directory> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
                 pair.setValue(child);
+                progress.step();
             }
         }
 
         for (ReadablePair<Path, Pair<Directory, Directory>> entry : map) {
-            taskService.update();
             Pair<Directory, Directory> pair = entry.getValue();
-            comparePairedDirectories(pair.getKey(), pair.getValue());
+            comparePairedDirectories(pair.getKey(), pair.getValue(), progress);
             updateTotalErrorCount(first, pair.getKey());
             updateTotalErrorCount(second, pair.getValue());
+            progress.step();
         }
     }
 
-    private void comparePairedDirectories(@Optional Directory first, @Optional Directory second) {
+    private void comparePairedDirectories(
+        @Optional Directory first,
+        @Optional Directory second,
+        @Mandatory Progress progress
+    ) {
         clearCompareErrors(first);
         clearCompareErrors(second);
 
@@ -93,34 +101,39 @@ public @Service class DirectoryComparator {
             }
         }
 
-        compareRecursively(first, second);
+        compareDirectories(first, second, progress);
+        compareFiles(first, second, progress);
     }
 
-    private void compareFiles(@Optional Directory first, @Optional Directory second) {
+    private void compareFiles(
+        @Optional Directory first,
+        @Optional Directory second,
+        @Mandatory Progress progress
+    ) {
         Map<Path, Pair<File, File>> map = new Map<>();
 
         if (first != null) {
             for (File child : first.getFiles()) {
-                taskService.update();
                 Pair<File, File> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
                 pair.setKey(child);
+                progress.step();
             }
         }
 
         if (second != null) {
             for (File child : second.getFiles()) {
-                taskService.update();
                 Pair<File, File> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
                 pair.setValue(child);
+                progress.step();
             }
         }
 
         for (ReadablePair<Path, Pair<File, File>> entry : map) {
-            taskService.update();
             Pair<File, File> pair = entry.getValue();
             comparePairedFiles(pair.getKey(), pair.getValue());
             updateTotalErrorCount(first, pair.getKey());
             updateTotalErrorCount(second, pair.getValue());
+            progress.step();
         }
     }
 
@@ -164,5 +177,11 @@ public @Service class DirectoryComparator {
                 parent.getProperties().getTotalErrorCount() + child.getProperties().getTotalErrorCount()
             );
         }
+    }
+
+    private long estimate(@Optional Directory first, @Optional Directory second) {
+        long firstTotal = first != null ? first.getProperties().getTotalCount() : 0;
+        long secondTotal = second != null ? second.getProperties().getTotalCount() : 0;
+        return 4 * (firstTotal + secondTotal);
     }
 }

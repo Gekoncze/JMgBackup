@@ -1,12 +1,22 @@
 package cz.mg.backup.components;
 
 import cz.mg.annotations.classes.Component;
+import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.exceptions.CancelException;
 
 public @Component class Progress {
-    private long value;
-    private long limit;
+    private final @Mandatory String description;
+    private volatile long value;
+    private volatile long limit;
+    private volatile @Optional Progress subProgress;
 
-    public Progress() {
+    public Progress(@Mandatory String description) {
+        this.description = description;
+    }
+
+    public @Mandatory String getDescription() {
+        return description;
     }
 
     public long getValue() {
@@ -25,7 +35,35 @@ public @Component class Progress {
         this.limit = limit;
     }
 
-    public void increment() {
+    public @Optional Progress getSubProgress() {
+        return subProgress;
+    }
+
+    public void setSubProgress(@Optional Progress subProgress) {
+        this.subProgress = subProgress;
+    }
+
+    public @Optional Double percent() {
+        return limit > 0 ? (((double)value / (double)limit) * 100) : null;
+    }
+
+    public @Mandatory Progress nest(@Mandatory String name) {
+        Progress subProgress = new Progress(name);
+        setSubProgress(subProgress);
+        return subProgress;
+    }
+
+    public void step() {
         value++;
+        checkStatus();
+    }
+
+    public void checkStatus() {
+        Task task = Task.getCurrentTask();
+        if (task != null) {
+            if (task.getStatus() == Status.CANCELLED) {
+                throw new CancelException();
+            }
+        }
     }
 }

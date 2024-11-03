@@ -2,10 +2,12 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.exceptions.StorageException;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -23,7 +25,6 @@ public @Service class ChecksumReader {
                 if (instance == null) {
                     instance = new ChecksumReader();
                     instance.hashConverter = HashConverter.getInstance();
-                    instance.taskService = TaskService.getInstance();
                 }
             }
         }
@@ -31,14 +32,20 @@ public @Service class ChecksumReader {
     }
 
     private @Service HashConverter hashConverter;
-    private @Service TaskService taskService;
 
     private ChecksumReader() {
     }
 
-    public @Mandatory Checksum read(@Mandatory Path path, @Mandatory Algorithm algorithm) {
+    public @Mandatory Checksum read(
+        @Mandatory Path path,
+        @Mandatory Algorithm algorithm,
+        @Mandatory Progress progress
+    ) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance(algorithm.getCode());
+
+            progress.setLimit(estimate(path));
+
             try (
                 DigestInputStream stream = new DigestInputStream(
                     Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS),
@@ -47,12 +54,18 @@ public @Service class ChecksumReader {
             ) {
                 byte[] buffer = new byte[BUFFER_SIZE];
                 while (stream.read(buffer) > 0) {
-                    taskService.update();
+                    progress.step();
                 }
             }
+
             return new Checksum(hashConverter.convert(messageDigest.digest()));
         } catch (Exception e) {
             throw new StorageException("Could not compute checksum.", e);
         }
+    }
+
+    private long estimate(@Mandatory Path path) throws IOException {
+        long size = Files.size(path);
+        return size / BUFFER_SIZE + (size % BUFFER_SIZE > 0 ? 1 : 0);
     }
 }

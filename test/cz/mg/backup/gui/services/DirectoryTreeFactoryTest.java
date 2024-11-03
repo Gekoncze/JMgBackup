@@ -2,6 +2,7 @@ package cz.mg.backup.gui.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.gui.views.directory.ObjectTreeEntry;
@@ -42,7 +43,7 @@ public @Test class DirectoryTreeFactoryTest {
         root.getFiles().addLast(secondFile);
         childDirectory.getFiles().addLast(firstFile);
 
-        ObjectTreeEntry rootEntry = factory.create(root);
+        ObjectTreeEntry rootEntry = factory.create(root, new Progress("test"));
 
         Assert.assertEquals(root, rootEntry.get());
         Assert.assertEquals(0, rootEntry.getIndex());
