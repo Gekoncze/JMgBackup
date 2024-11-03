@@ -2,12 +2,23 @@
     ...
 
 ### SOON ###
+    add unit test for directory service
+    add unit test for directory properties
+    add unit test for total error count after compare
+    add unit test for existing error clear
+        for directories
+        for files
+
+    fix bug - cancel in open dialog behaves like ok
+
     display better progress bar with an actual progress
         display number of processed items
             * as percentage if number of unprocessed items is available
             * as absolute number if number of unprocessed items is not available
 
         consider showing multiple progress bars when there are sub-tasks
+
+    display directory properties in detail view
 
     allow users to choose in main menu bar which kinds of errors they want to see and which to hide
         * missing file or directory
@@ -19,22 +30,17 @@
     ensure that compare is called only if both directories are reloaded / up to date
         such as, comparing when we know that we will be reloading second directory is wasteful
 
-    add more keyboard shortcuts to menu
-        consider adding icons too
-
-    add unit test for directory service
-
     add context menu for tree entries
         add option to show file or directory in file manager
         add option to show file or directory details
         add option to reload / refresh
         add option to show error details
 
-    add support for drag and drop
-    minor bug - after restoring tree node expansion, if all was closed then root is still expanded
-
 ### LATER ###
-    add unit test for directory properties
+    add more keyboard shortcuts to menu
+    add icons to menu
+    add support for drag and drop
+    fix bug - after restoring tree node expansion, if all was closed then root is still expanded
 
     add duplicate detector
         show different icon for duplicates ?

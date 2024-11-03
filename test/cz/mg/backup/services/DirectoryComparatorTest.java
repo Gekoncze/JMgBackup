@@ -4,10 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
-import cz.mg.backup.entities.Checksum;
-import cz.mg.backup.entities.Directory;
-import cz.mg.backup.entities.File;
-import cz.mg.backup.entities.FileProperties;
+import cz.mg.backup.entities.*;
 import cz.mg.backup.exceptions.CompareException;
 import cz.mg.collections.list.List;
 import cz.mg.test.Assert;
@@ -260,7 +257,7 @@ public @Test class DirectoryComparatorTest {
 
         service.compare(directory, null);
 
-        Assert.assertEquals(0, subdirectory.getErrors().count());
+        Assert.assertEquals(1, subdirectory.getErrors().count());
         Assert.assertEquals(2, directory.getErrors().count());
         Assert.assertEquals(RuntimeException.class, directory.getErrors().getFirst().getClass());
         Assert.assertEquals(IllegalArgumentException.class, directory.getErrors().getLast().getClass());
@@ -269,12 +266,12 @@ public @Test class DirectoryComparatorTest {
         directory.getErrors().addLast(new CompareException("1"));
         directory.getErrors().addLast(new CompareException("2"));
 
-        Assert.assertEquals(1, subdirectory.getErrors().count());
+        Assert.assertEquals(2, subdirectory.getErrors().count());
         Assert.assertEquals(4, directory.getErrors().count());
 
         service.compare(null, directory);
 
-        Assert.assertEquals(0, subdirectory.getErrors().count());
+        Assert.assertEquals(1, subdirectory.getErrors().count());
         Assert.assertEquals(2, directory.getErrors().count());
         Assert.assertEquals(RuntimeException.class, directory.getErrors().getFirst().getClass());
         Assert.assertEquals(IllegalArgumentException.class, directory.getErrors().getLast().getClass());
@@ -293,6 +290,7 @@ public @Test class DirectoryComparatorTest {
         directory.setPath(Path.of(name));
         directory.setDirectories(directories);
         directory.setFiles(files);
+        directory.setProperties(new DirectoryProperties());
         return directory;
     }
 

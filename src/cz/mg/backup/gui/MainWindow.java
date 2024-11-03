@@ -11,7 +11,6 @@ import cz.mg.backup.gui.views.directory.DirectoryView;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.menu.MainMenuBar;
 import cz.mg.backup.services.DirectoryComparator;
-import cz.mg.backup.services.DirectoryErrorService;
 import cz.mg.panel.Panel;
 
 import javax.swing.*;
@@ -25,7 +24,6 @@ public @Component class MainWindow extends JFrame {
     private static final int PADDING = 8;
 
     private final @Service DirectoryComparator compareService = DirectoryComparator.getInstance();
-    private final @Service DirectoryErrorService errorService = DirectoryErrorService.getInstance();
 
     private final @Mandatory Settings settings = new Settings(Algorithm.SHA256);
     private final @Mandatory DirectoryView leftView;
@@ -78,16 +76,6 @@ public @Component class MainWindow extends JFrame {
             leftView.getDirectory(),
             rightView.getDirectory()
         ));
-
-        ProgressDialog.show(this, "Propagate", () -> {
-            if (leftView.getDirectory() != null) {
-                errorService.propagate(leftView.getDirectory());
-            }
-
-            if (rightView.getDirectory() != null) {
-                errorService.propagate(rightView.getDirectory());
-            }
-        });
 
         leftView.refresh();
         rightView.refresh();

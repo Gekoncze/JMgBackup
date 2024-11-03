@@ -5,7 +5,6 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
-import cz.mg.backup.exceptions.PropagatedException;
 import cz.mg.backup.gui.icons.Icons;
 import cz.mg.panel.Panel;
 import cz.mg.panel.settings.Alignment;
@@ -62,15 +61,8 @@ public @Component class NodeCellRenderer implements TreeCellRenderer {
     }
 
     private @Mandatory Icon getDirectoryIcon(@Mandatory Directory directory) {
-        boolean hasError = false;
-        boolean hasInnerError = false;
-        for (Exception exception : directory.getErrors()) {
-            if (exception instanceof PropagatedException) {
-                hasInnerError = true;
-            } else {
-                hasError = true;
-            }
-        }
+        boolean hasError = directory.getErrors().count() > 0;
+        boolean hasInnerError = directory.getProperties().getTotalErrorCount() > 0;
 
         if (hasError) {
             return Icons.DIRECTORY_ERROR_ICON;

@@ -11,7 +11,6 @@ public class AllTests {
         // cz.mg.backup.services
         ChecksumServiceTest.main(args);
         DirectoryComparatorTest.main(args);
-        DirectoryErrorServiceTest.main(args);
         DirectoryReaderTest.main(args);
         DirectorySortTest.main(args);
         FileComparatorTest.main(args);
