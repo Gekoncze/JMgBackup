@@ -1,7 +1,6 @@
 package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
-import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
@@ -11,6 +10,7 @@ import cz.mg.collections.pair.Pair;
 import cz.mg.collections.pair.ReadablePair;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 public @Service class DirectoryComparator {
     private static volatile @Service DirectoryComparator instance;
@@ -35,15 +35,7 @@ public @Service class DirectoryComparator {
     }
 
     public void compare(@Optional Directory first, @Optional Directory second) {
-        if (first != null) {
-            clearCompareErrors(first);
-        }
-
-        if (second != null) {
-            clearCompareErrors(second);
-        }
-
-        compareRecursively(first, second);
+        comparePairedDirectories(first, second);
     }
 
     private void compareRecursively(@Optional Directory first, @Optional Directory second) {
@@ -59,7 +51,6 @@ public @Service class DirectoryComparator {
                 taskService.update();
                 Pair<Directory, Directory> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
                 pair.setKey(child);
-                clearCompareErrors(child);
             }
         }
 
@@ -68,26 +59,41 @@ public @Service class DirectoryComparator {
                 taskService.update();
                 Pair<Directory, Directory> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
                 pair.setValue(child);
-                clearCompareErrors(child);
             }
         }
 
         for (ReadablePair<Path, Pair<Directory, Directory>> entry : map) {
             taskService.update();
             Pair<Directory, Directory> pair = entry.getValue();
-            if (pair.getKey() != null && pair.getValue() != null) {
-                compareRecursively(pair.getKey(), pair.getValue());
-            } else if (pair.getKey() != null) {
-                pair.getKey().getErrors().addLast(new CompareException("Missing corresponding directory."));
-                compareRecursively(pair.getKey(), pair.getValue());
-            } else if (pair.getValue() != null) {
-                pair.getValue().getErrors().addLast(new CompareException("Missing corresponding directory."));
-                compareRecursively(pair.getKey(), pair.getValue());
-            }
-
+            comparePairedDirectories(pair.getKey(), pair.getValue());
             updateTotalErrorCount(first, pair.getKey());
             updateTotalErrorCount(second, pair.getValue());
         }
+    }
+
+    private void comparePairedDirectories(@Optional Directory first, @Optional Directory second) {
+        clearCompareErrors(first);
+        clearCompareErrors(second);
+
+        if (first != null && second == null) {
+            first.getErrors().addLast(new CompareException("Missing corresponding directory."));
+            // TODO - might need to increment total error count
+        }
+
+        if (first == null && second != null) {
+            second.getErrors().addLast(new CompareException("Missing corresponding directory."));
+            // TODO - might need to increment total error count
+        }
+
+        if (first != null && second != null) {
+            if (!Objects.equals(first.getPath().getFileName(), second.getPath().getFileName())) {
+                first.getErrors().addLast(new CompareException("Directory name differs."));
+                second.getErrors().addLast(new CompareException("Directory name differs."));
+                // TODO - might need to increment total error count
+            }
+        }
+
+        compareRecursively(first, second);
     }
 
     private void compareFiles(@Optional Directory first, @Optional Directory second) {
@@ -98,7 +104,6 @@ public @Service class DirectoryComparator {
                 taskService.update();
                 Pair<File, File> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
                 pair.setKey(child);
-                clearCompareErrors(child);
             }
         }
 
@@ -107,33 +112,42 @@ public @Service class DirectoryComparator {
                 taskService.update();
                 Pair<File, File> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
                 pair.setValue(child);
-                clearCompareErrors(child);
             }
         }
 
         for (ReadablePair<Path, Pair<File, File>> entry : map) {
             taskService.update();
             Pair<File, File> pair = entry.getValue();
-            if (pair.getKey() != null && pair.getValue() != null) {
-                fileComparator.compare(pair.getKey(), pair.getValue());
-            } else if (pair.getKey() != null) {
-                pair.getKey().getErrors().addLast(new CompareException("Missing corresponding file."));
-            } else if (pair.getValue() != null) {
-                pair.getValue().getErrors().addLast(new CompareException("Missing corresponding file."));
-            }
-
+            comparePairedFiles(pair.getKey(), pair.getValue());
             updateTotalErrorCount(first, pair.getKey());
             updateTotalErrorCount(second, pair.getValue());
         }
     }
 
-    private void clearCompareErrors(@Mandatory Directory directory) {
-        directory.getErrors().removeIf(e -> e instanceof CompareException);
-        directory.getProperties().setTotalErrorCount(0);
+    private void comparePairedFiles(@Optional File first, @Optional File second) {
+        clearCompareErrors(first);
+        clearCompareErrors(second);
+
+        if (first != null && second != null) {
+            fileComparator.compare(first, second);
+        } else if (first != null) {
+            first.getErrors().addLast(new CompareException("Missing corresponding file."));
+        } else if (second != null) {
+            second.getErrors().addLast(new CompareException("Missing corresponding file."));
+        }
     }
 
-    private void clearCompareErrors(@Mandatory File file) {
-        file.getErrors().removeIf(e -> e instanceof CompareException);
+    private void clearCompareErrors(@Optional Directory directory) {
+        if (directory != null) {
+            directory.getErrors().removeIf(e -> e instanceof CompareException);
+            directory.getProperties().setTotalErrorCount(0);
+        }
+    }
+
+    private void clearCompareErrors(@Optional File file) {
+        if (file != null) {
+            file.getErrors().removeIf(e -> e instanceof CompareException);
+        }
     }
 
     private void updateTotalErrorCount(@Optional Directory parent, @Optional File child) {

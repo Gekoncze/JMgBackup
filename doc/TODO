@@ -2,6 +2,8 @@
     ...
 
 ### SOON ###
+    resolve to do in directory comparator
+
     add unit test for directory service
     add unit test for directory properties
     add unit test for total error count after compare

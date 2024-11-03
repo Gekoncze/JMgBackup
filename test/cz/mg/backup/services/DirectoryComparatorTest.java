@@ -258,23 +258,23 @@ public @Test class DirectoryComparatorTest {
         service.compare(directory, null);
 
         Assert.assertEquals(1, subdirectory.getErrors().count());
-        Assert.assertEquals(2, directory.getErrors().count());
-        Assert.assertEquals(RuntimeException.class, directory.getErrors().getFirst().getClass());
-        Assert.assertEquals(IllegalArgumentException.class, directory.getErrors().getLast().getClass());
+        Assert.assertEquals(3, directory.getErrors().count());
+        Assert.assertEquals(RuntimeException.class, directory.getErrors().get(0).getClass());
+        Assert.assertEquals(IllegalArgumentException.class, directory.getErrors().get(1).getClass());
 
         subdirectory.getErrors().addLast(new CompareException("0"));
         directory.getErrors().addLast(new CompareException("1"));
         directory.getErrors().addLast(new CompareException("2"));
 
         Assert.assertEquals(2, subdirectory.getErrors().count());
-        Assert.assertEquals(4, directory.getErrors().count());
+        Assert.assertEquals(5, directory.getErrors().count());
 
         service.compare(null, directory);
 
         Assert.assertEquals(1, subdirectory.getErrors().count());
-        Assert.assertEquals(2, directory.getErrors().count());
-        Assert.assertEquals(RuntimeException.class, directory.getErrors().getFirst().getClass());
-        Assert.assertEquals(IllegalArgumentException.class, directory.getErrors().getLast().getClass());
+        Assert.assertEquals(3, directory.getErrors().count());
+        Assert.assertEquals(RuntimeException.class, directory.getErrors().get(0).getClass());
+        Assert.assertEquals(IllegalArgumentException.class, directory.getErrors().get(1).getClass());
     }
 
     private @Mandatory Directory createDirectory(@Mandatory String name) {
