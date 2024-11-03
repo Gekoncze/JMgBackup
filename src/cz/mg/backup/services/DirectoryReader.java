@@ -3,6 +3,8 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.Directory;
+import cz.mg.backup.entities.DirectoryProperties;
+import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Settings;
 
 import java.nio.file.DirectoryStream;
@@ -35,6 +37,7 @@ public @Service class DirectoryReader {
 
     public @Mandatory Directory read(@Mandatory Path path, @Mandatory Settings settings) {
         Directory directory = new Directory();
+        directory.setProperties(new DirectoryProperties());
         directory.setPath(path);
         try (DirectoryStream<Path> childPaths = Files.newDirectoryStream(path)) {
             for (Path childPath : childPaths) {
@@ -55,9 +58,13 @@ public @Service class DirectoryReader {
     private void read(@Mandatory Directory directory, @Mandatory Path childPath, @Mandatory Settings settings) {
         if (!Files.isSymbolicLink(childPath)) {
             if (Files.isDirectory(childPath)) {
-                directory.getDirectories().addLast(read(childPath, settings));
+                Directory childDirectory = read(childPath, settings);
+                directory.getDirectories().addLast(childDirectory);
+                directory.getProperties().add(childDirectory.getProperties());
             } else {
-                directory.getFiles().addLast(fileReader.read(childPath));
+                File childFile = fileReader.read(childPath);
+                directory.getFiles().addLast(childFile);
+                directory.getProperties().add(childFile.getProperties());
             }
         }
     }

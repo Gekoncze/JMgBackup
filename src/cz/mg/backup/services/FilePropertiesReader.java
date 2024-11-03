@@ -2,7 +2,7 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.backup.entities.Properties;
+import cz.mg.backup.entities.FileProperties;
 import cz.mg.backup.exceptions.StorageException;
 
 import java.nio.file.Files;
@@ -27,14 +27,14 @@ public @Service class FilePropertiesReader {
     private FilePropertiesReader() {
     }
 
-    public @Mandatory Properties read(@Mandatory Path path) {
+    public @Mandatory FileProperties read(@Mandatory Path path) {
         try {
             BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
-            Properties properties = new Properties();
-            properties.setSize(attributes.size());
-            properties.setCreated(new Date(attributes.creationTime().toMillis()));
-            properties.setModified(new Date(attributes.lastModifiedTime().toMillis()));
-            return properties;
+            FileProperties fileProperties = new FileProperties();
+            fileProperties.setSize(attributes.size());
+            fileProperties.setCreated(new Date(attributes.creationTime().toMillis()));
+            fileProperties.setModified(new Date(attributes.lastModifiedTime().toMillis()));
+            return fileProperties;
         } catch (Exception e) {
             throw new StorageException(e);
         }

@@ -7,7 +7,7 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
-import cz.mg.backup.entities.Properties;
+import cz.mg.backup.entities.FileProperties;
 import cz.mg.backup.exceptions.CompareException;
 import cz.mg.collections.list.List;
 import cz.mg.test.Assert;
@@ -307,7 +307,7 @@ public @Test class DirectoryComparatorTest {
     ) {
         File file = new File();
         file.setPath(Path.of(name));
-        file.setProperties(new Properties());
+        file.setProperties(new FileProperties());
         file.getProperties().setSize(size);
         file.setChecksum(new Checksum(hash));
         return file;

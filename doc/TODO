@@ -34,6 +34,8 @@
     minor bug - after restoring tree node expansion, if all was closed then root is still expanded
 
 ### LATER ###
+    add unit test for directory properties
+
     add duplicate detector
         show different icon for duplicates ?
         allow user to configure duplicate detection (specify key properties)

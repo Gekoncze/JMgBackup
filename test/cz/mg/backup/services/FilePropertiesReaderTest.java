@@ -3,7 +3,7 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.Configuration;
-import cz.mg.backup.entities.Properties;
+import cz.mg.backup.entities.FileProperties;
 import cz.mg.test.Assert;
 
 public @Test class FilePropertiesReaderTest {
@@ -19,7 +19,7 @@ public @Test class FilePropertiesReaderTest {
     private final @Service FilePropertiesReader reader = FilePropertiesReader.getInstance();
 
     private void testRead() {
-        Properties properties = reader.read(Configuration.FLYING_AKI_PATH);
-        Assert.assertEquals(218128, properties.getSize());
+        FileProperties fileProperties = reader.read(Configuration.FLYING_AKI_PATH);
+        Assert.assertEquals(218128, fileProperties.getSize());
     }
 }

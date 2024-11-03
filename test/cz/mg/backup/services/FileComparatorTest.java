@@ -6,7 +6,7 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.entities.File;
-import cz.mg.backup.entities.Properties;
+import cz.mg.backup.entities.FileProperties;
 import cz.mg.backup.exceptions.CompareException;
 import cz.mg.test.Assert;
 
@@ -93,9 +93,9 @@ public @Test class FileComparatorTest {
 
     private void testCompareClearsCompareErrors() {
         File first = new File();
-        first.setProperties(new Properties());
+        first.setProperties(new FileProperties());
         File second = new File();
-        second.setProperties(new Properties());
+        second.setProperties(new FileProperties());
         Assert.assertEquals(0, first.getErrors().count());
         Assert.assertEquals(0, second.getErrors().count());
         first.getErrors().addLast(new RuntimeException());
@@ -119,7 +119,7 @@ public @Test class FileComparatorTest {
 
     private @Mandatory File createFile(@Optional Long size, @Optional String hash) {
         File file = new File();
-        file.setProperties(new Properties());
+        file.setProperties(new FileProperties());
         file.getProperties().setSize(size);
         file.setChecksum(new Checksum(hash));
         return file;

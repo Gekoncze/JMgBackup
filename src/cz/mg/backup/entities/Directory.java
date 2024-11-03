@@ -7,10 +7,20 @@ import cz.mg.collections.list.List;
 
 
 public @Entity class Directory extends Node {
+    private DirectoryProperties properties;
     private List<Directory> directories = new List<>();
     private List<File> files = new List<>();
 
     public Directory() {
+    }
+
+    @Required @Part
+    public DirectoryProperties getProperties() {
+        return properties;
+    }
+
+    public void setProperties(DirectoryProperties properties) {
+        this.properties = properties;
     }
 
     @Required @Part

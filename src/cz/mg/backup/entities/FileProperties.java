@@ -6,12 +6,12 @@ import cz.mg.annotations.storage.Value;
 
 import java.util.Date;
 
-public @Entity class Properties {
+public @Entity class FileProperties {
     private Long size;
     private Date created;
     private Date modified;
 
-    public Properties() {
+    public FileProperties() {
     }
 
     @Required @Value
