@@ -104,9 +104,9 @@ public @Component class DirectoryView extends Panel {
     }
 
     private void select() {
-        directoryChooser.showOpenDialog(this);
+        int result = directoryChooser.showOpenDialog(this);
         File file = directoryChooser.getSelectedFile();
-        if (file != null) {
+        if (file != null && result == JFileChooser.APPROVE_OPTION) {
             setPath(file.toPath());
         }
         reload();

@@ -9,8 +9,6 @@
         for directories
         for files
 
-    fix bug - cancel in open dialog behaves like ok
-
     display better progress bar with an actual progress
         display number of processed items
             * as percentage if number of unprocessed items is available
