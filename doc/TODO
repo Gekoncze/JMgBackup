@@ -15,12 +15,9 @@
             * as percentage if number of unprocessed items is available
             * as absolute number if number of unprocessed items is not available
 
-        consider showing multiple progress bars when there are sub-tasks
+        show multiple progress bars when there are sub-tasks
 
 ### LATER ###
-    consider updatable progress description (or additional updatable field)
-        possible use case: include processing speed updated in real time, such as kB/s
-
     add context menu for tree entries
         add option to show file or directory in file manager
         add option to show file or directory details
@@ -51,3 +48,11 @@
     add support for symbolic links
     add support for automatic copying files
         have it also use duplicate detection to skip possible duplicates
+
+### CONSIDERATIONS ###
+    consider updatable progress description (or additional updatable field)
+        possible use case: include processing speed updated in real time, such as kB/s
+
+    consider updating checksum if it is detected that modified date was changed
+        would require very precise time
+        would require to track timestamp for checksum
