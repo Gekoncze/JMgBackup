@@ -17,8 +17,6 @@
 
         consider showing multiple progress bars when there are sub-tasks
 
-    display directory properties in detail view
-
     ensure that compare is called only if both directories are reloaded / up to date
         such as, comparing when we know that we will be reloading second directory is wasteful
 

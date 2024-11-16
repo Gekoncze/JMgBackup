@@ -21,6 +21,7 @@ public @Component class MainWindow extends JFrame {
     private static final @Mandatory String TITLE = Info.NAME + " " + Info.VERSION;
     private static final int DEFAULT_WIDTH = 1024;
     private static final int DEFAULT_HEIGHT = 768;
+    private static final int DEFAULT_DETAILS_HEIGHT = 220;
     private static final int MARGIN = 0;
     private static final int PADDING = 8;
 
@@ -50,7 +51,7 @@ public @Component class MainWindow extends JFrame {
         detailsSplitPane.setTopComponent(compareSplitPane);
         detailsSplitPane.setBottomComponent(detailsView = new DetailsView());
         detailsSplitPane.setResizeWeight(1);
-        detailsSplitPane.setDividerLocation(DEFAULT_HEIGHT - 192);
+        detailsSplitPane.setDividerLocation(DEFAULT_HEIGHT - DEFAULT_DETAILS_HEIGHT);
         panel.addVertical(detailsSplitPane, 1, 1);
 
         getContentPane().add(panel);

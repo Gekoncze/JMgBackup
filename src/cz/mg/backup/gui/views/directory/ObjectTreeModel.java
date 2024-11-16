@@ -38,7 +38,7 @@ public @Component class ObjectTreeModel implements TreeModel {
         if (entry.getChildren() != null) {
             return entry.getChildren().count();
         } else {
-            throw new IllegalStateException();
+            return 0;
         }
     }
 
