@@ -32,6 +32,8 @@ public @Component class MainWindow extends JFrame {
     private final @Mandatory DirectoryView rightView;
     private final @Mandatory DetailsView detailsView;
 
+    private boolean compareLock = false;
+
     public MainWindow() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle(TITLE);
@@ -74,24 +76,33 @@ public @Component class MainWindow extends JFrame {
     }
 
     public void compare() {
-        Directory a = leftView.getDirectory();
-        Directory b = rightView.getDirectory();
+        if (!compareLock) {
+            Directory a = leftView.getDirectory();
+            Directory b = rightView.getDirectory();
 
-        ProgressDialog.run(
-            this,
-            "Compare",
-            null,
-            progress -> compareService.compare(a, b, progress)
-        );
+            ProgressDialog.run(
+                this,
+                "Compare",
+                null,
+                progress -> compareService.compare(a, b, progress)
+            );
 
-        leftView.refresh();
-        rightView.refresh();
-        detailsView.refresh();
+            leftView.refresh();
+            rightView.refresh();
+            detailsView.refresh();
+        }
     }
 
     public void reload() {
-        leftView.reload();
-        rightView.reload();
+        try {
+            compareLock = true;
+            leftView.reload();
+            rightView.reload();
+        } finally {
+            compareLock = false;
+        }
+
+        compare();
     }
 
     public static void main(String[] args) {
