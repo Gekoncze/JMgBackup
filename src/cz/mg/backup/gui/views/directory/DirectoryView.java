@@ -13,6 +13,7 @@ import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.event.UserActionListener;
 import cz.mg.backup.gui.event.UserMouseClickListener;
+import cz.mg.backup.gui.event.UserTreeSelectionListener;
 import cz.mg.backup.gui.services.ButtonFactory;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
 import cz.mg.backup.services.ChecksumService;
@@ -24,6 +25,7 @@ import cz.mg.collections.pair.Pair;
 import cz.mg.panel.Panel;
 
 import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreePath;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -83,6 +85,7 @@ public @Component class DirectoryView extends Panel {
         popupMenu.add(clearChecksumMenuItem);
 
         treeView.addMouseListener(new UserMouseClickListener(this::onMouseClicked));
+        treeView.addTreeSelectionListener(new UserTreeSelectionListener(this::onSelectionChanged));
 
         refresh();
     }
@@ -206,27 +209,21 @@ public @Component class DirectoryView extends Panel {
     }
 
     private void onMouseClicked(@Mandatory MouseEvent event) {
-        if (event.getButton() == MouseEvent.BUTTON1) {
-            updateDetails(event);
-        }
-
         if (event.getButton() == MouseEvent.BUTTON3) {
             showPopupMenu(event);
         }
     }
 
-    private void updateDetails(@Mandatory MouseEvent event) {
-        window.getDetailsView().setNode(getNodeAt(event));
-        window.getDetailsView().repaint();
-    }
-
-    private @Optional Node getNodeAt(@Mandatory MouseEvent event) {
-        TreePath treePath = treeView.getPathForLocation(event.getX(), event.getY());
-        if (treePath != null) {
-            ObjectTreeEntry entry = (ObjectTreeEntry) treePath.getLastPathComponent();
-            return (Node) entry.get();
-        } else {
-            return null;
+    private void onSelectionChanged(@Mandatory TreeSelectionEvent event) {
+        for (TreePath path : event.getPaths()) {
+            if (event.isAddedPath(path)) {
+                Node node = getNodeFrom(path);
+                if (node != null) {
+                    window.getDetailsView().setNode(node);
+                    window.getDetailsView().repaint();
+                }
+                break;
+            }
         }
     }
 
@@ -276,15 +273,21 @@ public @Component class DirectoryView extends Panel {
         window.compare();
     }
 
-    private List<Node> getSelectedNodes() {
+    private @Mandatory List<Node> getSelectedNodes() {
         List<Node> selectedNodes = new List<>();
         TreePath[] paths = treeView.getSelectionPaths();
         if (paths != null) {
             for (TreePath path : paths) {
-                Node node = (Node) ((ObjectTreeEntry) path.getLastPathComponent()).get();
-                selectedNodes.addLast(node);
+                Node node = getNodeFrom(path);
+                if (node != null) {
+                    selectedNodes.addLast(node);
+                }
             }
         }
         return selectedNodes;
+    }
+
+    private @Optional Node getNodeFrom(@Optional TreePath path) {
+        return path == null ? null : (Node) ((ObjectTreeEntry) path.getLastPathComponent()).get();
     }
 }

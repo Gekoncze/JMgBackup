@@ -2,8 +2,6 @@
     ...
 
 ### SOON ###
-    fix bug where changing selection in tree view does not update details view
-
     resolve to do in directory comparator
 
     add unit test for progress updates and estimates
