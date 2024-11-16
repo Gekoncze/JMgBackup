@@ -4,8 +4,8 @@ import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.Info;
-import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
+import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Settings;
 import cz.mg.backup.gui.views.details.DetailsView;
 import cz.mg.backup.gui.views.directory.DirectoryView;
@@ -73,11 +73,15 @@ public @Component class MainWindow extends JFrame {
     }
 
     public void compare() {
-        ProgressDialog.show(this, "Compare", () -> compareService.compare(
-            leftView.getDirectory(),
-            rightView.getDirectory(),
-            new Progress("Compare")
-        ));
+        Directory a = leftView.getDirectory();
+        Directory b = rightView.getDirectory();
+
+        ProgressDialog.run(
+            this,
+            "Compare",
+            null,
+            progress -> compareService.compare(a, b, progress)
+        );
 
         leftView.refresh();
         rightView.refresh();

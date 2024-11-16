@@ -3,6 +3,8 @@ package cz.mg.backup.gui.dialogs;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.components.Status;
 import cz.mg.backup.components.Task;
 import cz.mg.backup.gui.MainWindow;
@@ -16,7 +18,8 @@ import cz.mg.panel.settings.Fill;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public @Component class ProgressDialog extends Dialog {
     private static final int MARGIN = 8;
@@ -25,10 +28,14 @@ public @Component class ProgressDialog extends Dialog {
 
     private final @Service ButtonFactory buttonFactory = ButtonFactory.getInstance();
 
-    private final @Mandatory Task task;
+    private final @Mandatory Task<?> task;
     private final @Mandatory Timer timer;
 
-    private ProgressDialog(@Mandatory MainWindow window, @Mandatory String title, @Mandatory Runnable runnable) {
+    private ProgressDialog(
+        @Mandatory MainWindow window,
+        @Mandatory String title,
+        @Mandatory Task<?> task
+    ) {
         super(window);
         setTitle(title);
 
@@ -44,11 +51,11 @@ public @Component class ProgressDialog extends Dialog {
         addWindowListener(new UserWindowClosedListener(this::closed));
         addKeyListenerRecursive(this, new UserEscapeKeyPressListener(this::cancel));
 
-        task = new Task(runnable);
-        timer = new Timer(REFRESH_DELAY, this::refresh);
+        this.task = task;
+        this.timer = new Timer(REFRESH_DELAY, this::refresh);
     }
 
-    public void start() {
+    private void start() {
         task.start();
         timer.start();
     }
@@ -80,28 +87,30 @@ public @Component class ProgressDialog extends Dialog {
         }
     }
 
-    public static void show(
+    public static void run(
         @Mandatory MainWindow window,
         @Mandatory String title,
-        @Mandatory Runnable runnable
+        @Optional String description,
+        @Mandatory Consumer<Progress> runnable
     ) {
-        ProgressDialog dialog = new ProgressDialog(window, title, runnable);
+        Task<?> task = new Task<>(description != null ? description : title, runnable);
+        ProgressDialog dialog = new ProgressDialog(window, title, task);
         dialog.start();
         dialog.setVisible(true);
         dialog.rethrow();
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T show(
+    public static <R> R compute(
         @Mandatory MainWindow window,
         @Mandatory String title,
-        @Mandatory Supplier<T> function
+        @Optional String description,
+        @Mandatory Function<Progress, R> runnable
     ) {
-        Object[] captor = new Object[1];
-        ProgressDialog dialog = new ProgressDialog(window, title, () -> captor[0] = function.get());
+        Task<R> task = new Task<>(description != null ? description : title, runnable);
+        ProgressDialog dialog = new ProgressDialog(window, title, task);
         dialog.start();
         dialog.setVisible(true);
         dialog.rethrow();
-        return (T) captor[0];
+        return task.getResult();
     }
 }

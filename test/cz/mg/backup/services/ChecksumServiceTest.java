@@ -5,6 +5,7 @@ import cz.mg.annotations.classes.Test;
 import cz.mg.backup.Configuration;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.*;
+import cz.mg.collections.list.List;
 import cz.mg.test.Assert;
 
 public @Test class ChecksumServiceTest {
@@ -29,7 +30,7 @@ public @Test class ChecksumServiceTest {
         File file = new File();
         file.setPath(Configuration.FLYING_AKI_PATH);
 
-        service.compute(file, Algorithm.SHA256, new Progress("Test"));
+        service.compute(new List<>(file), Algorithm.SHA256, new Progress("Test"));
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
@@ -40,7 +41,7 @@ public @Test class ChecksumServiceTest {
         file.setPath(Configuration.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(FAKESUM));
 
-        service.compute(file, Algorithm.SHA256, new Progress("Test"));
+        service.compute(new List<>(file), Algorithm.SHA256, new Progress("Test"));
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(FAKESUM, file.getChecksum().getHash());
@@ -53,7 +54,7 @@ public @Test class ChecksumServiceTest {
         Directory directory = new Directory();
         directory.getFiles().addLast(file);
 
-        service.compute(directory, Algorithm.SHA256, new Progress("Test"));
+        service.compute(new List<>(directory), Algorithm.SHA256, new Progress("Test"));
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
@@ -64,7 +65,7 @@ public @Test class ChecksumServiceTest {
         file.setPath(Configuration.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(FAKESUM));
 
-        service.clear(file);
+        service.clear(new List<>(file), new Progress("Test"));
 
         Assert.assertNull(file.getChecksum());
     }
@@ -77,7 +78,7 @@ public @Test class ChecksumServiceTest {
         Directory directory = new Directory();
         directory.getFiles().addLast(file);
 
-        service.clear(directory);
+        service.clear(new List<>(directory), new Progress("Test"));
 
         Assert.assertNull(file.getChecksum());
     }

@@ -2,9 +2,9 @@
     ...
 
 ### SOON ###
-    move progress object creation into progress dialog
+    fix bug where changing selection in tree view does not update details view
+
     resolve to do in directory comparator
-    resolve to do in checksum service
 
     add unit test for progress updates and estimates
     add unit test for directory service

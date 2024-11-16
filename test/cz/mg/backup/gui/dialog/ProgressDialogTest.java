@@ -18,7 +18,7 @@ public @Test class ProgressDialogTest {
 
     private void test() {
         MainWindow window = new MainWindow();
-        SwingUtilities.invokeLater(() -> ProgressDialog.show(window, "Test Task", this::testTask));
+        SwingUtilities.invokeLater(() -> ProgressDialog.run(window, "Test Task", null, progress -> testTask()));
         window.setVisible(true);
     }
 

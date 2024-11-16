@@ -1,6 +1,7 @@
 package cz.mg.backup.components;
 
 import cz.mg.annotations.classes.Component;
+
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.exceptions.CancelException;
@@ -9,7 +10,7 @@ public @Component class Progress {
     private final @Mandatory String description;
     private volatile long value;
     private volatile long limit;
-    private volatile @Optional Progress subProgress;
+    private volatile @Optional Progress next;
 
     public Progress(@Mandatory String description) {
         this.description = description;
@@ -35,12 +36,12 @@ public @Component class Progress {
         this.limit = limit;
     }
 
-    public @Optional Progress getSubProgress() {
-        return subProgress;
+    public @Optional Progress getNext() {
+        return next;
     }
 
-    public void setSubProgress(@Optional Progress subProgress) {
-        this.subProgress = subProgress;
+    public void setNext(@Optional Progress next) {
+        this.next = next;
     }
 
     public @Optional Double percent() {
@@ -49,7 +50,7 @@ public @Component class Progress {
 
     public @Mandatory Progress nest(@Mandatory String name) {
         Progress subProgress = new Progress(name);
-        setSubProgress(subProgress);
+        setNext(subProgress);
         return subProgress;
     }
 

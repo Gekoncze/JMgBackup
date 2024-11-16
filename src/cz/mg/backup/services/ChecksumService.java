@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.*;
+import cz.mg.collections.list.List;
 
 public @Service class ChecksumService {
     private static volatile @Service ChecksumService instance;
@@ -25,25 +26,27 @@ public @Service class ChecksumService {
     private ChecksumService() {
     }
 
-    public void compute(@Mandatory Node node, @Mandatory Algorithm algorithm, @Mandatory Progress progress) {
-        if (node instanceof File file) {
-            compute(file, algorithm, progress);
-        } else if (node instanceof Directory directory) {
-            compute(directory, algorithm, progress);
-        } else {
-            throw new UnsupportedOperationException(
-                "Unsupported node of type " + node.getClass().getSimpleName() + "."
-            );
+    public void compute(@Mandatory List<Node> nodes, @Mandatory Algorithm algorithm, @Mandatory Progress progress) {
+        progress.setLimit(estimate(nodes));
+
+        for (Node node : nodes) {
+            if (node instanceof File file) {
+                compute(file, algorithm, progress);
+                progress.step();
+            } else if (node instanceof Directory directory) {
+                compute(directory, algorithm, progress);
+                progress.step();
+            } else {
+                throw new UnsupportedOperationException(
+                    "Unsupported node of type " + node.getClass().getSimpleName() + "."
+                );
+            }
         }
     }
 
-    public void compute(@Mandatory Directory directory, @Mandatory Algorithm algorithm, @Mandatory Progress progress) {
-        if (progress.getLimit() < 1) {
-            progress.setLimit(directory.getProperties().getTotalCount());
-        }
-
+    private void compute(@Mandatory Directory directory, @Mandatory Algorithm algorithm, @Mandatory Progress progress) {
         for (File file : directory.getFiles()) {
-            compute(file, algorithm, progress.nest("Checksum " + file.getPath().getFileName()));
+            compute(file, algorithm, progress);
             progress.step();
         }
 
@@ -53,35 +56,61 @@ public @Service class ChecksumService {
         }
     }
 
-    public void compute(@Mandatory File file, @Mandatory Algorithm algorithm, @Mandatory Progress progress) {
+    private void compute(@Mandatory File file, @Mandatory Algorithm algorithm, @Mandatory Progress progress) {
         if (file.getChecksum() == null) {
-            file.setChecksum(checksumReader.read(file.getPath(), algorithm, progress));
+            file.setChecksum(checksumReader.read(
+                file.getPath(),
+                algorithm,
+                progress.nest("Checksum " + file.getPath().getFileName())
+            ));
         }
     }
 
-    public void clear(@Mandatory Node node) { // TODO - track progress
-        if (node instanceof File file) {
-            clear(file);
-        } else if (node instanceof Directory directory) {
-            clear(directory);
-        } else {
-            throw new UnsupportedOperationException(
-                "Unsupported node of type " + node.getClass().getSimpleName() + "."
-            );
+    public void clear(@Mandatory List<Node> nodes, @Mandatory Progress progress) {
+        progress.setLimit(estimate(nodes));
+
+        for (Node node : nodes) {
+            if (node instanceof File file) {
+                clear(file);
+                progress.step();
+            } else if (node instanceof Directory directory) {
+                clear(directory, progress);
+                progress.step();
+            } else {
+                throw new UnsupportedOperationException(
+                    "Unsupported node of type " + node.getClass().getSimpleName() + "."
+                );
+            }
         }
     }
 
-    public void clear(@Mandatory Directory directory) {
+    private void clear(@Mandatory Directory directory, @Mandatory Progress progress) {
         for (File file : directory.getFiles()) {
             clear(file);
+            progress.step();
         }
 
         for (Directory subdirectory : directory.getDirectories()) {
-            clear(subdirectory);
+            clear(subdirectory, progress);
+            progress.step();
         }
     }
 
-    public void clear(@Mandatory File file) {
+    private void clear(@Mandatory File file) {
         file.setChecksum(null);
+    }
+
+    private long estimate(@Mandatory List<Node> nodes) {
+        long estimate = 0;
+
+        for (Node node : nodes) {
+            if (node instanceof Directory directory) {
+                estimate += directory.getProperties().getTotalFileCount();
+            }
+
+            estimate++;
+        }
+
+        return estimate;
     }
 }

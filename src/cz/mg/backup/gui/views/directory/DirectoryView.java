@@ -5,6 +5,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
+import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
@@ -119,10 +120,11 @@ public @Component class DirectoryView extends Panel {
         if (path != null) {
             Map<Path, Pair<Checksum, Date>> checksums = collectChecksums();
             setDirectory(
-                ProgressDialog.show(
+                ProgressDialog.compute(
                     window,
                     "Load Directory",
-                    () -> directoryReader.read(path, window.getSettings(), new Progress("Load Directory"))
+                    "Load Directory " + path.toString(),
+                    progress -> directoryReader.read(path, window.getSettings(), progress)
                 )
             );
             restoreChecksums(checksums);
@@ -248,24 +250,29 @@ public @Component class DirectoryView extends Panel {
     }
 
     private void computeChecksum() {
-        ProgressDialog.show(window, "Compute checksum", () -> {
-            for (Node node : getSelectedNodes()) {
-                checksumService.compute(
-                    node,
-                    window.getSettings().getAlgorithm(),
-                    new Progress("Checksum " + node.getPath().getFileName())
-                );
-            }
-        });
+        List<Node> nodes = getSelectedNodes();
+        Algorithm algorithm = window.getSettings().getAlgorithm();
+
+        ProgressDialog.run(
+            window,
+            "Compute checksum",
+            null,
+            progress -> checksumService.compute(nodes, algorithm, progress)
+        );
+
         window.compare();
     }
 
     private void clearChecksum() {
-        ProgressDialog.show(window, "Clear checksum", () -> {
-            for (Node node : getSelectedNodes()) {
-                checksumService.clear(node);
-            }
-        });
+        List<Node> nodes = getSelectedNodes();
+
+        ProgressDialog.run(
+            window,
+            "Clear checksum",
+            null,
+            progress -> checksumService.clear(nodes, progress)
+        );
+
         window.compare();
     }
 

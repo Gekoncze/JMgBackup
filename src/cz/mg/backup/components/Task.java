@@ -5,39 +5,66 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.exceptions.CancelException;
 
-public @Component class Task {
-    private static final ThreadLocal<Task> currentTask = new ThreadLocal<>();
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-    private final @Mandatory Runnable runnable;
+public @Component class Task<R> {
+    private static final ThreadLocal<Task<?>> currentTask = new ThreadLocal<>();
+
+    private final @Mandatory Function<Progress, R> runnable;
+    private final @Mandatory Progress progress;
+    private @Mandatory Status status;
+    private @Optional R result;
+    private @Optional RuntimeException exception;
     private @Optional Thread thread;
-    private volatile @Optional RuntimeException exception;
-    private volatile @Mandatory Status status;
 
-    public Task(@Mandatory Runnable runnable) {
+    public Task(@Mandatory String description, @Mandatory Runnable runnable) {
+        this(description, progress -> {
+            runnable.run();
+            return null;
+        });
+    }
+
+    public Task(@Mandatory String description, @Mandatory Consumer<Progress> runnable) {
+        this(description, progress -> {
+            runnable.accept(progress);
+            return null;
+        });
+    }
+
+    public Task(@Mandatory String description, @Mandatory Supplier<R> runnable) {
+        this(description, progress -> {
+            return runnable.get();
+        });
+    }
+
+    public Task(@Mandatory String description, @Mandatory Function<Progress, R> runnable) {
         this.runnable = runnable;
+        this.progress = new Progress(description);
         this.status = Status.PENDING;
+    }
+
+    public synchronized @Mandatory Progress getProgress() {
+        return progress;
     }
 
     public synchronized @Mandatory Status getStatus() {
         return status;
     }
 
-    private synchronized void setStatus(@Mandatory Status status) {
-        this.status = status;
+    public synchronized @Optional R getResult() {
+        return result;
     }
 
     public synchronized @Optional RuntimeException getException() {
         return exception;
     }
 
-    public synchronized void setException(@Optional RuntimeException exception) {
-        this.exception = exception;
-    }
-
     public synchronized void start() {
         if (status == Status.PENDING) {
             thread = new Thread(this::compute);
-            setStatus(Status.RUNNING);
+            status = Status.RUNNING;
             thread.start();
         }
     }
@@ -45,21 +72,21 @@ public @Component class Task {
     private void compute() {
         try {
             currentTask.set(this);
-            runnable.run();
-            setStatus(Status.COMPLETED);
+            result = runnable.apply(progress);
+            status = Status.COMPLETED;
         } catch (RuntimeException e) {
             if (!(e instanceof CancelException)) {
-                setException(e);
-                setStatus(Status.FAILED);
+                exception = e;
+                status = Status.FAILED;
             }
         }
     }
 
     public synchronized void cancel() {
-        setStatus(Status.CANCELLED);
+        status = Status.CANCELLED;
     }
 
-    public void join() {
+    public synchronized void join() {
         try {
             if (thread != null) {
                 thread.join();
@@ -69,7 +96,7 @@ public @Component class Task {
         }
     }
 
-    public static @Optional Task getCurrentTask() {
+    public static @Optional Task<?> getCurrentTask() {
         return currentTask.get();
     }
 }
