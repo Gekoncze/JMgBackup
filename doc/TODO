@@ -2,8 +2,6 @@
     ...
 
 ### SOON ###
-    resolve to do in directory comparator
-
     add unit test for progress updates and estimates
     add unit test for directory service
     add unit test for directory properties

@@ -11,8 +11,10 @@ public @Component class DirectoryDetailsView extends Panel {
     public DirectoryDetailsView(@Mandatory Directory directory) {
         addVertical(new TitleLabel(directory.getPath().getFileName().toString()));
         addVertical(new PlainLabel("Path: " + directory.getPath()));
-        addVertical(new PlainLabel("Directory count: " + directory.getDirectories().count()));
-        addVertical(new PlainLabel("File count: " + directory.getFiles().count()));
+        addVertical(new PlainLabel("Directory count: " + directory.getDirectories().count()
+            + " (total " + directory.getProperties().getTotalDirectoryCount() + ")"));
+        addVertical(new PlainLabel("File count: " + directory.getFiles().count()
+            + " (total " + directory.getProperties().getTotalFileCount() + ")"));
 
         if (!directory.getErrors().isEmpty()) {
             addVertical(new PlainLabel("Errors:"));

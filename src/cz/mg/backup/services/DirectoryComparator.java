@@ -85,19 +85,20 @@ public @Service class DirectoryComparator {
 
         if (first != null && second == null) {
             first.getErrors().addLast(new CompareException("Missing corresponding directory."));
-            // TODO - might need to increment total error count
+            first.getProperties().setTotalErrorCount(first.getProperties().getTotalErrorCount() + 1);
         }
 
         if (first == null && second != null) {
             second.getErrors().addLast(new CompareException("Missing corresponding directory."));
-            // TODO - might need to increment total error count
+            second.getProperties().setTotalErrorCount(second.getProperties().getTotalErrorCount() + 1);
         }
 
         if (first != null && second != null) {
             if (!Objects.equals(first.getPath().getFileName(), second.getPath().getFileName())) {
                 first.getErrors().addLast(new CompareException("Directory name differs."));
+                first.getProperties().setTotalErrorCount(first.getProperties().getTotalErrorCount() + 1);
                 second.getErrors().addLast(new CompareException("Directory name differs."));
-                // TODO - might need to increment total error count
+                second.getProperties().setTotalErrorCount(second.getProperties().getTotalErrorCount() + 1);
             }
         }
 

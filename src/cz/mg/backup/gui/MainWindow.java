@@ -19,8 +19,8 @@ import java.awt.*;
 
 public @Component class MainWindow extends JFrame {
     private static final @Mandatory String TITLE = Info.NAME + " " + Info.VERSION;
-    private static final int DEFAULT_WIDTH = 800;
-    private static final int DEFAULT_HEIGHT = 600;
+    private static final int DEFAULT_WIDTH = 1024;
+    private static final int DEFAULT_HEIGHT = 768;
     private static final int MARGIN = 0;
     private static final int PADDING = 8;
 
