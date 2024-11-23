@@ -86,7 +86,7 @@ public @Component class Task<R> {
         status = Status.CANCELLED;
     }
 
-    public synchronized void join() {
+    public void join() {
         try {
             if (thread != null) {
                 thread.join();
