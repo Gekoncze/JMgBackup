@@ -18,6 +18,8 @@
         show multiple progress bars when there are sub-tasks
 
 ### LATER ###
+    show question mark icon when matching file or directory does not have checksum computed
+
     add context menu for tree entries
         add option to show file or directory in file manager
         add option to show file or directory details
