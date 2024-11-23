@@ -19,6 +19,8 @@
 
 ### LATER ###
     show question mark icon when matching file or directory does not have checksum computed
+    improve details view - after clicking same element, it should still be refreshed
+        this is when comparing details of two files in separate views
 
     add context menu for tree entries
         add option to show file or directory in file manager
