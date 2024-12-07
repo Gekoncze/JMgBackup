@@ -33,8 +33,6 @@
     add icons to menu
     add support for drag and drop
 
-    fix bug - after restoring tree node expansion, if all was closed then root is still expanded
-
     add duplicate detector
         show different icon for duplicates ?
         allow user to configure duplicate detection (specify key properties)

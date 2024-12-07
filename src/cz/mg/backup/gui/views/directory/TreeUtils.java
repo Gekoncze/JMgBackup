@@ -14,6 +14,14 @@ public @Static class TreeUtils {
         return convert(tree.getExpandedDescendants(getRootPath(tree)));
     }
 
+    public static @Optional TreePath getCollapsedRootPath(@Mandatory JTree tree) {
+        TreePath root = getRootPath(tree);
+        if (root != null && !tree.isExpanded(root)) {
+            return root;
+        }
+        return null;
+    }
+
     public static @Mandatory List<TreePath> getSelectedPaths(@Mandatory JTree tree) {
         return convert(tree.getSelectionPaths());
     }
@@ -41,5 +49,23 @@ public @Static class TreeUtils {
             }
         }
         return pathList;
+    }
+
+    public static void expandPaths(@Mandatory JTree tree, @Mandatory List<TreePath> expandedPaths) {
+        for (TreePath expandedPath : expandedPaths) {
+            tree.expandPath(expandedPath);
+        }
+    }
+
+    public static void collapseRootPath(@Mandatory JTree tree, @Optional TreePath collapsedRoot) {
+        if (collapsedRoot != null) {
+            tree.collapsePath(collapsedRoot);
+        }
+    }
+
+    public static void selectPaths(@Mandatory JTree tree, @Mandatory List<TreePath> selectedPaths) {
+        for (TreePath selectedPath : selectedPaths) {
+            tree.addSelectionPath(selectedPath);
+        }
     }
 }

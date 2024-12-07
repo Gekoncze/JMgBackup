@@ -47,7 +47,7 @@ public @Component class DirectoryView extends Panel {
 
     private final @Mandatory MainWindow window;
     private final @Mandatory JTextField pathField;
-    private final @Mandatory JTree treeView;
+    private final @Mandatory JTree tree;
     private final @Mandatory JFileChooser directoryChooser;
     private final @Mandatory JPopupMenu popupMenu;
 
@@ -66,11 +66,11 @@ public @Component class DirectoryView extends Panel {
         pathPanel.addHorizontal(pathField, 1, 0);
         pathPanel.addHorizontal(buttonFactory.create("...", this::select));
 
-        treeView = new JTree();
-        treeView.setBorder(BorderFactory.createEtchedBorder());
+        tree = new JTree();
+        tree.setBorder(BorderFactory.createEtchedBorder());
 
         addVertical(pathPanel, 1, 0);
-        addVertical(new JScrollPane(treeView), 1, 1);
+        addVertical(new JScrollPane(tree), 1, 1);
 
         directoryChooser = new JFileChooser();
         directoryChooser.setDialogType(JFileChooser.OPEN_DIALOG);
@@ -86,8 +86,8 @@ public @Component class DirectoryView extends Panel {
         clearChecksumMenuItem.addActionListener(new UserActionListener(this::clearChecksum));
         popupMenu.add(clearChecksumMenuItem);
 
-        treeView.addMouseListener(new UserMouseClickListener(this::onMouseClicked));
-        treeView.addTreeSelectionListener(new UserTreeSelectionListener(this::onSelectionChanged));
+        tree.addMouseListener(new UserMouseClickListener(this::onMouseClicked));
+        tree.addTreeSelectionListener(new UserTreeSelectionListener(this::onSelectionChanged));
 
         refresh();
     }
@@ -144,29 +144,21 @@ public @Component class DirectoryView extends Panel {
 
     public void refresh() {
         if (directory != null) {
-            List<TreePath> expandedPaths = TreeUtils.getExpandedPaths(treeView);
-            List<TreePath> selectedPaths = TreeUtils.getSelectedPaths(treeView);
-            treeView.setModel(new ObjectTreeModel(
+            List<TreePath> expandedPaths = TreeUtils.getExpandedPaths(tree);
+            TreePath collapsedRootPath = TreeUtils.getCollapsedRootPath(tree);
+            List<TreePath> selectedPaths = TreeUtils.getSelectedPaths(tree);
+
+            tree.setModel(new ObjectTreeModel(
                 directoryTreeFactory.create(directory, new Progress("Build directory tree")))
             );
-            restoreExpandedPaths(expandedPaths);
-            restoreSelectedPaths(selectedPaths);
+
+            TreeUtils.expandPaths(tree, expandedPaths);
+            TreeUtils.collapseRootPath(tree, collapsedRootPath);
+            TreeUtils.selectPaths(tree, selectedPaths);
         } else {
-            treeView.setModel(new ObjectTreeModel(null));
+            tree.setModel(new ObjectTreeModel(null));
         }
-        treeView.setCellRenderer(new NodeCellRenderer());
-    }
-
-    private void restoreExpandedPaths(@Mandatory List<TreePath> expandedPaths) {
-        for (TreePath expandedPath : expandedPaths) {
-            treeView.expandPath(expandedPath);
-        }
-    }
-
-    private void restoreSelectedPaths(@Mandatory List<TreePath> selectedPaths) {
-        for (TreePath selectedPath : selectedPaths) {
-            treeView.addSelectionPath(selectedPath);
-        }
+        tree.setCellRenderer(new NodeCellRenderer());
     }
 
     private @Mandatory Map<Path, Pair<Checksum, Date>> collectChecksums() {
@@ -231,13 +223,13 @@ public @Component class DirectoryView extends Panel {
 
     private void showPopupMenu(@Mandatory MouseEvent event) {
         if (isRowSelectedAt(event)) {
-            popupMenu.show(treeView, event.getX(), event.getY());
+            popupMenu.show(tree, event.getX(), event.getY());
         }
     }
 
     private boolean isRowSelectedAt(@Mandatory MouseEvent event) {
-        int row = treeView.getRowForLocation(event.getX(), event.getY());
-        int[] selectedRows = treeView.getSelectionRows();
+        int row = tree.getRowForLocation(event.getX(), event.getY());
+        int[] selectedRows = tree.getSelectionRows();
         if (row != -1 && selectedRows != null) {
             for (int selectedRow : selectedRows) {
                 if (selectedRow == row) {
@@ -277,7 +269,7 @@ public @Component class DirectoryView extends Panel {
 
     private @Mandatory List<Node> getSelectedNodes() {
         List<Node> selectedNodes = new List<>();
-        TreePath[] paths = treeView.getSelectionPaths();
+        TreePath[] paths = tree.getSelectionPaths();
         if (paths != null) {
             for (TreePath path : paths) {
                 Node node = getNodeFrom(path);
