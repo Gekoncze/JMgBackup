@@ -10,11 +10,6 @@
         for directories
         for files
 
-    minor fix for checksum
-        when selected multiple nodes and one node is parent of another node
-            exclude the child node, because it is going to get computed anyway
-            current solution shows too large limit
-
 ### LATER ###
     show question mark icon when matching file or directory does not have checksum computed
     improve details view - after clicking same element, it should still be refreshed

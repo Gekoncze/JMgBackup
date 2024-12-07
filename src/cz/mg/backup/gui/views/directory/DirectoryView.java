@@ -16,6 +16,7 @@ import cz.mg.backup.gui.event.UserMouseClickListener;
 import cz.mg.backup.gui.event.UserTreeSelectionListener;
 import cz.mg.backup.gui.services.ButtonFactory;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
+import cz.mg.backup.gui.services.SelectionSimplifier;
 import cz.mg.backup.services.ChecksumService;
 import cz.mg.backup.services.DirectoryReader;
 import cz.mg.backup.services.DirectoryService;
@@ -42,6 +43,7 @@ public @Component class DirectoryView extends Panel {
     private final @Service ButtonFactory buttonFactory = ButtonFactory.getInstance();
     private final @Service ChecksumService checksumService = ChecksumService.getInstance();
     private final @Service DirectoryService directoryService = DirectoryService.getInstance();
+    private final @Service SelectionSimplifier selectionSimplifier = SelectionSimplifier.getInstance();
 
     private final @Mandatory MainWindow window;
     private final @Mandatory JTextField pathField;
@@ -247,7 +249,7 @@ public @Component class DirectoryView extends Panel {
     }
 
     private void computeChecksum() {
-        List<Node> nodes = getSelectedNodes();
+        List<Node> nodes = getSimplifiedSelectedNodes();
         Algorithm algorithm = window.getSettings().getAlgorithm();
 
         ProgressDialog.run(
@@ -261,7 +263,7 @@ public @Component class DirectoryView extends Panel {
     }
 
     private void clearChecksum() {
-        List<Node> nodes = getSelectedNodes();
+        List<Node> nodes = getSimplifiedSelectedNodes();
 
         ProgressDialog.run(
             window,
@@ -285,6 +287,15 @@ public @Component class DirectoryView extends Panel {
             }
         }
         return selectedNodes;
+    }
+
+    private @Mandatory List<Node> getSimplifiedSelectedNodes() {
+        return ProgressDialog.compute(
+            window,
+            "Simplify selection",
+            null,
+            progress -> selectionSimplifier.simplify(getSelectedNodes(), progress)
+        );
     }
 
     private @Optional Node getNodeFrom(@Optional TreePath path) {

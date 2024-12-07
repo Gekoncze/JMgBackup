@@ -60,7 +60,7 @@ public @Component class Progress {
     }
 
     public void checkStatus() {
-        Task task = Task.getCurrentTask();
+        Task<?> task = Task.getCurrentTask();
         if (task != null) {
             if (task.getStatus() == Status.CANCELLED) {
                 throw new CancelException();
