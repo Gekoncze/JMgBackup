@@ -18,7 +18,7 @@ public @Component class ProgressBar extends Panel {
     public ProgressBar(@Mandatory Progress progress) {
         super(0, PADDING);
 
-        descriptionLabel = new JLabel(progress.getDescription());
+        descriptionLabel = new JLabel();
         addVertical(descriptionLabel, 1, 0, Alignment.MIDDLE, Fill.BOTH);
 
         progressBar = new JProgressBar();
@@ -40,6 +40,8 @@ public @Component class ProgressBar extends Panel {
         progressBar.setValue(percent == null ? 0 : ((int) (double) percent));
         progressBar.setString(progressBarText);
         progressBar.setStringPainted(percent != null);
+
+        descriptionLabel.setText(progress.getDescription());
 
         return this;
     }
