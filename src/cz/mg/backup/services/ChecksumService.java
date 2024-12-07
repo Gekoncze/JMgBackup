@@ -57,7 +57,7 @@ public @Service class ChecksumService {
     }
 
     private void compute(@Mandatory File file, @Mandatory Algorithm algorithm, @Mandatory Progress progress) {
-        if (file.getChecksum() == null) {
+        if (file.getChecksum() == null || file.getChecksum().getAlgorithm() != algorithm) {
             file.setChecksum(checksumReader.read(
                 file.getPath(),
                 algorithm,

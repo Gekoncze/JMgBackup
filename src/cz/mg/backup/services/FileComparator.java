@@ -38,13 +38,28 @@ public @Service class FileComparator {
         }
 
         if (first.getChecksum() != null && second.getChecksum() != null) {
-            if (!Objects.equals(first.getChecksum().getHash(), second.getChecksum().getHash())) {
+            if (!Objects.equals(first.getChecksum().getAlgorithm(), second.getChecksum().getAlgorithm())) {
+                CompareException exception = new CompareException(
+                    "Expected algorithm " + first.getChecksum().getAlgorithm() + ", " +
+                        "but got " + second.getChecksum().getAlgorithm() + "."
+                );
+                first.getErrors().addLast(exception);
+                second.getErrors().addLast(exception);
+            } else if (!Objects.equals(first.getChecksum().getHash(), second.getChecksum().getHash())) {
                 CompareException exception = new CompareException(
                     "Expected hash " + first.getChecksum().getHash() + ", " +
                         "but got " + second.getChecksum().getHash() + "."
                 );
                 first.getErrors().addLast(exception);
                 second.getErrors().addLast(exception);
+            }
+        } else if (first.getChecksum() != null || second.getChecksum() != null) {
+            if (first.getChecksum() == null) {
+                first.getErrors().addLast(new CompareException("Checksum not computed."));
+            }
+
+            if (second.getChecksum() == null) {
+                second.getErrors().addLast(new CompareException("Checksum not computed."));
             }
         }
     }

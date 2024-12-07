@@ -21,7 +21,9 @@ public @Component class FileDetailsView extends Panel {
         addVertical(new PlainLabel("Modified: " + formatDate(file.getProperties().getModified())));
 
         if (file.getChecksum() != null) {
-            addVertical(new PlainLabel("Hash: " + file.getChecksum().getHash()));
+            addVertical(new PlainLabel(
+                "Hash: " + file.getChecksum().getHash() + " (" + file.getChecksum().getAlgorithm() + ")"
+            ));
         }
 
         if (!file.getErrors().isEmpty()) {

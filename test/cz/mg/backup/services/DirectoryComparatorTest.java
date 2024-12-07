@@ -308,7 +308,7 @@ public @Test class DirectoryComparatorTest {
         file.setPath(Path.of(name));
         file.setProperties(new FileProperties());
         file.getProperties().setSize(size);
-        file.setChecksum(new Checksum(hash));
+        file.setChecksum(new Checksum(Algorithm.SHA256, hash));
         return file;
     }
 }

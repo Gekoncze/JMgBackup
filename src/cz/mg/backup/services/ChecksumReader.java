@@ -59,7 +59,7 @@ public @Service class ChecksumReader {
                 }
             }
 
-            return new Checksum(hashConverter.convert(messageDigest.digest()));
+            return new Checksum(algorithm, hashConverter.convert(messageDigest.digest()));
         } catch (Exception e) {
             if (e instanceof CancelException ce) {
                 throw ce;

@@ -10,10 +10,6 @@
         for directories
         for files
 
-    in file store not only checksum but also algorithm
-        when comparing, compare also algorithm
-        when computing, compare also algorithm (not just nullability)
-
     minor fix for checksum
         when selected multiple nodes and one node is parent of another node
             exclude the child node, because it is going to get computed anyway
@@ -40,7 +36,12 @@
     add more keyboard shortcuts to menu
     add icons to menu
     add support for drag and drop
+
     fix bug - after restoring tree node expansion, if all was closed then root is still expanded
+
+    fix bug - when selecting node from different view (left vs right) then always refresh details
+        or when clicking, make sure that selected item is the one that was lastly clicked on
+        + make sure that keyboard selection still refreshes details view properly
 
     add duplicate detector
         show different icon for duplicates ?

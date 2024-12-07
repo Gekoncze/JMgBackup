@@ -5,6 +5,7 @@ import cz.mg.annotations.classes.Test;
 import cz.mg.backup.Configuration;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
+import cz.mg.backup.entities.Checksum;
 import cz.mg.test.Assert;
 
 public @Test class ChecksumReaderTest {
@@ -20,9 +21,9 @@ public @Test class ChecksumReaderTest {
     private final @Service ChecksumReader reader = ChecksumReader.getInstance();
 
     private void testRead() {
-        Assert.assertEquals(
-            Configuration.FLYING_AKI_HASH,
-            reader.read(Configuration.FLYING_AKI_PATH, Algorithm.SHA256, new Progress("Test")).getHash()
-        );
+        Checksum checksum = reader.read(Configuration.FLYING_AKI_PATH, Algorithm.SHA256, new Progress("Test"));
+
+        Assert.assertEquals(Algorithm.SHA256, checksum.getAlgorithm());
+        Assert.assertEquals(Configuration.FLYING_AKI_HASH, checksum.getHash());
     }
 }

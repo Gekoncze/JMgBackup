@@ -9,14 +9,13 @@ import cz.mg.collections.list.List;
 import cz.mg.test.Assert;
 
 public @Test class ChecksumServiceTest {
-    private static final String FAKESUM = "0123456789F";
-
     public static void main(String[] args) {
         System.out.print("Running " + ChecksumServiceTest.class.getSimpleName() + " ... ");
 
         ChecksumServiceTest test = new ChecksumServiceTest();
         test.testComputeFileMissing();
         test.testComputeFileExisting();
+        test.testComputeFileDifferentAlgorithm();
         test.testComputeDirectory();
         test.testClearFile();
         test.testClearDirectory();
@@ -39,12 +38,25 @@ public @Test class ChecksumServiceTest {
     private void testComputeFileExisting() {
         File file = new File();
         file.setPath(Configuration.FLYING_AKI_PATH);
-        file.setChecksum(new Checksum(FAKESUM));
+        file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
 
         service.compute(new List<>(file), Algorithm.SHA256, new Progress("Test"));
 
         Assert.assertNotNull(file.getChecksum());
-        Assert.assertEquals(FAKESUM, file.getChecksum().getHash());
+        Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
+        Assert.assertEquals("FF", file.getChecksum().getHash());
+    }
+
+    private void testComputeFileDifferentAlgorithm() {
+        File file = new File();
+        file.setPath(Configuration.FLYING_AKI_PATH);
+        file.setChecksum(new Checksum(Algorithm.MD5, "FF"));
+
+        service.compute(new List<>(file), Algorithm.SHA256, new Progress("Test"));
+
+        Assert.assertNotNull(file.getChecksum());
+        Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
+        Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
     }
 
     private void testComputeDirectory() {
@@ -58,13 +70,14 @@ public @Test class ChecksumServiceTest {
         service.compute(new List<>(directory), Algorithm.SHA256, new Progress("Test"));
 
         Assert.assertNotNull(file.getChecksum());
+        Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
         Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
     }
 
     private void testClearFile() {
         File file = new File();
         file.setPath(Configuration.FLYING_AKI_PATH);
-        file.setChecksum(new Checksum(FAKESUM));
+        file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
 
         service.clear(new List<>(file), new Progress("Test"));
 
@@ -74,7 +87,7 @@ public @Test class ChecksumServiceTest {
     private void testClearDirectory() {
         File file = new File();
         file.setPath(Configuration.FLYING_AKI_PATH);
-        file.setChecksum(new Checksum(FAKESUM));
+        file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
 
         Directory directory = new Directory();
         directory.setProperties(new DirectoryProperties());

@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.FileProperties;
@@ -27,67 +28,73 @@ public @Test class FileComparatorTest {
         testCompare(
             createFile(null, null),
             createFile(null, null),
-            false
+            false, false
         );
 
         testCompare(
-            createFile(1L, "gg"),
-            createFile(1L, "gg"),
-            false
+            createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
+            createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
+            false, false
         );
 
         testCompare(
             createFile(1L, null),
             createFile(1L, null),
-            false
+            false, false
         );
 
         testCompare(
-            createFile(null, "gg"),
-            createFile(null, "gg"),
-            false
+            createFile(null, new Checksum(Algorithm.SHA256, "gg")),
+            createFile(null, new Checksum(Algorithm.SHA256, "gg")),
+            false, false
         );
 
         testCompare(
-            createFile(1L, "gg"),
-            createFile(3L, "gg"),
-            true
+            createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
+            createFile(3L, new Checksum(Algorithm.SHA256, "gg")),
+            true, true
         );
 
         testCompare(
-            createFile(1L, "abc"),
-            createFile(1L, "gg"),
-            true
+            createFile(1L, new Checksum(Algorithm.SHA256, "abc")),
+            createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
+            true, true
         );
 
         testCompare(
-            createFile(2L, "abc"),
-            createFile(78L, ""),
-            true
+            createFile(2L, new Checksum(Algorithm.SHA256, "abc")),
+            createFile(78L, new Checksum(Algorithm.SHA256, "")),
+            true, true
         );
 
         testCompare(
             createFile(2L, null),
             createFile(78L, null),
-            true
+            true, true
         );
 
         testCompare(
-            createFile(null, "abc"),
-            createFile(null, ""),
-            true
+            createFile(null, new Checksum(Algorithm.SHA256, "abc")),
+            createFile(null, new Checksum(Algorithm.SHA256, "")),
+            true, true
         );
 
         testCompare(
             createFile(null, null),
-            createFile(null, ""),
-            true
+            createFile(null, new Checksum(Algorithm.SHA256, "")),
+            true, false
         );
 
         testCompare(
             createFile(2L, null),
             createFile(null, null),
-            true
+            true, true
+        );
+
+        testCompare(
+            createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
+            createFile(1L, new Checksum(Algorithm.MD5, "gg")),
+            true, true
         );
     }
 
@@ -111,17 +118,22 @@ public @Test class FileComparatorTest {
         Assert.assertEquals(IllegalArgumentException.class, second.getErrors().getFirst().getClass());
     }
 
-    private void testCompare(@Mandatory File first, @Mandatory File second, boolean fail) {
+    private void testCompare(
+        @Mandatory File first,
+        @Mandatory File second,
+        boolean firstHasErrors,
+        boolean secondHasErrors
+    ) {
         service.compare(first, second);
-        Assert.assertEquals(fail, !first.getErrors().isEmpty());
-        Assert.assertEquals(fail, !second.getErrors().isEmpty());
+        Assert.assertEquals(firstHasErrors, !first.getErrors().isEmpty());
+        Assert.assertEquals(secondHasErrors, !second.getErrors().isEmpty());
     }
 
-    private @Mandatory File createFile(@Optional Long size, @Optional String hash) {
+    private @Mandatory File createFile(@Optional Long size, @Optional Checksum checksum) {
         File file = new File();
         file.setProperties(new FileProperties());
         file.getProperties().setSize(size);
-        file.setChecksum(new Checksum(hash));
+        file.setChecksum(checksum);
         return file;
     }
 }
