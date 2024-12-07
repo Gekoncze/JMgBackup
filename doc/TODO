@@ -37,11 +37,6 @@
         show different icon for duplicates ?
         allow user to configure duplicate detection (specify key properties)
 
-    improve sorting
-        current sorting is wrong:
-            Example 2
-            Example
-
     add support for symbolic links
     add support for automatic copying files
         have it also use duplicate detection to skip possible duplicates
