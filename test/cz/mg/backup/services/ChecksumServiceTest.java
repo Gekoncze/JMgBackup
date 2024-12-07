@@ -52,6 +52,7 @@ public @Test class ChecksumServiceTest {
         file.setPath(Configuration.FLYING_AKI_PATH);
 
         Directory directory = new Directory();
+        directory.setProperties(new DirectoryProperties());
         directory.getFiles().addLast(file);
 
         service.compute(new List<>(directory), Algorithm.SHA256, new Progress("Test"));
@@ -76,6 +77,7 @@ public @Test class ChecksumServiceTest {
         file.setChecksum(new Checksum(FAKESUM));
 
         Directory directory = new Directory();
+        directory.setProperties(new DirectoryProperties());
         directory.getFiles().addLast(file);
 
         service.clear(new List<>(directory), new Progress("Test"));

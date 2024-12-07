@@ -16,7 +16,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 
 public @Service class ChecksumReader {
-    private static final int BUFFER_SIZE = 1048576 * 4;
+    private static final int BUFFER_SIZE = 1048576 * 2;
 
     private static volatile @Service ChecksumReader instance;
 
