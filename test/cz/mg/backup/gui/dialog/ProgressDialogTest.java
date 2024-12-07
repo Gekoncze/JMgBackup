@@ -1,6 +1,5 @@
 package cz.mg.backup.gui.dialog;
 
-import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.gui.MainWindow;

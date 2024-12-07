@@ -10,12 +10,14 @@
         for directories
         for files
 
-    display better progress bar with an actual progress
-        display number of processed items
-            * as percentage if number of unprocessed items is available
-            * as absolute number if number of unprocessed items is not available
+    in file store not only checksum but also algorithm
+        when comparing, compare also algorithm
+        when computing, compare also algorithm (not just nullability)
 
-        show multiple progress bars when there are sub-tasks
+    minor fix for checksum
+        when selected multiple nodes and one node is parent of another node
+            exclude the child node, because it is going to get computed anyway
+            current solution shows too large limit
 
 ### LATER ###
     show question mark icon when matching file or directory does not have checksum computed
