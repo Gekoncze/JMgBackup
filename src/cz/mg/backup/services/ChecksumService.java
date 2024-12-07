@@ -105,7 +105,7 @@ public @Service class ChecksumService {
 
         for (Node node : nodes) {
             if (node instanceof Directory directory) {
-                estimate += directory.getProperties().getTotalFileCount();
+                estimate += directory.getProperties().getTotalCount();
             }
 
             estimate++;

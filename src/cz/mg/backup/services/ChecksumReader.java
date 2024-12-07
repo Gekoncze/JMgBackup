@@ -5,6 +5,7 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Checksum;
+import cz.mg.backup.exceptions.CancelException;
 import cz.mg.backup.exceptions.StorageException;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 
 public @Service class ChecksumReader {
-    private static final int BUFFER_SIZE = 1048576;
+    private static final int BUFFER_SIZE = 1048576 * 4;
 
     private static volatile @Service ChecksumReader instance;
 
@@ -60,7 +61,11 @@ public @Service class ChecksumReader {
 
             return new Checksum(hashConverter.convert(messageDigest.digest()));
         } catch (Exception e) {
-            throw new StorageException("Could not compute checksum.", e);
+            if (e instanceof CancelException ce) {
+                throw ce;
+            } else {
+                throw new StorageException("Could not compute checksum.", e);
+            }
         }
     }
 
