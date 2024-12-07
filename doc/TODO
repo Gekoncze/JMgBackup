@@ -56,6 +56,8 @@
         have it also use duplicate detection to skip possible duplicates
 
 ### CONSIDERATIONS ###
+    consider showing special (warning ?) icon when checksum is not computed on one side
+
     consider updatable progress description (or additional updatable field)
         possible use case: include processing speed updated in real time, such as kB/s
 
