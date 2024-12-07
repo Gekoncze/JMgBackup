@@ -24,6 +24,7 @@ public @Test class SelectionSimplifierTest {
         test.testChildrenWithSelectedParentMiddle();
         test.testChildrenWithSelectedParentLast();
         test.testChildrenWithoutSelectedParent();
+        test.testChildWithDistantSelectedParent();
         test.testNestedSingle();
         test.testNestedMultiple();
         test.testNestedAllDuplicates();
@@ -148,6 +149,18 @@ public @Test class SelectionSimplifierTest {
         Assert.assertEquals("cat/yellow", output.get(0).getPath().toString());
         Assert.assertEquals("cat/gray", output.get(1).getPath().toString());
         Assert.assertEquals("cat/black", output.get(2).getPath().toString());
+    }
+
+    private void testChildWithDistantSelectedParent() {
+        List<Node> input = new List<>(
+            create("cat"),
+            create("cat", "yellow", "sleepy", "rare")
+        );
+
+        List<Node> output = simplifier.simplify(input, new Progress("test"));
+
+        Assert.assertEquals(1, output.count());
+        Assert.assertEquals("cat", output.get(0).getPath().toString());
     }
 
     private void testNestedSingle() {
