@@ -11,11 +11,6 @@
         for files
 
 ### LATER ###
-    fix bug - when selecting node from different view (left vs right) then always refresh details
-        or when clicking, make sure that selected item is the one that was lastly clicked on
-        + make sure that keyboard selection still refreshes details view properly
-        this fix is important for case where user wants to compare details of two files in separate views
-
     add context menu for tree entries
         add option to show file or directory in file manager
         add option to show file or directory details

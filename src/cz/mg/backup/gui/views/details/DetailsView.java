@@ -35,5 +35,7 @@ public @Component class DetailsView extends JScrollPane {
                 getViewport().add(new DirectoryDetailsView(directory), 1, 1);
             }
         }
+
+        repaint();
     }
 }

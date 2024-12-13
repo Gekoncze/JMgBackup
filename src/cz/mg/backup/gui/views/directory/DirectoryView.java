@@ -203,6 +203,14 @@ public @Component class DirectoryView extends Panel {
     }
 
     private void onMouseClicked(@Mandatory MouseEvent event) {
+        if (event.getButton() == MouseEvent.BUTTON1) {
+            TreePath path = tree.getPathForLocation(event.getX(), event.getY());
+            Node node = getNodeFrom(path);
+            if (node != null) {
+                window.getDetailsView().setNode(node);
+            }
+        }
+
         if (event.getButton() == MouseEvent.BUTTON3) {
             showPopupMenu(event);
         }
@@ -214,7 +222,6 @@ public @Component class DirectoryView extends Panel {
                 Node node = getNodeFrom(path);
                 if (node != null) {
                     window.getDetailsView().setNode(node);
-                    window.getDetailsView().repaint();
                 }
                 break;
             }
