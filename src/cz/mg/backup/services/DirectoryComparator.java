@@ -34,6 +34,9 @@ public @Service class DirectoryComparator {
     private DirectoryComparator() {
     }
 
+    /**
+     * Compares given directories and stores compare exceptions in respective files and directories.
+     */
     public void compare(
         @Optional Directory first,
         @Optional Directory second,
@@ -50,6 +53,7 @@ public @Service class DirectoryComparator {
     ) {
         Map<Path, Pair<Directory, Directory>> map = new Map<>();
 
+        // collect first directories to pairs
         if (first != null) {
             for (Directory child : first.getDirectories()) {
                 Pair<Directory, Directory> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
@@ -58,6 +62,7 @@ public @Service class DirectoryComparator {
             }
         }
 
+        // collect second directories to pairs
         if (second != null) {
             for (Directory child : second.getDirectories()) {
                 Pair<Directory, Directory> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
@@ -66,11 +71,10 @@ public @Service class DirectoryComparator {
             }
         }
 
+        // compare paired directories
         for (ReadablePair<Path, Pair<Directory, Directory>> entry : map) {
             Pair<Directory, Directory> pair = entry.getValue();
             comparePairedDirectories(pair.getKey(), pair.getValue(), progress);
-            updateTotalErrorCount(first, pair.getKey());
-            updateTotalErrorCount(second, pair.getValue());
             progress.step();
         }
     }
@@ -113,6 +117,7 @@ public @Service class DirectoryComparator {
     ) {
         Map<Path, Pair<File, File>> map = new Map<>();
 
+        // collect first files to pairs
         if (first != null) {
             for (File child : first.getFiles()) {
                 Pair<File, File> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
@@ -121,6 +126,7 @@ public @Service class DirectoryComparator {
             }
         }
 
+        // collect second files to pairs
         if (second != null) {
             for (File child : second.getFiles()) {
                 Pair<File, File> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
@@ -129,11 +135,10 @@ public @Service class DirectoryComparator {
             }
         }
 
+        // compare paired files
         for (ReadablePair<Path, Pair<File, File>> entry : map) {
             Pair<File, File> pair = entry.getValue();
             comparePairedFiles(pair.getKey(), pair.getValue());
-            updateTotalErrorCount(first, pair.getKey());
-            updateTotalErrorCount(second, pair.getValue());
             progress.step();
         }
     }
@@ -154,29 +159,12 @@ public @Service class DirectoryComparator {
     private void clearCompareErrors(@Optional Directory directory) {
         if (directory != null) {
             directory.getErrors().removeIf(e -> e instanceof CompareException);
-            directory.getProperties().setTotalErrorCount(0);
         }
     }
 
     private void clearCompareErrors(@Optional File file) {
         if (file != null) {
             file.getErrors().removeIf(e -> e instanceof CompareException);
-        }
-    }
-
-    private void updateTotalErrorCount(@Optional Directory parent, @Optional File child) {
-        if (parent != null && child != null) {
-            parent.getProperties().setTotalErrorCount(
-                parent.getProperties().getTotalErrorCount() + child.getErrors().count()
-            );
-        }
-    }
-
-    private void updateTotalErrorCount(@Optional Directory parent, @Optional Directory child) {
-        if (parent != null && child != null) {
-            parent.getProperties().setTotalErrorCount(
-                parent.getProperties().getTotalErrorCount() + child.getProperties().getTotalErrorCount()
-            );
         }
     }
 

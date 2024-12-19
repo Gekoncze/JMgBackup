@@ -12,6 +12,7 @@ import cz.mg.backup.gui.views.directory.DirectoryView;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.menu.MainMenuBar;
 import cz.mg.backup.services.DirectoryComparator;
+import cz.mg.backup.services.StatisticsCounter;
 import cz.mg.panel.Panel;
 
 import javax.swing.*;
@@ -25,7 +26,8 @@ public @Component class MainWindow extends JFrame {
     private static final int MARGIN = 0;
     private static final int PADDING = 8;
 
-    private final @Service DirectoryComparator compareService = DirectoryComparator.getInstance();
+    private final @Service DirectoryComparator directoryComparator = DirectoryComparator.getInstance();
+    private final @Service StatisticsCounter statisticsCounter = StatisticsCounter.getInstance();
 
     private final @Mandatory Settings settings = new Settings(Algorithm.SHA256);
     private final @Mandatory DirectoryView leftView;
@@ -84,7 +86,21 @@ public @Component class MainWindow extends JFrame {
                 this,
                 "Compare",
                 null,
-                progress -> compareService.compare(a, b, progress)
+                progress -> directoryComparator.compare(a, b, progress)
+            );
+
+            ProgressDialog.run(
+                this,
+                "Gather statistics",
+                null,
+                progress -> statisticsCounter.count(a)
+            );
+
+            ProgressDialog.run(
+                this,
+                "Gather statistics",
+                null,
+                progress -> statisticsCounter.count(b)
             );
 
             leftView.refresh();

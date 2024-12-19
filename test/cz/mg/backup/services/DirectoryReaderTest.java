@@ -5,7 +5,6 @@ import cz.mg.annotations.classes.Test;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
-import cz.mg.backup.entities.Settings;
 import cz.mg.test.Assert;
 
 import java.nio.file.Path;
@@ -26,7 +25,6 @@ public @Test class DirectoryReaderTest {
     private void testRead() {
         Directory test = reader.read(
             Path.of("test", "cz", "mg", "backup", "test"),
-            new Settings(),
             new Progress("Test")
         );
         Assert.assertEquals(true, test.getErrors().isEmpty());
@@ -53,7 +51,6 @@ public @Test class DirectoryReaderTest {
         // rare case where symbolic link is followed for convenience
         Directory directory = reader.read(
             Path.of("test", "cz", "mg", "backup", "test", "directoryLink"),
-            new Settings(),
             new Progress("Test")
         );
 

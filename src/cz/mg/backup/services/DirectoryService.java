@@ -7,8 +7,6 @@ import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
 
-import java.nio.file.Path;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public @Service class DirectoryService {
@@ -53,19 +51,8 @@ public @Service class DirectoryService {
             }
 
             for (Directory subdirectory : directory.getDirectories()) {
-                consumer.accept(subdirectory);
                 forEachNode(subdirectory, consumer);
             }
         }
-    }
-
-    public @Optional Node find(@Optional Directory directory, @Mandatory Path path) {
-        Node[] wanted = new Node[1];
-        forEachNode(directory, node -> {
-            if (Objects.equals(node.getPath(), path)) {
-                wanted[0] = node;
-            }
-        });
-        return wanted[0];
     }
 }

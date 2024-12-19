@@ -17,9 +17,7 @@ import cz.mg.backup.gui.event.UserTreeSelectionListener;
 import cz.mg.backup.gui.services.ButtonFactory;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
 import cz.mg.backup.gui.services.SelectionSimplifier;
-import cz.mg.backup.services.ChecksumService;
-import cz.mg.backup.services.DirectoryReader;
-import cz.mg.backup.services.DirectoryService;
+import cz.mg.backup.services.*;
 import cz.mg.collections.list.List;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
@@ -32,17 +30,17 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Date;
-import java.util.Objects;
 
 public @Component class DirectoryView extends Panel {
     private static final int MARGIN = 4;
     private static final int PADDING = 4;
 
     private final @Service DirectoryReader directoryReader = DirectoryReader.getInstance();
+    private final @Service DirectorySearch directorySearch = DirectorySearch.getInstance();
+    private final @Service StatisticsCounter statisticsCounter = StatisticsCounter.getInstance();
     private final @Service DirectoryTreeFactory directoryTreeFactory = DirectoryTreeFactory.getInstance();
     private final @Service ButtonFactory buttonFactory = ButtonFactory.getInstance();
     private final @Service ChecksumService checksumService = ChecksumService.getInstance();
-    private final @Service DirectoryService directoryService = DirectoryService.getInstance();
     private final @Service SelectionSimplifier selectionSimplifier = SelectionSimplifier.getInstance();
 
     private final @Mandatory MainWindow window;
@@ -123,16 +121,35 @@ public @Component class DirectoryView extends Panel {
         Path displayedPath = getDisplayedPath();
 
         if (path != null) {
-            Map<Path, Pair<Checksum, Date>> checksums = collectChecksums();
+            Map<Path, Pair<Checksum, Date>> checksums = ProgressDialog.compute(
+                window,
+                "Collect checksums",
+                null,
+                progress -> checksumService.collect(directory, progress)
+            );
+
             setDirectory(
                 ProgressDialog.compute(
                     window,
-                    "Load Directory",
-                    "Load Directory " + path.toString(),
-                    progress -> directoryReader.read(path, window.getSettings(), progress)
+                    "Load directory",
+                    "Load directory " + path,
+                    progress -> directoryReader.read(path, progress)
                 )
             );
-            restoreChecksums(checksums);
+
+            ProgressDialog.run(
+                window,
+                "Gather statistics",
+                null,
+                progress -> statisticsCounter.count(directory)
+            );
+
+            ProgressDialog.run(
+                window,
+                "Restore checksums",
+                null,
+                progress -> checksumService.restore(directory, checksums, progress)
+            );
         } else {
             setDirectory(null);
         }
@@ -161,32 +178,6 @@ public @Component class DirectoryView extends Panel {
         tree.setCellRenderer(new NodeCellRenderer());
     }
 
-    private @Mandatory Map<Path, Pair<Checksum, Date>> collectChecksums() {
-        Map<Path, Pair<Checksum, Date>> checksums = new Map<>();
-        directoryService.forEachFile(
-            directory,
-            file -> checksums.set(
-                file.getPath(),
-                new Pair<>(file.getChecksum(), file.getProperties().getModified())
-            )
-        );
-        return checksums;
-    }
-
-    private void restoreChecksums(@Mandatory Map<Path, Pair<Checksum, Date>> map) {
-        directoryService.forEachFile(
-            directory,
-            file -> {
-                Pair<Checksum, Date> pair = map.getOptional(file.getPath());
-                if (pair != null) {
-                    if (Objects.equals(file.getProperties().getModified(), pair.getValue())) {
-                        file.setChecksum(pair.getKey());
-                    }
-                }
-            }
-        );
-    }
-
     private @Optional Path getDisplayedPath() {
         Node node = window.getDetailsView().getNode();
         if (node != null && directory != null && node.getPath().startsWith(directory.getPath())) {
@@ -198,7 +189,7 @@ public @Component class DirectoryView extends Panel {
 
     private void restoreDisplayedPath(@Optional Path path) {
         if (path != null && directory != null) {
-            window.getDetailsView().setNode(directoryService.find(directory, path));
+            window.getDetailsView().setNode(directorySearch.find(directory, path));
         }
     }
 

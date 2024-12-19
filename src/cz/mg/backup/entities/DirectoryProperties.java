@@ -1,7 +1,6 @@
 package cz.mg.backup.entities;
 
 import cz.mg.annotations.classes.Entity;
-import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Required;
 import cz.mg.annotations.storage.Value;
 
@@ -58,19 +57,5 @@ public @Entity class DirectoryProperties {
 
     public void setTotalErrorCount(long totalErrorCount) {
         this.totalErrorCount = totalErrorCount;
-    }
-
-    public void add(@Mandatory DirectoryProperties properties) {
-        this.totalSize += properties.totalSize;
-        this.totalCount += properties.totalCount + 1;
-        this.totalFileCount += properties.totalFileCount;
-        this.totalDirectoryCount += properties.totalDirectoryCount + 1;
-        this.totalErrorCount += properties.totalErrorCount;
-    }
-
-    public void add(@Mandatory FileProperties properties) {
-        this.totalSize += properties.getSize();
-        this.totalCount++;
-        this.totalFileCount++;
     }
 }

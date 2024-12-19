@@ -2,9 +2,16 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.*;
 import cz.mg.collections.list.List;
+import cz.mg.collections.map.Map;
+import cz.mg.collections.pair.Pair;
+
+import java.nio.file.Path;
+import java.util.Date;
+import java.util.Objects;
 
 public @Service class ChecksumService {
     private static volatile @Service ChecksumService instance;
@@ -15,6 +22,7 @@ public @Service class ChecksumService {
                 if (instance == null) {
                     instance = new ChecksumService();
                     instance.checksumReader = ChecksumReader.getInstance();
+                    instance.directoryService = DirectoryService.getInstance();
                 }
             }
         }
@@ -22,6 +30,7 @@ public @Service class ChecksumService {
     }
 
     private @Service ChecksumReader checksumReader;
+    private @Service DirectoryService directoryService;
 
     private ChecksumService() {
     }
@@ -100,17 +109,58 @@ public @Service class ChecksumService {
         file.setChecksum(null);
     }
 
+    public @Mandatory Map<Path, Pair<Checksum, Date>> collect(
+        @Optional Directory directory,
+        @Mandatory Progress progress
+    ) {
+        progress.setLimit(estimate(directory));
+
+        Map<Path, Pair<Checksum, Date>> checksums = new Map<>();
+        directoryService.forEachFile(
+            directory,
+            file -> checksums.set(
+                file.getPath(),
+                new Pair<>(file.getChecksum(), file.getProperties().getModified())
+            )
+        );
+        return checksums;
+    }
+
+    public void restore(
+        @Optional Directory directory,
+        @Mandatory Map<Path, Pair<Checksum, Date>> map,
+        @Mandatory Progress progress
+    ) {
+        progress.setLimit(estimate(directory));
+
+        directoryService.forEachFile(
+            directory,
+            file -> {
+                Pair<Checksum, Date> pair = map.getOptional(file.getPath());
+                if (pair != null) {
+                    if (Objects.equals(file.getProperties().getModified(), pair.getValue())) {
+                        file.setChecksum(pair.getKey());
+                    }
+                }
+            }
+        );
+    }
+
     private long estimate(@Mandatory List<Node> nodes) {
         long estimate = 0;
-
         for (Node node : nodes) {
-            if (node instanceof Directory directory) {
-                estimate += directory.getProperties().getTotalCount();
-            }
-
-            estimate++;
+            estimate += estimate(node);
         }
-
         return estimate;
+    }
+
+    private long estimate(@Optional Node node) {
+        if (node instanceof Directory directory) {
+            return directory.getProperties().getTotalCount() + 1;
+        } else if (node != null) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

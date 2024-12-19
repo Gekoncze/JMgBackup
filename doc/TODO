@@ -1,13 +1,16 @@
 ### NOW ###
-    add unit test for total error count after compare
-        fix bug from failing test - clear compare errors should not set to 0 when there are non-compare errors
+    ...
 
 ### SOON ###
     add unit test for progress updates and estimates
     add unit test for directory service
-    add unit test for directory properties
+    add unit test for directory search
+    add unit test for statistics counter
+    add unit test for collect and restore checksum in checksum service
 
 ### LATER ###
+    show total size in details
+
     add context menu for tree entries
         add option to show file or directory in file manager
         add option to show file or directory details

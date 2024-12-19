@@ -103,10 +103,6 @@ public @Test class DirectoryComparatorTest {
         Assert.assertEquals(0, firstL1.getErrors().count());
         Assert.assertEquals(1, secondL2.getErrors().count());
         Assert.assertEquals(0, secondL1.getErrors().count());
-
-        Assert.assertEquals(0, firstL1.getProperties().getTotalErrorCount());
-        Assert.assertEquals(1, secondL2.getProperties().getTotalErrorCount());
-        Assert.assertEquals(1, secondL1.getProperties().getTotalErrorCount());
     }
 
     private void testMissingSecondDirectory() {
@@ -119,10 +115,6 @@ public @Test class DirectoryComparatorTest {
         Assert.assertEquals(1, firstL2.getErrors().count());
         Assert.assertEquals(0, firstL1.getErrors().count());
         Assert.assertEquals(0, secondL1.getErrors().count());
-
-        Assert.assertEquals(1, firstL2.getProperties().getTotalErrorCount());
-        Assert.assertEquals(1, firstL1.getProperties().getTotalErrorCount());
-        Assert.assertEquals(0, secondL1.getProperties().getTotalErrorCount());
     }
 
     private void testMissingBothDirectories() {
@@ -153,9 +145,6 @@ public @Test class DirectoryComparatorTest {
         Assert.assertEquals(0, firstL1.getErrors().count());
         Assert.assertEquals(1, secondL2.getErrors().count());
         Assert.assertEquals(0, secondL1.getErrors().count());
-
-        Assert.assertEquals(0, firstL1.getProperties().getTotalErrorCount());
-        Assert.assertEquals(1, secondL1.getProperties().getTotalErrorCount());
     }
 
     private void testMissingSecondFile() {
@@ -168,9 +157,6 @@ public @Test class DirectoryComparatorTest {
         Assert.assertEquals(1, firstL2.getErrors().count());
         Assert.assertEquals(0, firstL1.getErrors().count());
         Assert.assertEquals(0, secondL1.getErrors().count());
-
-        Assert.assertEquals(1, firstL1.getProperties().getTotalErrorCount());
-        Assert.assertEquals(0, secondL1.getProperties().getTotalErrorCount());
     }
 
     private void testMissingBothFiles() {
@@ -185,9 +171,6 @@ public @Test class DirectoryComparatorTest {
         Assert.assertEquals(0, firstL1.getErrors().count());
         Assert.assertEquals(1, secondL2.getErrors().count());
         Assert.assertEquals(0, secondL1.getErrors().count());
-
-        Assert.assertEquals(1, firstL1.getProperties().getTotalErrorCount());
-        Assert.assertEquals(1, secondL1.getProperties().getTotalErrorCount());
     }
 
     private void testDifferentFile() {
@@ -202,9 +185,6 @@ public @Test class DirectoryComparatorTest {
         Assert.assertEquals(1, firstFile.getErrors().count());
         Assert.assertEquals(0, secondDirectory.getErrors().count());
         Assert.assertEquals(1, secondFile.getErrors().count());
-
-        Assert.assertEquals(1, firstDirectory.getProperties().getTotalErrorCount());
-        Assert.assertEquals(1, secondDirectory.getProperties().getTotalErrorCount());
     }
 
     private void testRecursive() {
@@ -255,18 +235,6 @@ public @Test class DirectoryComparatorTest {
         Assert.assertEquals(0, secondL2.getErrors().count());
         Assert.assertEquals(0, secondL2b.getErrors().count());
         Assert.assertEquals(1, secondL3.getErrors().count());
-
-        Assert.assertEquals(1, firstL1.getProperties().getTotalErrorCount());
-        Assert.assertEquals(0, firstL2a.getProperties().getTotalErrorCount());
-        Assert.assertEquals(1, firstL2.getProperties().getTotalErrorCount());
-        Assert.assertEquals(0, firstL2b.getProperties().getTotalErrorCount());
-        Assert.assertEquals(1, firstL3.getProperties().getTotalErrorCount());
-
-        Assert.assertEquals(1, secondL1.getProperties().getTotalErrorCount());
-        Assert.assertEquals(0, secondL2a.getProperties().getTotalErrorCount());
-        Assert.assertEquals(1, secondL2.getProperties().getTotalErrorCount());
-        Assert.assertEquals(0, secondL2b.getProperties().getTotalErrorCount());
-        Assert.assertEquals(1, secondL3.getProperties().getTotalErrorCount());
     }
 
     private void testCompareClearsCompareErrors() {
@@ -292,8 +260,6 @@ public @Test class DirectoryComparatorTest {
 
         Assert.assertEquals(1, first.getErrors().count());
         Assert.assertEquals(1, second.getErrors().count());
-        Assert.assertEquals(1, first.getProperties().getTotalErrorCount());
-        Assert.assertEquals(1, second.getProperties().getTotalErrorCount());
         Assert.assertEquals(RuntimeException.class, first.getErrors().getFirst().getClass());
         Assert.assertEquals(IllegalArgumentException.class, second.getErrors().getFirst().getClass());
     }

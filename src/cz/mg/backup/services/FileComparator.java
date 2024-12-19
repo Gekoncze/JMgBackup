@@ -24,6 +24,9 @@ public @Service class FileComparator {
     private FileComparator() {
     }
 
+    /**
+     * Compares given files and stores compare exceptions in them.
+     */
     public void compare(@Mandatory File first, @Mandatory File second) {
         first.getErrors().removeIf(e -> e instanceof CompareException);
         second.getErrors().removeIf(e -> e instanceof CompareException);
