@@ -3,7 +3,6 @@
 
 ### SOON ###
     add unit test for progress updates and estimates
-    add unit test for directory service
     add unit test for directory search
     add unit test for statistics counter
     add unit test for collect and restore checksum in checksum service

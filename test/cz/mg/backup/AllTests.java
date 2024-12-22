@@ -11,14 +11,15 @@ public class AllTests {
         SelectionSimplifierTest.main(args);
 
         // cz.mg.backup.services
+        ChecksumReaderTest.main(args);
         ChecksumServiceTest.main(args);
         DirectoryComparatorTest.main(args);
         DirectoryReaderTest.main(args);
+        DirectoryServiceTest.main(args);
         DirectorySortTest.main(args);
         FileComparatorTest.main(args);
-        ChecksumReaderTest.main(args);
-        FileReaderTest.main(args);
         FilePropertiesReaderTest.main(args);
+        FileReaderTest.main(args);
         HashConverterTest.main(args);
     }
 }
