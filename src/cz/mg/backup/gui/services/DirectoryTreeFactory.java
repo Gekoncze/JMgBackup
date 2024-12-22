@@ -29,7 +29,10 @@ public @Service class DirectoryTreeFactory {
     }
 
     public @Mandatory ObjectTreeEntry create(@Mandatory Directory directory, @Mandatory Progress progress) {
-        return create(directory, 0, progress);
+        progress.setLimit(estimate(directory));
+        ObjectTreeEntry entry = create(directory, 0, progress);
+        progress.step();
+        return entry;
     }
 
     private @Mandatory ObjectTreeEntry create(@Mandatory Directory directory, int index, @Mandatory Progress progress) {
@@ -40,14 +43,14 @@ public @Service class DirectoryTreeFactory {
         int i = 0;
 
         for (Directory child : directory.getDirectories()) {
-            progress.step();
             children.set(i, create(child, i, progress));
+            progress.step();
             i++;
         }
 
         for (File child : directory.getFiles()) {
-            progress.step();
             children.set(i, create(child, i));
+            progress.step();
             i++;
         }
 
@@ -68,5 +71,9 @@ public @Service class DirectoryTreeFactory {
 
     private int hash(@Mandatory Node n) {
         return Objects.hash(n.getPath());
+    }
+
+    private long estimate(@Mandatory Directory directory) {
+        return directory.getProperties().getTotalCount() + 1L;
     }
 }

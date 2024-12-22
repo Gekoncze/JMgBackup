@@ -41,10 +41,10 @@ public @Test class StatisticsCounterTest {
         statisticsCounter.count(directory);
 
         Assert.assertEquals(0L, directory.getProperties().getTotalSize());
-        Assert.assertEquals(0, directory.getProperties().getTotalCount());
-        Assert.assertEquals(0, directory.getProperties().getTotalFileCount());
-        Assert.assertEquals(0, directory.getProperties().getTotalDirectoryCount());
-        Assert.assertEquals(0, directory.getProperties().getTotalErrorCount());
+        Assert.assertEquals(0L, directory.getProperties().getTotalCount());
+        Assert.assertEquals(0L, directory.getProperties().getTotalFileCount());
+        Assert.assertEquals(0L, directory.getProperties().getTotalDirectoryCount());
+        Assert.assertEquals(0L, directory.getProperties().getTotalErrorCount());
     }
 
     private void testRecompute() {
@@ -53,26 +53,26 @@ public @Test class StatisticsCounterTest {
         directory.getErrors().addLast(new CompareException("first error"));
         directory.getErrors().addLast(new CompareException("second error"));
         directory.getProperties().setTotalSize(11111L);
-        directory.getProperties().setTotalCount(11111);
-        directory.getProperties().setTotalFileCount(11111);
-        directory.getProperties().setTotalDirectoryCount(11111);
-        directory.getProperties().setTotalErrorCount(11111);
+        directory.getProperties().setTotalCount(11111L);
+        directory.getProperties().setTotalFileCount(11111L);
+        directory.getProperties().setTotalDirectoryCount(11111L);
+        directory.getProperties().setTotalErrorCount(11111L);
 
         statisticsCounter.count(directory);
 
         Assert.assertEquals(0L, directory.getProperties().getTotalSize());
-        Assert.assertEquals(0, directory.getProperties().getTotalCount());
-        Assert.assertEquals(0, directory.getProperties().getTotalFileCount());
-        Assert.assertEquals(0, directory.getProperties().getTotalDirectoryCount());
-        Assert.assertEquals(2, directory.getProperties().getTotalErrorCount());
+        Assert.assertEquals(0L, directory.getProperties().getTotalCount());
+        Assert.assertEquals(0L, directory.getProperties().getTotalFileCount());
+        Assert.assertEquals(0L, directory.getProperties().getTotalDirectoryCount());
+        Assert.assertEquals(2L, directory.getProperties().getTotalErrorCount());
 
         statisticsCounter.count(directory);
 
         Assert.assertEquals(0L, directory.getProperties().getTotalSize());
-        Assert.assertEquals(0, directory.getProperties().getTotalCount());
-        Assert.assertEquals(0, directory.getProperties().getTotalFileCount());
-        Assert.assertEquals(0, directory.getProperties().getTotalDirectoryCount());
-        Assert.assertEquals(2, directory.getProperties().getTotalErrorCount());
+        Assert.assertEquals(0L, directory.getProperties().getTotalCount());
+        Assert.assertEquals(0L, directory.getProperties().getTotalFileCount());
+        Assert.assertEquals(0L, directory.getProperties().getTotalDirectoryCount());
+        Assert.assertEquals(2L, directory.getProperties().getTotalErrorCount());
     }
 
     private void testSingleDirectorySingleFile() {
@@ -92,20 +92,20 @@ public @Test class StatisticsCounterTest {
         statisticsCounter.count(directory);
 
         Assert.assertEquals(123L, directory.getProperties().getTotalSize());
-        Assert.assertEquals(1, directory.getProperties().getTotalCount());
-        Assert.assertEquals(1, directory.getProperties().getTotalFileCount());
-        Assert.assertEquals(0, directory.getProperties().getTotalDirectoryCount());
-        Assert.assertEquals(5, directory.getProperties().getTotalErrorCount());
+        Assert.assertEquals(1L, directory.getProperties().getTotalCount());
+        Assert.assertEquals(1L, directory.getProperties().getTotalFileCount());
+        Assert.assertEquals(0L, directory.getProperties().getTotalDirectoryCount());
+        Assert.assertEquals(5L, directory.getProperties().getTotalErrorCount());
     }
 
     private void testSingleDirectorySingleSubdirectory() {
         Directory subDirectory = new Directory();
         subDirectory.setProperties(new DirectoryProperties());
         subDirectory.getProperties().setTotalSize(11111L);
-        subDirectory.getProperties().setTotalCount(11111);
-        subDirectory.getProperties().setTotalFileCount(11111);
-        subDirectory.getProperties().setTotalDirectoryCount(11111);
-        subDirectory.getProperties().setTotalErrorCount(11111);
+        subDirectory.getProperties().setTotalCount(11111L);
+        subDirectory.getProperties().setTotalFileCount(11111L);
+        subDirectory.getProperties().setTotalDirectoryCount(11111L);
+        subDirectory.getProperties().setTotalErrorCount(11111L);
         subDirectory.getErrors().addLast(new CompareException("third error"));
 
         Directory directory = new Directory();
@@ -117,16 +117,16 @@ public @Test class StatisticsCounterTest {
         statisticsCounter.count(directory);
 
         Assert.assertEquals(0L, directory.getProperties().getTotalSize());
-        Assert.assertEquals(1, directory.getProperties().getTotalCount());
-        Assert.assertEquals(0, directory.getProperties().getTotalFileCount());
-        Assert.assertEquals(1, directory.getProperties().getTotalDirectoryCount());
-        Assert.assertEquals(3, directory.getProperties().getTotalErrorCount());
+        Assert.assertEquals(1L, directory.getProperties().getTotalCount());
+        Assert.assertEquals(0L, directory.getProperties().getTotalFileCount());
+        Assert.assertEquals(1L, directory.getProperties().getTotalDirectoryCount());
+        Assert.assertEquals(3L, directory.getProperties().getTotalErrorCount());
 
         Assert.assertEquals(0L, subDirectory.getProperties().getTotalSize());
-        Assert.assertEquals(0, subDirectory.getProperties().getTotalCount());
-        Assert.assertEquals(0, subDirectory.getProperties().getTotalFileCount());
-        Assert.assertEquals(0, subDirectory.getProperties().getTotalDirectoryCount());
-        Assert.assertEquals(1, subDirectory.getProperties().getTotalErrorCount());
+        Assert.assertEquals(0L, subDirectory.getProperties().getTotalCount());
+        Assert.assertEquals(0L, subDirectory.getProperties().getTotalFileCount());
+        Assert.assertEquals(0L, subDirectory.getProperties().getTotalDirectoryCount());
+        Assert.assertEquals(1L, subDirectory.getProperties().getTotalErrorCount());
     }
 
     private void testMultipleNested() {
@@ -156,15 +156,15 @@ public @Test class StatisticsCounterTest {
         statisticsCounter.count(directory);
 
         Assert.assertEquals(130L, directory.getProperties().getTotalSize());
-        Assert.assertEquals(3, directory.getProperties().getTotalCount());
-        Assert.assertEquals(2, directory.getProperties().getTotalFileCount());
-        Assert.assertEquals(1, directory.getProperties().getTotalDirectoryCount());
-        Assert.assertEquals(6, directory.getProperties().getTotalErrorCount());
+        Assert.assertEquals(3L, directory.getProperties().getTotalCount());
+        Assert.assertEquals(2L, directory.getProperties().getTotalFileCount());
+        Assert.assertEquals(1L, directory.getProperties().getTotalDirectoryCount());
+        Assert.assertEquals(6L, directory.getProperties().getTotalErrorCount());
 
         Assert.assertEquals(123L, subDirectory.getProperties().getTotalSize());
-        Assert.assertEquals(1, subDirectory.getProperties().getTotalCount());
-        Assert.assertEquals(1, subDirectory.getProperties().getTotalFileCount());
-        Assert.assertEquals(0, subDirectory.getProperties().getTotalDirectoryCount());
-        Assert.assertEquals(4, subDirectory.getProperties().getTotalErrorCount());
+        Assert.assertEquals(1L, subDirectory.getProperties().getTotalCount());
+        Assert.assertEquals(1L, subDirectory.getProperties().getTotalFileCount());
+        Assert.assertEquals(0L, subDirectory.getProperties().getTotalDirectoryCount());
+        Assert.assertEquals(4L, subDirectory.getProperties().getTotalErrorCount());
     }
 }

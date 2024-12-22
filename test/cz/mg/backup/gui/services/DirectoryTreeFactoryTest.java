@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
+import cz.mg.backup.entities.DirectoryProperties;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.gui.views.directory.ObjectTreeEntry;
 import cz.mg.test.Assert;
@@ -42,8 +43,11 @@ public @Test class DirectoryTreeFactoryTest {
         root.getDirectories().addLast(emptyDirectory);
         root.getFiles().addLast(secondFile);
         childDirectory.getFiles().addLast(firstFile);
+        root.setProperties(new DirectoryProperties());
+        root.getProperties().setTotalCount(4L);
 
-        ObjectTreeEntry rootEntry = factory.create(root, new Progress("test"));
+        Progress progress = new Progress("test");
+        ObjectTreeEntry rootEntry = factory.create(root, progress);
 
         Assert.assertEquals(root, rootEntry.get());
         Assert.assertEquals(0, rootEntry.getIndex());
@@ -77,5 +81,8 @@ public @Test class DirectoryTreeFactoryTest {
         Assert.assertEquals(true, secondFileEntry.isLeaf());
         Assert.assertEquals("second file", secondFileEntry.toString());
         Assert.assertNull(secondFileEntry.getChildren());
+
+        Assert.assertEquals(5L, progress.getLimit());
+        Assert.assertEquals(5L, progress.getValue());
     }
 }
