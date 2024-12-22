@@ -8,11 +8,15 @@
         statistics counter test
 
 ### SOON ###
-    ...
-
-### LATER ###
     show total size in details
 
+    show progress bar only after some time, lets say 1 or 2 seconds
+        maybe only change cursor temporarily to loading one
+
+    add icons to menu
+    add support for drag and drop
+
+### LATER ###
     add context menu for tree entries
         add option to show file or directory in file manager
         add option to show file or directory details
@@ -26,21 +30,16 @@
         * property not computed
         * file system error
 
-    add icons to menu
-    add support for drag and drop
-
     add duplicate detector
         show different icon for duplicates ?
         allow user to configure duplicate detection (specify key properties)
 
-    add support for symbolic links
-    add support for automatic copying files
-        have it also use duplicate detection to skip possible duplicates
-
-    show progress bar only after some time, lets say 1 or 2 seconds
-        maybe only change cursor temporarily to loading one
+    add support for automatic copy of missing files
+        files could have been moved, so consider utilizing some sort of duplicate detection for that
 
 ### CONSIDERATIONS ###
+    consider adding support for symbolic links as files
+
     consider getting rid of directory service
 
     optimize directory search if needed
