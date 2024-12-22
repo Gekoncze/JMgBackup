@@ -40,10 +40,13 @@ public @Test class ChecksumServiceTest {
         File file = new File();
         file.setPath(Configuration.FLYING_AKI_PATH);
 
-        service.compute(new List<>(file), Algorithm.SHA256, new Progress("Test"));
+        Progress progress = new Progress("Test");
+        service.compute(new List<>(file), Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
+        Assert.assertEquals(1L, progress.getLimit());
+        Assert.assertEquals(1L, progress.getValue());
     }
 
     private void testComputeFileExisting() {
@@ -51,11 +54,14 @@ public @Test class ChecksumServiceTest {
         file.setPath(Configuration.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
 
-        service.compute(new List<>(file), Algorithm.SHA256, new Progress("Test"));
+        Progress progress = new Progress("Test");
+        service.compute(new List<>(file), Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
         Assert.assertEquals("FF", file.getChecksum().getHash());
+        Assert.assertEquals(1L, progress.getLimit());
+        Assert.assertEquals(1L, progress.getValue());
     }
 
     private void testComputeFileDifferentAlgorithm() {
@@ -63,11 +69,14 @@ public @Test class ChecksumServiceTest {
         file.setPath(Configuration.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.MD5, "FF"));
 
-        service.compute(new List<>(file), Algorithm.SHA256, new Progress("Test"));
+        Progress progress = new Progress("Test");
+        service.compute(new List<>(file), Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
         Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
+        Assert.assertEquals(1L, progress.getLimit());
+        Assert.assertEquals(1L, progress.getValue());
     }
 
     private void testComputeDirectory() {
@@ -75,14 +84,18 @@ public @Test class ChecksumServiceTest {
         file.setPath(Configuration.FLYING_AKI_PATH);
 
         Directory directory = new Directory();
-        directory.setProperties(new DirectoryProperties());
         directory.getFiles().addLast(file);
+        directory.setProperties(new DirectoryProperties());
+        directory.getProperties().setTotalCount(1L);
 
-        service.compute(new List<>(directory), Algorithm.SHA256, new Progress("Test"));
+        Progress progress = new Progress("Test");
+        service.compute(new List<>(directory), Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
         Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
+        Assert.assertEquals(2L, progress.getLimit());
+        Assert.assertEquals(2L, progress.getValue());
     }
 
     private void testClearFile() {
@@ -90,9 +103,12 @@ public @Test class ChecksumServiceTest {
         file.setPath(Configuration.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
 
-        service.clear(new List<>(file), new Progress("Test"));
+        Progress progress = new Progress("Test");
+        service.clear(new List<>(file), progress);
 
         Assert.assertNull(file.getChecksum());
+        Assert.assertEquals(1L, progress.getLimit());
+        Assert.assertEquals(1L, progress.getValue());
     }
 
     private void testClearDirectory() {
@@ -101,17 +117,25 @@ public @Test class ChecksumServiceTest {
         file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
 
         Directory directory = new Directory();
-        directory.setProperties(new DirectoryProperties());
         directory.getFiles().addLast(file);
+        directory.setProperties(new DirectoryProperties());
+        directory.getProperties().setTotalCount(1L);
 
-        service.clear(new List<>(directory), new Progress("Test"));
+        Progress progress = new Progress("Test");
+        service.clear(new List<>(directory), progress);
 
         Assert.assertNull(file.getChecksum());
+        Assert.assertEquals(2L, progress.getLimit());
+        Assert.assertEquals(2L, progress.getValue());
     }
 
     private void testCollectEmpty() {
-        var map = service.collect(null, new Progress("Test"));
+        Progress progress = new Progress("Test");
+        var map = service.collect(null, progress);
+
         Assert.assertEquals(true, map.isEmpty());
+        Assert.assertEquals(0L, progress.getLimit());
+        Assert.assertEquals(0L, progress.getValue());
     }
 
     private void testCollect() {
@@ -135,20 +159,29 @@ public @Test class ChecksumServiceTest {
         directory.getFiles().addLast(firstFile);
         directory.getFiles().addLast(secondFile);
         directory.setProperties(new DirectoryProperties());
+        directory.getProperties().setTotalCount(2L);
 
-        Map<Path, Pair<Checksum, Date>> map = service.collect(directory, new Progress("Test"));
+        Progress progress = new Progress("Test");
+        Map<Path, Pair<Checksum, Date>> map = service.collect(directory, progress);
 
         Assert.assertEquals(2, map.count());
         Assert.assertEquals(checksum, map.get(Path.of("/foo")).getKey());
         Assert.assertEquals(createDate(2), map.get(Path.of("/foo")).getValue());
         Assert.assertEquals(null, map.get(Path.of("/bar")).getKey());
         Assert.assertEquals(createDate(4), map.get(Path.of("/bar")).getValue());
+        Assert.assertEquals(3L, progress.getLimit());
+        Assert.assertEquals(3L, progress.getValue());
     }
 
     private void testRestoreEmpty() {
+        Progress progress = new Progress("Test");
+
         Assert.assertThatCode(() -> {
-            service.restore(null, new Map<>(), new Progress("Test"));
+            service.restore(null, new Map<>(), progress);
         }).doesNotThrowAnyException();
+
+        Assert.assertEquals(0L, progress.getLimit());
+        Assert.assertEquals(0L, progress.getValue());
     }
 
     private void testRestore() {
@@ -215,6 +248,7 @@ public @Test class ChecksumServiceTest {
         directory.getFiles().addLast(fifthFile);
         directory.getFiles().addLast(sixthFile);
         directory.setProperties(new DirectoryProperties());
+        directory.getProperties().setTotalCount(6L);
 
         Map<Path, Pair<Checksum, Date>> map = new Map<>();
         map.set(Path.of("/1"), new Pair<>(null, createDate(2)));
@@ -222,7 +256,8 @@ public @Test class ChecksumServiceTest {
         map.set(Path.of("/3"), new Pair<>(checksum3b, createDate(6)));
         map.set(Path.of("/4"), new Pair<>(checksum4, createDate(100)));
 
-        service.restore(directory, map, new Progress("Test"));
+        Progress progress = new Progress("Test");
+        service.restore(directory, map, progress);
 
         Assert.assertSame(null, firstFile.getChecksum());
         Assert.assertSame(checksum2, secondFile.getChecksum());
@@ -230,6 +265,8 @@ public @Test class ChecksumServiceTest {
         Assert.assertSame(null, fourthFile.getChecksum());
         Assert.assertSame(null, fifthFile.getChecksum());
         Assert.assertSame(checksum6, sixthFile.getChecksum());
+        Assert.assertEquals(7L, progress.getLimit());
+        Assert.assertEquals(7L, progress.getValue());
     }
 
     private @Mandatory Date createDate(int day) {

@@ -3,6 +3,7 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.test.Assert;
@@ -24,17 +25,17 @@ public @Test class DirectorySearchTest {
     private final @Service DirectorySearch search = DirectorySearch.getInstance();
 
     private void testEmpty() {
-        Assert.assertNull(search.find(null, Path.of("/f")));
+        Assert.assertNull(search.find(null, Path.of("/f"), new Progress("test")));
     }
 
     private void testSingle() {
         File file = createFile(Path.of("/f"));
         Directory directory = createDirectory(Path.of("/d"), file);
 
-        Assert.assertSame(file, search.find(directory, Path.of("/f")));
-        Assert.assertSame(directory, search.find(directory, Path.of("/d")));
-        Assert.assertNull(search.find(directory, Path.of("/x")));
-        Assert.assertNull(search.find(directory, Path.of("")));
+        Assert.assertSame(file, search.find(directory, Path.of("/f"), new Progress("test")));
+        Assert.assertSame(directory, search.find(directory, Path.of("/d"), new Progress("test")));
+        Assert.assertNull(search.find(directory, Path.of("/x"), new Progress("test")));
+        Assert.assertNull(search.find(directory, Path.of(""), new Progress("test")));
     }
 
     private void testMultiple() {
@@ -44,12 +45,12 @@ public @Test class DirectorySearchTest {
         Directory secondDirectory = createDirectory(Path.of("/dd"), secondFile);
         directory.getDirectories().addLast(secondDirectory);
 
-        Assert.assertSame(file, search.find(directory, Path.of("/f")));
-        Assert.assertSame(directory, search.find(directory, Path.of("/d")));
-        Assert.assertSame(secondFile, search.find(directory, Path.of("/ff")));
-        Assert.assertSame(secondDirectory, search.find(directory, Path.of("/dd")));
-        Assert.assertNull(search.find(directory, Path.of("/x")));
-        Assert.assertNull(search.find(directory, Path.of("")));
+        Assert.assertSame(file, search.find(directory, Path.of("/f"), new Progress("test")));
+        Assert.assertSame(directory, search.find(directory, Path.of("/d"), new Progress("test")));
+        Assert.assertSame(secondFile, search.find(directory, Path.of("/ff"), new Progress("test")));
+        Assert.assertSame(secondDirectory, search.find(directory, Path.of("/dd"), new Progress("test")));
+        Assert.assertNull(search.find(directory, Path.of("/x"), new Progress("test")));
+        Assert.assertNull(search.find(directory, Path.of(""), new Progress("test")));
     }
 
     private @Mandatory Directory createDirectory(@Mandatory Path path, @Mandatory File file) {

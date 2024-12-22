@@ -3,6 +3,7 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.test.Assert;
@@ -27,32 +28,32 @@ public @Test class DirectoryServiceTest {
     private void testEmpty() {
         directoryService.forEachNode(null, node -> {
             throw new AssertException("No consumer should be called.");
-        });
+        }, new Progress("test"));
 
         directoryService.forEachFile(null, node -> {
             throw new AssertException("No consumer should be called.");
-        });
+        }, new Progress("test"));
 
         directoryService.forEachDirectory(null, node -> {
             throw new AssertException("No consumer should be called.");
-        });
+        }, new Progress("test"));
     }
 
     private void testSingle() {
         File file = createFile(Path.of("/f"));
         Directory directory = createDirectory(Path.of("/d"), file);
 
-        directoryService.forEachNode(directory, n -> n.setPath(Path.of("/x")));
+        directoryService.forEachNode(directory, n -> n.setPath(Path.of("/x")), new Progress("test"));
 
         Assert.assertEquals(Path.of("/x"), file.getPath());
         Assert.assertEquals(Path.of("/x"), directory.getPath());
 
-        directoryService.forEachFile(directory, f -> f.setPath(Path.of("/f1")));
+        directoryService.forEachFile(directory, f -> f.setPath(Path.of("/f1")), new Progress("test"));
 
         Assert.assertEquals(Path.of("/f1"), file.getPath());
         Assert.assertEquals(Path.of("/x"), directory.getPath());
 
-        directoryService.forEachDirectory(directory, d -> d.setPath(Path.of("/d1")));
+        directoryService.forEachDirectory(directory, d -> d.setPath(Path.of("/d1")), new Progress("test"));
 
         Assert.assertEquals(Path.of("/f1"), file.getPath());
         Assert.assertEquals(Path.of("/d1"), directory.getPath());
@@ -65,21 +66,21 @@ public @Test class DirectoryServiceTest {
         Directory secondDirectory = createDirectory(Path.of("/dd"), secondFile);
         directory.getDirectories().addLast(secondDirectory);
 
-        directoryService.forEachNode(directory, n -> n.setPath(Path.of("/x")));
+        directoryService.forEachNode(directory, n -> n.setPath(Path.of("/x")), new Progress("test"));
 
         Assert.assertEquals(Path.of("/x"), file.getPath());
         Assert.assertEquals(Path.of("/x"), directory.getPath());
         Assert.assertEquals(Path.of("/x"), secondFile.getPath());
         Assert.assertEquals(Path.of("/x"), secondDirectory.getPath());
 
-        directoryService.forEachFile(directory, f -> f.setPath(Path.of("/f1")));
+        directoryService.forEachFile(directory, f -> f.setPath(Path.of("/f1")), new Progress("test"));
 
         Assert.assertEquals(Path.of("/f1"), file.getPath());
         Assert.assertEquals(Path.of("/x"), directory.getPath());
         Assert.assertEquals(Path.of("/f1"), secondFile.getPath());
         Assert.assertEquals(Path.of("/x"), secondDirectory.getPath());
 
-        directoryService.forEachDirectory(directory, d -> d.setPath(Path.of("/d1")));
+        directoryService.forEachDirectory(directory, d -> d.setPath(Path.of("/d1")), new Progress("test"));
 
         Assert.assertEquals(Path.of("/f1"), file.getPath());
         Assert.assertEquals(Path.of("/d1"), directory.getPath());

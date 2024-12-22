@@ -189,7 +189,14 @@ public @Component class DirectoryView extends Panel {
 
     private void restoreDisplayedPath(@Optional Path path) {
         if (path != null && directory != null) {
-            window.getDetailsView().setNode(directorySearch.find(directory, path));
+            window.getDetailsView().setNode(
+                ProgressDialog.compute(
+                    window,
+                    "Search",
+                    null,
+                    progress -> directorySearch.find(directory, path, progress)
+                )
+            );
         }
     }
 

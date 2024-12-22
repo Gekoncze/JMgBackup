@@ -121,7 +121,8 @@ public @Service class ChecksumService {
             file -> checksums.set(
                 file.getPath(),
                 new Pair<>(file.getChecksum(), file.getProperties().getModified())
-            )
+            ),
+            progress
         );
         return checksums;
     }
@@ -142,7 +143,8 @@ public @Service class ChecksumService {
                         file.setChecksum(pair.getKey());
                     }
                 }
-            }
+            },
+            progress
         );
     }
 
