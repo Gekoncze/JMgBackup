@@ -23,10 +23,9 @@ public @Test class DirectoryReaderTest {
     private final @Service DirectoryReader reader = DirectoryReader.getInstance();
 
     private void testRead() {
-        Directory test = reader.read(
-            Path.of("test", "cz", "mg", "backup", "test"),
-            new Progress("Test")
-        );
+        Progress progress = new Progress("Test");
+        Directory test = reader.read(Path.of("test", "cz", "mg", "backup", "test"), progress);
+
         Assert.assertEquals(true, test.getErrors().isEmpty());
         Assert.assertEquals("test", test.getPath().getFileName().toString());
         Assert.assertEquals(1, test.getFiles().count());
@@ -45,16 +44,19 @@ public @Test class DirectoryReaderTest {
         Assert.assertEquals(true, two.getErrors().isEmpty());
         Assert.assertEquals("two", two.getPath().getFileName().toString());
         Assert.assertEquals(0, two.getFiles().count());
+
+        Assert.assertEquals(0L, progress.getLimit()); // indefinite
+        Assert.assertEquals(6L, progress.getValue());
     }
 
     private void testReadSymbolicLink() {
-        // rare case where symbolic link is followed for convenience
-        Directory directory = reader.read(
-            Path.of("test", "cz", "mg", "backup", "test", "directoryLink"),
-            new Progress("Test")
-        );
+        // symbolic link for given path only is followed for convenience
+        Progress progress = new Progress("Test");
+        Directory directory = reader.read(Path.of("test", "cz", "mg", "backup", "test", "directoryLink"), progress);
 
         Assert.assertEquals("directoryLink", directory.getPath().getFileName().toString());
         Assert.assertEquals(1, directory.getFiles().count());
+        Assert.assertEquals(0L, progress.getLimit()); // indefinite
+        Assert.assertEquals(1L, progress.getValue());
     }
 }

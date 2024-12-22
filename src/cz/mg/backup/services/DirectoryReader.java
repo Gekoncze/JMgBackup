@@ -35,7 +35,7 @@ public @Service class DirectoryReader {
     /**
      * Reads directory tree from given path.
      * Files included.
-     * Symbolic links skipped.
+     * Symbolic links skipped, except for the explicitly given path.
      * Files and directories are sorted alphabetically.
      */
     public @Mandatory Directory read(@Mandatory Path path, @Mandatory Progress progress) {
