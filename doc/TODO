@@ -1,5 +1,11 @@
 ### NOW ###
     add assertions for progress updates and estimates
+        directory sort test
+        file comparator test
+        file properties reader test
+        file reader test
+        hash converter test
+        statistics counter test
 
 ### SOON ###
     ...
