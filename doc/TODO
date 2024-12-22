@@ -35,6 +35,10 @@
         maybe only change cursor temporarily to loading one
 
 ### CONSIDERATIONS ###
+    optimize directory search if needed
+        currently iterating through all elements
+        and also not utilizing sorted elements
+
     consider allowing multiple checksums types to be computed for single file
 
     consider showing special (warning ?) icon when checksum is not computed on one side

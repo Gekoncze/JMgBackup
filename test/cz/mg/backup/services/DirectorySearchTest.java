@@ -3,10 +3,9 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
-import cz.mg.backup.entities.Directory;
-import cz.mg.backup.entities.DirectoryProperties;
-import cz.mg.backup.entities.File;
+import cz.mg.backup.entities.*;
 import cz.mg.test.Assert;
 
 import java.nio.file.Path;
@@ -24,34 +23,49 @@ public @Test class DirectorySearchTest {
     }
 
     private final @Service DirectorySearch search = DirectorySearch.getInstance();
+    private final @Service StatisticsCounter statisticsCounter = StatisticsCounter.getInstance();
 
     private void testEmpty() {
-        Assert.assertNull(search.find(null, Path.of("/f"), new Progress("test")));
+        test(null, Path.of("/f"), null, 0L);
     }
 
     private void testSingle() {
-        File file = createFile(Path.of("/f"));
+        File file = createFile(Path.of("/d/f"));
         Directory directory = createDirectory(Path.of("/d"), file);
 
-        Assert.assertSame(file, search.find(directory, Path.of("/f"), new Progress("test")));
-        Assert.assertSame(directory, search.find(directory, Path.of("/d"), new Progress("test")));
-        Assert.assertNull(search.find(directory, Path.of("/x"), new Progress("test")));
-        Assert.assertNull(search.find(directory, Path.of(""), new Progress("test")));
+        test(directory, Path.of("/d/f"), file, 2L);
+        test(directory, Path.of("/d"), directory, 2L);
+        test(directory, Path.of("/x"), null, 2L);
+        test(directory, Path.of(""), null, 2L);
     }
 
     private void testMultiple() {
-        File file = createFile(Path.of("/f"));
+        File file = createFile(Path.of("/d/f"));
         Directory directory = createDirectory(Path.of("/d"), file);
-        File secondFile = createFile(Path.of("/ff"));
-        Directory secondDirectory = createDirectory(Path.of("/dd"), secondFile);
+        File secondFile = createFile(Path.of("/d/dd/ff"));
+        Directory secondDirectory = createDirectory(Path.of("/d/dd"), secondFile);
         directory.getDirectories().addLast(secondDirectory);
 
-        Assert.assertSame(file, search.find(directory, Path.of("/f"), new Progress("test")));
-        Assert.assertSame(directory, search.find(directory, Path.of("/d"), new Progress("test")));
-        Assert.assertSame(secondFile, search.find(directory, Path.of("/ff"), new Progress("test")));
-        Assert.assertSame(secondDirectory, search.find(directory, Path.of("/dd"), new Progress("test")));
-        Assert.assertNull(search.find(directory, Path.of("/x"), new Progress("test")));
-        Assert.assertNull(search.find(directory, Path.of(""), new Progress("test")));
+        test(directory, Path.of("/d/f"), file, 4L);
+        test(directory, Path.of("/d"), directory, 4L);
+        test(directory, Path.of("/d/dd/ff"), secondFile, 4L);
+        test(directory, Path.of("/d/dd"), secondDirectory, 4L);
+        test(directory, Path.of("/x"), null, 4L);
+        test(directory, Path.of(""), null, 4L);
+    }
+
+    private void test(
+        @Optional Directory directory,
+        @Mandatory Path wanted,
+        @Optional Node expectation,
+        long expectedCount
+    ) {
+        Progress progress = new Progress("test");
+        statisticsCounter.count(directory);
+        Node reality = search.find(directory, wanted, progress);
+        Assert.assertSame(expectation, reality);
+        Assert.assertEquals(expectedCount, progress.getLimit());
+        Assert.assertEquals(expectedCount, progress.getValue());
     }
 
     private @Mandatory Directory createDirectory(@Mandatory Path path, @Mandatory File file) {
@@ -65,6 +79,8 @@ public @Test class DirectorySearchTest {
     private @Mandatory File createFile(@Mandatory Path path) {
         File file = new File();
         file.setPath(path);
+        file.setProperties(new FileProperties());
+        file.getProperties().setSize(1L);
         return file;
     }
 }
