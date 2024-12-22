@@ -78,13 +78,14 @@ public @Service class SelectionSimplifier {
             if (isParentNode(currentMarkedNode, i)) {
                 markFalse(markedNodes);
                 currentMarkedNode.setValue(true);
+                progress.step();
                 return;
             } else {
                 String name = currentMarkedNode.getKey().getPath().getName(i).toString();
                 List<Pair<Node, Boolean>> group = map.getOrCreate(name, () -> new List<>());
                 group.addLast(currentMarkedNode);
+                progress.step();
             }
-            progress.step();
         }
 
         for (ReadablePair<String, List<Pair<Node, Boolean>>> entry : map) {
