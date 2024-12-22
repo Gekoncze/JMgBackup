@@ -5,6 +5,7 @@ import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
+import cz.mg.backup.entities.DirectoryProperties;
 import cz.mg.backup.entities.File;
 import cz.mg.test.Assert;
 
@@ -57,6 +58,7 @@ public @Test class DirectorySearchTest {
         Directory directory = new Directory();
         directory.setPath(path);
         directory.getFiles().addLast(file);
+        directory.setProperties(new DirectoryProperties());
         return directory;
     }
 
