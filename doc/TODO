@@ -35,6 +35,8 @@
         maybe only change cursor temporarily to loading one
 
 ### CONSIDERATIONS ###
+    consider getting rid of directory service
+
     optimize directory search if needed
         currently iterating through all elements
         and also not utilizing sorted elements
