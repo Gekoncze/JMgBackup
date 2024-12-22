@@ -75,7 +75,6 @@ public @Service class DirectoryComparator {
         for (ReadablePair<Path, Pair<Directory, Directory>> entry : map) {
             Pair<Directory, Directory> pair = entry.getValue();
             comparePairedDirectories(pair.getKey(), pair.getValue(), progress);
-            progress.step();
         }
     }
 
@@ -90,11 +89,13 @@ public @Service class DirectoryComparator {
         if (first != null && second == null) {
             first.getErrors().addLast(new CompareException("Missing corresponding directory."));
             first.getProperties().setTotalErrorCount(first.getProperties().getTotalErrorCount() + 1);
+            progress.step();
         }
 
         if (first == null && second != null) {
             second.getErrors().addLast(new CompareException("Missing corresponding directory."));
             second.getProperties().setTotalErrorCount(second.getProperties().getTotalErrorCount() + 1);
+            progress.step();
         }
 
         if (first != null && second != null) {
@@ -104,6 +105,7 @@ public @Service class DirectoryComparator {
                 second.getErrors().addLast(new CompareException("Directory name differs."));
                 second.getProperties().setTotalErrorCount(second.getProperties().getTotalErrorCount() + 1);
             }
+            progress.step(2);
         }
 
         compareDirectories(first, second, progress);
@@ -138,21 +140,23 @@ public @Service class DirectoryComparator {
         // compare paired files
         for (ReadablePair<Path, Pair<File, File>> entry : map) {
             Pair<File, File> pair = entry.getValue();
-            comparePairedFiles(pair.getKey(), pair.getValue());
-            progress.step();
+            comparePairedFiles(pair.getKey(), pair.getValue(), progress);
         }
     }
 
-    private void comparePairedFiles(@Optional File first, @Optional File second) {
+    private void comparePairedFiles(@Optional File first, @Optional File second, @Mandatory Progress progress) {
         clearCompareErrors(first);
         clearCompareErrors(second);
 
         if (first != null && second != null) {
             fileComparator.compare(first, second);
+            progress.step(2);
         } else if (first != null) {
             first.getErrors().addLast(new CompareException("Missing corresponding file."));
+            progress.step();
         } else if (second != null) {
             second.getErrors().addLast(new CompareException("Missing corresponding file."));
+            progress.step();
         }
     }
 
@@ -169,8 +173,8 @@ public @Service class DirectoryComparator {
     }
 
     private long estimate(@Optional Directory first, @Optional Directory second) {
-        long firstTotal = first != null ? first.getProperties().getTotalCount() : 0;
-        long secondTotal = second != null ? second.getProperties().getTotalCount() : 0;
-        return 4 * (firstTotal + secondTotal);
+        long firstTotal = first != null ? first.getProperties().getTotalCount() : 0L;
+        long secondTotal = second != null ? second.getProperties().getTotalCount() : 0L;
+        return 2L * (firstTotal + secondTotal) + 2L;
     }
 }

@@ -59,6 +59,11 @@ public @Component class Progress {
         checkStatus();
     }
 
+    public void step(long size) {
+        value += size;
+        checkStatus();
+    }
+
     public void checkStatus() {
         Task<?> task = Task.getCurrentTask();
         if (task != null) {
