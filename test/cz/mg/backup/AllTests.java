@@ -15,6 +15,7 @@ public class AllTests {
         ChecksumServiceTest.main(args);
         DirectoryComparatorTest.main(args);
         DirectoryReaderTest.main(args);
+        DirectorySearchTest.main(args);
         DirectoryServiceTest.main(args);
         DirectorySortTest.main(args);
         FileComparatorTest.main(args);
