@@ -63,5 +63,6 @@ public @Service class StatisticsCounter {
     public void collect(@Mandatory Directory parent, @Mandatory File child) {
         DirectoryProperties properties = parent.getProperties();
         properties.setTotalSize(properties.getTotalSize() + child.getProperties().getSize());
+        properties.setTotalErrorCount(properties.getTotalErrorCount() + child.getErrors().count());
     }
 }

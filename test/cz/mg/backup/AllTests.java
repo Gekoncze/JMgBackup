@@ -22,5 +22,6 @@ public class AllTests {
         FilePropertiesReaderTest.main(args);
         FileReaderTest.main(args);
         HashConverterTest.main(args);
+        StatisticsCounterTest.main(args);
     }
 }
