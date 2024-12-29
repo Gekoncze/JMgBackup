@@ -2,8 +2,6 @@
     ...
 
 ### SOON ###
-    show total size in details
-
     show progress bar only after some time, lets say 1 or 2 seconds
         maybe only change cursor temporarily to loading one
 

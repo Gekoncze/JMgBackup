@@ -15,6 +15,7 @@ public @Component class DirectoryDetailsView extends Panel {
             + " (total " + directory.getProperties().getTotalDirectoryCount() + ")"));
         addVertical(new PlainLabel("File count: " + directory.getFiles().count()
             + " (total " + directory.getProperties().getTotalFileCount() + ")"));
+        addVertical(new PlainLabel("Size: " + String.format("%,d", directory.getProperties().getTotalSize()) + " bytes"));
 
         if (!directory.getErrors().isEmpty()) {
             addVertical(new PlainLabel("Errors:"));
