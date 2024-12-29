@@ -2,8 +2,13 @@
     ...
 
 ### SOON ###
-    show progress bar only after some time, lets say 1 or 2 seconds
-        maybe only change cursor temporarily to loading one
+    improve background task processing
+        run sequential tasks in single dialog and thread
+        consider extracting worker class from task
+        consider introducing sub-tasks instead of sub-progresses
+
+        show progress bar only after some time, lets say 1 or 2 seconds
+            maybe only change cursor temporarily to loading one
 
     add icons to menu
     add support for drag and drop
