@@ -355,7 +355,7 @@ public @Test class DirectoryComparatorTest {
         directory.setDirectories(directories);
         directory.setFiles(files);
         directory.setProperties(new DirectoryProperties());
-        statisticsCounter.count(directory);
+        statisticsCounter.count(directory, new Progress("test"));
         return directory;
     }
 

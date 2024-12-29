@@ -3,6 +3,7 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.DirectoryProperties;
 import cz.mg.backup.entities.File;
@@ -27,18 +28,21 @@ public @Service class StatisticsCounter {
     /**
      * Gathers statistics for given directory and its subdirectories.
      */
-    public void count(@Optional Directory directory) {
+    public void count(@Optional Directory directory, @Mandatory Progress progress) {
         if (directory != null) {
             initialize(directory);
 
             for (Directory child : directory.getDirectories()) {
-                count(child);
+                count(child, progress);
                 collect(directory, child);
             }
 
             for (File child : directory.getFiles()) {
                 collect(directory, child);
+                progress.step();
             }
+
+            progress.step();
         }
     }
 

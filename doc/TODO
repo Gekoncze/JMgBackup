@@ -1,10 +1,5 @@
 ### NOW ###
-    add assertions for progress updates and estimates
-        file comparator test
-        file properties reader test
-        file reader test
-        hash converter test
-        statistics counter test
+    ...
 
 ### SOON ###
     show total size in details

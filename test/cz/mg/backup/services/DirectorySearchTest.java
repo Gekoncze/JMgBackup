@@ -61,7 +61,7 @@ public @Test class DirectorySearchTest {
         long expectedCount
     ) {
         Progress progress = new Progress("test");
-        statisticsCounter.count(directory);
+        statisticsCounter.count(directory, new Progress("test"));
         Node reality = search.find(directory, wanted, progress);
         Assert.assertSame(expectation, reality);
         Assert.assertEquals(expectedCount, progress.getLimit());

@@ -141,7 +141,7 @@ public @Component class DirectoryView extends Panel {
                 window,
                 "Gather statistics",
                 null,
-                progress -> statisticsCounter.count(directory)
+                progress -> statisticsCounter.count(directory, progress)
             );
 
             ProgressDialog.run(

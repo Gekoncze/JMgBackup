@@ -93,14 +93,14 @@ public @Component class MainWindow extends JFrame {
                 this,
                 "Gather statistics",
                 null,
-                progress -> statisticsCounter.count(a)
+                progress -> statisticsCounter.count(a, progress)
             );
 
             ProgressDialog.run(
                 this,
                 "Gather statistics",
                 null,
-                progress -> statisticsCounter.count(b)
+                progress -> statisticsCounter.count(b, progress)
             );
 
             leftView.refresh();
