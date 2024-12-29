@@ -16,9 +16,20 @@ public @Test class DirectorySortTest {
         System.out.print("Running " + DirectorySortTest.class.getSimpleName() + " ... ");
 
         DirectorySortTest test = new DirectorySortTest();
+        test.testEmpty();
         test.testSort();
 
         System.out.println("OK");
+    }
+
+    private void testEmpty() {
+        Directory directory = new Directory();
+
+        Progress progress = new Progress("Test");
+        sort.sort(directory, progress);
+
+        Assert.assertEquals(0L, progress.getLimit());
+        Assert.assertEquals(0L, progress.getValue());
     }
 
     private final @Service DirectorySort sort = DirectorySort.getInstance();
@@ -34,7 +45,8 @@ public @Test class DirectorySortTest {
         directory.getFiles().addLast(createFile(Path.of("y", "B")));
         directory.getFiles().addLast(createFile(Path.of("Z", "A")));
 
-        sort.sort(directory, new Progress("Test"));
+        Progress progress = new Progress("Test");
+        sort.sort(directory, progress);
 
         checkName("A", directory.getDirectories().get(0));
         checkName("AA", directory.getDirectories().get(1));
@@ -44,6 +56,8 @@ public @Test class DirectorySortTest {
         checkName("AA", directory.getFiles().get(1));
         checkName("B", directory.getFiles().get(2));
         checkName("BB", directory.getFiles().get(3));
+        Assert.assertEquals(16L, progress.getLimit());
+        Assert.assertEquals(true, progress.getValue() >= 4L && progress.getValue() <= 16L);
     }
 
     private void checkName(@Mandatory String expectation, @Mandatory Node node) {

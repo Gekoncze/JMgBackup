@@ -47,6 +47,10 @@ public @Service class DirectorySort {
     }
 
     private long estimate(long count) {
-        return Math.round(Math.ceil(count * Math.log(count)));
+        return Math.round(Math.ceil(count * log(count, 2)));
+    }
+
+    private double log(double count, double base) {
+        return Math.log(count) / Math.log(base);
     }
 }
