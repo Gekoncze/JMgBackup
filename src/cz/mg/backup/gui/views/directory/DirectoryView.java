@@ -12,6 +12,7 @@ import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.event.UserActionListener;
+import cz.mg.backup.gui.event.UserFileDragAndDrop;
 import cz.mg.backup.gui.event.UserMouseClickListener;
 import cz.mg.backup.gui.event.UserTreeSelectionListener;
 import cz.mg.backup.gui.services.ButtonFactory;
@@ -66,6 +67,7 @@ public @Component class DirectoryView extends Panel {
 
         tree = new JTree();
         tree.setBorder(BorderFactory.createEtchedBorder());
+        tree.setTransferHandler(new UserFileDragAndDrop(this::setPath));
 
         addVertical(pathPanel, 1, 0);
         addVertical(new JScrollPane(tree), 1, 1);
@@ -97,6 +99,7 @@ public @Component class DirectoryView extends Panel {
     public void setPath(@Optional Path path) {
         this.path = path;
         pathField.setText(path == null ? "" : path.toString());
+        reload();
     }
 
     public @Optional Directory getDirectory() {
@@ -114,7 +117,6 @@ public @Component class DirectoryView extends Panel {
         if (file != null && result == JFileChooser.APPROVE_OPTION) {
             setPath(file.toPath());
         }
-        reload();
     }
 
     public void reload() {
