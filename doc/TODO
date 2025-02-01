@@ -2,7 +2,9 @@
     ...
 
 ### SOON ###
-    ...
+    introduce directory manager
+        move directory reload logic to directory manager
+        move compare logic from main window to directory manager
 
 ### LATER ###
     add test for DirectoryReload
