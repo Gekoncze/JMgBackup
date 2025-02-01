@@ -12,17 +12,18 @@ import cz.mg.collections.pair.Pair;
 import java.nio.file.Path;
 import java.util.Date;
 
-public @Service class DirectoryReload {
-    private static volatile @Service DirectoryReload instance;
+public @Service class DirectoryManager {
+    private static volatile @Service DirectoryManager instance;
 
-    public static @Service DirectoryReload getInstance() {
+    public static @Service DirectoryManager getInstance() {
         if (instance == null) {
             synchronized (Service.class) {
                 if (instance == null) {
-                    instance = new DirectoryReload();
+                    instance = new DirectoryManager();
                     instance.directoryReader = DirectoryReader.getInstance();
                     instance.statisticsCounter = StatisticsCounter.getInstance();
                     instance.checksumService = ChecksumService.getInstance();
+                    instance.directoryComparator = DirectoryComparator.getInstance();
                 }
             }
         }
@@ -32,8 +33,9 @@ public @Service class DirectoryReload {
     private @Service DirectoryReader directoryReader;
     private @Service StatisticsCounter statisticsCounter;
     private @Service ChecksumService checksumService;
+    private @Service DirectoryComparator directoryComparator;
 
-    private DirectoryReload() {
+    private DirectoryManager() {
     }
 
     /**
@@ -67,5 +69,29 @@ public @Service class DirectoryReload {
         progress.step();
 
         return directory;
+    }
+
+    /**
+     * Compares given directories.
+     * Statistics are updated afterward.
+     */
+    public void compare(
+        @Optional Directory a,
+        @Optional Directory b,
+        @Mandatory Progress progress
+    ) {
+        progress.setLimit(3);
+
+        directoryComparator.compare(a, b, progress.nest("Compare"));
+
+        progress.step();
+
+        statisticsCounter.count(a, progress.nest("Gather statistics"));
+
+        progress.step();
+
+        statisticsCounter.count(b, progress.nest("Gather statistics"));
+
+        progress.step();
     }
 }

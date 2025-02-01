@@ -37,7 +37,7 @@ public @Component class DirectoryView extends Panel {
     private final @Service ButtonFactory buttonFactory = ButtonFactory.getInstance();
     private final @Service ChecksumService checksumService = ChecksumService.getInstance();
     private final @Service SelectionSimplifier selectionSimplifier = SelectionSimplifier.getInstance();
-    private final @Service DirectoryReload directoryReload = DirectoryReload.getInstance();
+    private final @Service DirectoryManager directoryManager = DirectoryManager.getInstance();
 
     private final @Mandatory MainWindow window;
     private final @Mandatory JTextField pathField;
@@ -123,7 +123,7 @@ public @Component class DirectoryView extends Panel {
                     window,
                     "Reload directory",
                     null,
-                    progress -> directoryReload.reload(directory, path, progress)
+                    progress -> directoryManager.reload(directory, path, progress)
                 )
             );
         } else {

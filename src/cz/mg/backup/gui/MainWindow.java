@@ -3,9 +3,7 @@ package cz.mg.backup.gui;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.Info;
-import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Settings;
@@ -13,8 +11,7 @@ import cz.mg.backup.gui.views.details.DetailsView;
 import cz.mg.backup.gui.views.directory.DirectoryView;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.menu.MainMenuBar;
-import cz.mg.backup.services.DirectoryComparator;
-import cz.mg.backup.services.StatisticsCounter;
+import cz.mg.backup.services.DirectoryManager;
 import cz.mg.panel.Panel;
 
 import javax.swing.*;
@@ -28,8 +25,7 @@ public @Component class MainWindow extends JFrame {
     private static final int MARGIN = 0;
     private static final int PADDING = 8;
 
-    private final @Service DirectoryComparator directoryComparator = DirectoryComparator.getInstance();
-    private final @Service StatisticsCounter statisticsCounter = StatisticsCounter.getInstance();
+    private final @Service DirectoryManager directoryManager = DirectoryManager.getInstance();
 
     private final @Mandatory Settings settings = new Settings(Algorithm.SHA256);
     private final @Mandatory DirectoryView leftView;
@@ -88,33 +84,13 @@ public @Component class MainWindow extends JFrame {
                 this,
                 "Compare",
                 null,
-                progress -> compareDirectoriesAndUpdateStatistics(a, b, progress)
+                progress -> directoryManager.compare(a, b, progress)
             );
 
             leftView.refresh();
             rightView.refresh();
             detailsView.refresh();
         }
-    }
-
-    private void compareDirectoriesAndUpdateStatistics(
-        @Optional Directory a,
-        @Optional Directory b,
-        @Mandatory Progress progress
-    ) {
-        progress.setLimit(3);
-
-        directoryComparator.compare(a, b, progress.nest("Compare"));
-
-        progress.step();
-
-        statisticsCounter.count(a, progress.nest("Gather statistics"));
-
-        progress.step();
-
-        statisticsCounter.count(b, progress.nest("Gather statistics"));
-
-        progress.step();
     }
 
     public void reload() {
