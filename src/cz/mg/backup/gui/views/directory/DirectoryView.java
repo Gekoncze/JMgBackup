@@ -6,7 +6,6 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
-import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
@@ -20,8 +19,6 @@ import cz.mg.backup.gui.services.DirectoryTreeFactory;
 import cz.mg.backup.gui.services.SelectionSimplifier;
 import cz.mg.backup.services.*;
 import cz.mg.collections.list.List;
-import cz.mg.collections.map.Map;
-import cz.mg.collections.pair.Pair;
 import cz.mg.panel.Panel;
 
 import javax.swing.*;
@@ -30,19 +27,17 @@ import javax.swing.tree.TreePath;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Date;
 
 public @Component class DirectoryView extends Panel {
     private static final int MARGIN = 4;
     private static final int PADDING = 4;
 
-    private final @Service DirectoryReader directoryReader = DirectoryReader.getInstance();
     private final @Service DirectorySearch directorySearch = DirectorySearch.getInstance();
-    private final @Service StatisticsCounter statisticsCounter = StatisticsCounter.getInstance();
     private final @Service DirectoryTreeFactory directoryTreeFactory = DirectoryTreeFactory.getInstance();
     private final @Service ButtonFactory buttonFactory = ButtonFactory.getInstance();
     private final @Service ChecksumService checksumService = ChecksumService.getInstance();
     private final @Service SelectionSimplifier selectionSimplifier = SelectionSimplifier.getInstance();
+    private final @Service DirectoryReload directoryReload = DirectoryReload.getInstance();
 
     private final @Mandatory MainWindow window;
     private final @Mandatory JTextField pathField;
@@ -123,34 +118,13 @@ public @Component class DirectoryView extends Panel {
         Path displayedPath = getDisplayedPath();
 
         if (path != null) {
-            Map<Path, Pair<Checksum, Date>> checksums = ProgressDialog.compute(
-                window,
-                "Collect checksums",
-                null,
-                progress -> checksumService.collect(directory, progress)
-            );
-
             setDirectory(
                 ProgressDialog.compute(
                     window,
-                    "Load directory",
-                    "Load directory " + path,
-                    progress -> directoryReader.read(path, progress)
+                    "Reload directory",
+                    null,
+                    progress -> directoryReload.reload(directory, path, progress)
                 )
-            );
-
-            ProgressDialog.run(
-                window,
-                "Gather statistics",
-                null,
-                progress -> statisticsCounter.count(directory, progress)
-            );
-
-            ProgressDialog.run(
-                window,
-                "Restore checksums",
-                null,
-                progress -> checksumService.restore(directory, checksums, progress)
             );
         } else {
             setDirectory(null);

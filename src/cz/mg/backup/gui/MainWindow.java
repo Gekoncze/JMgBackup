@@ -3,7 +3,9 @@ package cz.mg.backup.gui;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.Info;
+import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Settings;
@@ -86,27 +88,33 @@ public @Component class MainWindow extends JFrame {
                 this,
                 "Compare",
                 null,
-                progress -> directoryComparator.compare(a, b, progress)
-            );
-
-            ProgressDialog.run(
-                this,
-                "Gather statistics",
-                null,
-                progress -> statisticsCounter.count(a, progress)
-            );
-
-            ProgressDialog.run(
-                this,
-                "Gather statistics",
-                null,
-                progress -> statisticsCounter.count(b, progress)
+                progress -> compareDirectoriesAndUpdateStatistics(a, b, progress)
             );
 
             leftView.refresh();
             rightView.refresh();
             detailsView.refresh();
         }
+    }
+
+    private void compareDirectoriesAndUpdateStatistics(
+        @Optional Directory a,
+        @Optional Directory b,
+        @Mandatory Progress progress
+    ) {
+        progress.setLimit(3);
+
+        directoryComparator.compare(a, b, progress.nest("Compare"));
+
+        progress.step();
+
+        statisticsCounter.count(a, progress.nest("Gather statistics"));
+
+        progress.step();
+
+        statisticsCounter.count(b, progress.nest("Gather statistics"));
+
+        progress.step();
     }
 
     public void reload() {
