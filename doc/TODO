@@ -3,9 +3,13 @@
 
 ### SOON ###
     move remaining logic from main window and directory view to directory manager
+        such as reload and checksum actions in directory view
+        actions over directories should be centralized if possible
+        consider adding something like actions manager for ui layer
+        consider if state should be stored in directory views or in some state object (wild idea)
 
 ### LATER ###
-    add test for DirectoryReload
+    add test for directory manager
 
     add context menu for tree entries
         add option to show file or directory in file manager
