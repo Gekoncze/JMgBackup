@@ -9,6 +9,9 @@
         consider if state should be stored in directory views or in some state object (wild idea)
 
 ### LATER ###
+    separate path selector component from directory view
+        consider making it editable
+
     add test for directory manager
 
     add context menu for tree entries

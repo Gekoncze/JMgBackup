@@ -115,8 +115,6 @@ public @Component class DirectoryView extends Panel {
     }
 
     public void reload() {
-        Path displayedPath = getDisplayedPath();
-
         if (path != null) {
             setDirectory(
                 ProgressDialog.compute(
@@ -131,12 +129,11 @@ public @Component class DirectoryView extends Panel {
         }
 
         window.compare();
-
-        restoreDisplayedPath(displayedPath);
     }
 
     public void refresh() {
         if (directory != null) {
+            Path displayedPath = getDisplayedPath();
             List<TreePath> expandedPaths = TreeUtils.getExpandedPaths(tree);
             TreePath collapsedRootPath = TreeUtils.getCollapsedRootPath(tree);
             List<TreePath> selectedPaths = TreeUtils.getSelectedPaths(tree);
@@ -148,6 +145,7 @@ public @Component class DirectoryView extends Panel {
             TreeUtils.expandPaths(tree, expandedPaths);
             TreeUtils.collapseRootPath(tree, collapsedRootPath);
             TreeUtils.selectPaths(tree, selectedPaths);
+            restoreDisplayedPath(displayedPath);
         } else {
             tree.setModel(new ObjectTreeModel(null));
         }
