@@ -2,16 +2,10 @@
     ...
 
 ### SOON ###
-    move remaining logic from main window and directory view to directory manager
-        such as reload and checksum actions in directory view
-        actions over directories should be centralized if possible
-        consider adding something like actions manager for ui layer
-        consider if state should be stored in directory views or in some state object (wild idea)
-
-### LATER ###
     separate path selector component from directory view
         consider making it editable
 
+### LATER ###
     add test for directory manager
 
     add context menu for tree entries
@@ -37,6 +31,14 @@
     add icons to menu
 
 ### CONSIDERATIONS ###
+    consider moving compare itself on directory to directory manager
+
+    consider moving remaining logic from main window and directory view to directory manager
+        such as reload and checksum actions in directory view
+        actions over directories should be centralized if possible
+        consider adding something like actions manager for ui layer
+        consider if state should be stored in directory views or in some state object (wild idea)
+
     consider adding support for symbolic links as files
 
     consider getting rid of directory service
