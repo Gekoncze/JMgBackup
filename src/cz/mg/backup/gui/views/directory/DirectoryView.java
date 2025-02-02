@@ -10,11 +10,7 @@ import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
-import cz.mg.backup.gui.event.UserActionListener;
-import cz.mg.backup.gui.event.UserFileDragAndDrop;
-import cz.mg.backup.gui.event.UserMouseClickListener;
-import cz.mg.backup.gui.event.UserTreeSelectionListener;
-import cz.mg.backup.gui.services.ButtonFactory;
+import cz.mg.backup.gui.event.*;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
 import cz.mg.backup.gui.services.SelectionSimplifier;
 import cz.mg.backup.services.*;
@@ -25,7 +21,6 @@ import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreePath;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.nio.file.Path;
 
 public @Component class DirectoryView extends Panel {
@@ -34,18 +29,15 @@ public @Component class DirectoryView extends Panel {
 
     private final @Service DirectorySearch directorySearch = DirectorySearch.getInstance();
     private final @Service DirectoryTreeFactory directoryTreeFactory = DirectoryTreeFactory.getInstance();
-    private final @Service ButtonFactory buttonFactory = ButtonFactory.getInstance();
     private final @Service ChecksumService checksumService = ChecksumService.getInstance();
     private final @Service SelectionSimplifier selectionSimplifier = SelectionSimplifier.getInstance();
     private final @Service DirectoryManager directoryManager = DirectoryManager.getInstance();
 
     private final @Mandatory MainWindow window;
-    private final @Mandatory JTextField pathField;
+    private final @Mandatory PathSelector pathSelector;
     private final @Mandatory JTree tree;
-    private final @Mandatory JFileChooser directoryChooser;
     private final @Mandatory JPopupMenu popupMenu;
 
-    private @Optional Path path;
     private @Optional Directory directory;
 
     public DirectoryView(@Mandatory MainWindow window) {
@@ -53,23 +45,14 @@ public @Component class DirectoryView extends Panel {
         setMargin(MARGIN);
         setPadding(PADDING);
 
-        pathField = new JTextField();
-        pathField.setEditable(false);
-
-        Panel pathPanel = new Panel(0, PADDING);
-        pathPanel.addHorizontal(pathField, 1, 0);
-        pathPanel.addHorizontal(buttonFactory.create("...", this::select));
+        pathSelector = new PathSelector();
+        pathSelector.addPathSelectionListener(new UserPathChangeListener(this::onPathSelected));
+        addVertical(pathSelector, 1, 0);
 
         tree = new JTree();
         tree.setBorder(BorderFactory.createEtchedBorder());
-        tree.setTransferHandler(new UserFileDragAndDrop(this::setPath));
-
-        addVertical(pathPanel, 1, 0);
+        tree.setTransferHandler(new UserFileDragAndDrop(this::onFileDropped));
         addVertical(new JScrollPane(tree), 1, 1);
-
-        directoryChooser = new JFileChooser();
-        directoryChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-        directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         popupMenu = new JPopupMenu();
 
@@ -87,16 +70,6 @@ public @Component class DirectoryView extends Panel {
         refresh();
     }
 
-    public @Optional Path getPath() {
-        return path;
-    }
-
-    public void setPath(@Optional Path path) {
-        this.path = path;
-        pathField.setText(path == null ? "" : path.toString());
-        reload();
-    }
-
     public @Optional Directory getDirectory() {
         return directory;
     }
@@ -106,15 +79,16 @@ public @Component class DirectoryView extends Panel {
         refresh();
     }
 
-    private void select() {
-        int result = directoryChooser.showOpenDialog(this);
-        File file = directoryChooser.getSelectedFile();
-        if (file != null && result == JFileChooser.APPROVE_OPTION) {
-            setPath(file.toPath());
-        }
+    private void onPathSelected(@Optional Path path) {
+        reload();
+    }
+
+    private void onFileDropped(@Mandatory Path path) {
+        pathSelector.setPath(path);
     }
 
     public void reload() {
+        Path path = pathSelector.getPath();
         if (path != null) {
             setDirectory(
                 ProgressDialog.compute(
