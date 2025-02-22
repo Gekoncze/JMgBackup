@@ -1,12 +1,11 @@
 package cz.mg.backup.gui.dialogs;
 
 import cz.mg.annotations.classes.Component;
-import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.Algorithm;
+import cz.mg.backup.gui.components.TextButton;
 import cz.mg.backup.gui.event.UserEscapeKeyPressListener;
 import cz.mg.backup.gui.MainWindow;
-import cz.mg.backup.gui.services.ButtonFactory;
 import cz.mg.panel.Panel;
 import cz.mg.panel.settings.Alignment;
 
@@ -16,8 +15,6 @@ public @Component class HashFunctionDialog extends Dialog {
     private static final int MARGIN = 8;
     private static final int PADDING = 8;
     private static final int MIN_WIDTH = 256;
-
-    private final @Service ButtonFactory buttonFactory = ButtonFactory.getInstance();
 
     private final @Mandatory MainWindow window;
     private final @Mandatory JComboBox<Algorithm> algorithmComboBox;
@@ -31,8 +28,8 @@ public @Component class HashFunctionDialog extends Dialog {
         algorithmComboBox.setSelectedItem(window.getSettings().getAlgorithm());
 
         Panel buttonsPanel = new Panel(0, PADDING, Alignment.RIGHT);
-        buttonsPanel.addHorizontal(buttonFactory.create("Cancel", this::cancel));
-        buttonsPanel.addHorizontal(buttonFactory.create("Ok", this::ok));
+        buttonsPanel.addHorizontal(new TextButton("Cancel", this::cancel));
+        buttonsPanel.addHorizontal(new TextButton("Ok", this::ok));
 
         Panel panel = new Panel(MARGIN, PADDING);
         panel.addVertical(new JLabel("Hash algorithm"));

@@ -1,7 +1,6 @@
 package cz.mg.backup.gui.dialogs;
 
 import cz.mg.annotations.classes.Component;
-import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
@@ -9,10 +8,10 @@ import cz.mg.backup.components.Status;
 import cz.mg.backup.components.Task;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.components.ProgressBar;
+import cz.mg.backup.gui.components.TextButton;
 import cz.mg.backup.gui.event.UserEscapeKeyPressListener;
 import cz.mg.backup.gui.event.UserWindowClosedListener;
 import cz.mg.backup.gui.event.UserWindowClosingListener;
-import cz.mg.backup.gui.services.ButtonFactory;
 import cz.mg.collections.list.List;
 import cz.mg.collections.list.ListItem;
 import cz.mg.panel.Panel;
@@ -30,8 +29,6 @@ public @Component class ProgressDialog extends Dialog {
     private static final int REFRESH_DELAY = 100; // milliseconds
     private static final int DEFAULT_WIDTH = 512;
     private static final int DEFAULT_HEIGHT = 192;
-
-    private final @Service ButtonFactory buttonFactory = ButtonFactory.getInstance();
 
     private final @Mandatory Task<?> task;
     private final @Mandatory Timer timer;
@@ -55,7 +52,7 @@ public @Component class ProgressDialog extends Dialog {
         progressScrollPane.setBorder(null);
         panel.addVertical(progressScrollPane, 1, 1);
 
-        panel.addVertical(buttonFactory.create("Cancel", this::cancel), 0, 0, Alignment.MIDDLE, Fill.NONE);
+        panel.addVertical(new TextButton("Cancel", this::cancel), 0, 0, Alignment.MIDDLE, Fill.NONE);
 
         getContentPane().add(panel);
         setLocationRelativeTo(null);

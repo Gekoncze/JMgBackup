@@ -1,12 +1,12 @@
 package cz.mg.backup.gui.views.directory;
 
 import cz.mg.annotations.classes.Component;
-import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.gui.MainWindow;
+import cz.mg.backup.gui.components.IconButton;
 import cz.mg.backup.gui.event.*;
-import cz.mg.backup.gui.services.ButtonFactory;
+import cz.mg.backup.gui.icons.Icons;
 import cz.mg.collections.list.List;
 import cz.mg.panel.Panel;
 
@@ -21,8 +21,6 @@ import java.util.Objects;
 public @Component class PathSelector extends Panel {
     private static final int MARGIN = 0;
     private static final int PADDING = 4;
-
-    private final @Service ButtonFactory buttonFactory = ButtonFactory.getInstance();
 
     private final @Mandatory List<UserPathChangeListener> listeners = new List<>();
     private final @Mandatory MainWindow window;
@@ -42,8 +40,10 @@ public @Component class PathSelector extends Panel {
         pathField.addFocusListener(new UserFocusLostListener(this::onFocusLost));
         pathField.addKeyListener(new UserKeyPressListener(this::onKeyPressed));
 
+        addHorizontal(new JLabel("Directory"));
         addHorizontal(pathField, 1, 0);
-        addHorizontal(buttonFactory.create("...", this::select));
+        addHorizontal(new IconButton(Icons.STANDARD_OPEN_20, this::select));
+        addHorizontal(new IconButton(Icons.STANDARD_RELOAD_20, this::triggerListeners));
 
         directoryChooser = new JFileChooser();
         directoryChooser.setDialogType(JFileChooser.OPEN_DIALOG);

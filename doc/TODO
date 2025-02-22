@@ -27,8 +27,6 @@
     add support for automatic copy of missing files
         files could have been moved, so consider utilizing some sort of duplicate detection for that
 
-    add icons to menu
-
 ### CONSIDERATIONS ###
     consider moving compare itself on directory to directory manager
 
