@@ -42,8 +42,8 @@ public @Component class PathSelector extends Panel {
 
         addHorizontal(new JLabel("Directory"));
         addHorizontal(pathField, 1, 0);
-        addHorizontal(new IconButton(Icons.STANDARD_OPEN_20, this::select));
-        addHorizontal(new IconButton(Icons.STANDARD_RELOAD_20, this::triggerListeners));
+        addHorizontal(new IconButton(Icons.STANDARD_OPEN_20, "Open", this::select));
+        addHorizontal(new IconButton(Icons.STANDARD_RELOAD_20, "Refresh", this::triggerListeners));
 
         directoryChooser = new JFileChooser();
         directoryChooser.setDialogType(JFileChooser.OPEN_DIALOG);

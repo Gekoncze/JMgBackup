@@ -11,8 +11,9 @@ public class IconButton extends JButton {
         removeBackground();
     }
 
-    public IconButton(@Mandatory Icon icon, @Mandatory UserActionListener.Handler action) {
+    public IconButton(@Mandatory Icon icon, String tooltip, @Mandatory UserActionListener.Handler action) {
         setIcon(icon);
+        setToolTipText(tooltip);
         addActionListener(new UserActionListener(action));
         removeBackground();
     }
