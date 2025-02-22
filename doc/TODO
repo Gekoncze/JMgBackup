@@ -2,14 +2,7 @@
     ...
 
 ### SOON ###
-    make path selector text field editable
-        trim string automatically
-        check if can undo text during editing finished event (in case path not found)
-            if not then can also just leave directory view empty
-                then can either set null path or invalid path
-                    but invalid path might cause some errors
-                        but these errors could occur also if for example directory got moved
-                            so test behavior for this scenario anyway and think about proper strategy
+    ...
 
 ### LATER ###
     add test for directory manager

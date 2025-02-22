@@ -45,7 +45,7 @@ public @Component class DirectoryView extends Panel {
         setMargin(MARGIN);
         setPadding(PADDING);
 
-        pathSelector = new PathSelector();
+        pathSelector = new PathSelector(window);
         pathSelector.addPathSelectionListener(new UserPathChangeListener(this::onPathSelected));
         addVertical(pathSelector, 1, 0);
 
