@@ -82,7 +82,13 @@ public @Service class DirectoryManager {
     ) {
         progress.setLimit(3);
 
-        directoryComparator.compare(a, b, progress.nest("Compare"));
+        if (a != null && b != null) {
+            directoryComparator.compare(a, b, progress.nest("Compare"));
+        } else if (a != null) {
+            directoryComparator.compare(a, a, progress.nest("Compare"));
+        } else if (b != null) {
+            directoryComparator.compare(b, b, progress.nest("Compare"));
+        }
 
         progress.step();
 
