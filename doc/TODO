@@ -14,11 +14,16 @@
         add option to show error details
 
     allow users to choose in main menu bar which kinds of errors they want to see and which to hide
+        might want to add to view menu
         * missing file or directory
         * hash does not match
         * possible duplicate of a file
         * property not computed
         * file system error
+
+    allow user to show usage in percent relative to parent total
+        might want to add preference to view menu
+        consider showing colors (for example red high percent, green small percent)
 
     add duplicate detector
         show different icon for duplicates ?
