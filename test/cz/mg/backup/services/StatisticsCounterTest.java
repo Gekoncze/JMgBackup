@@ -9,6 +9,7 @@ import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.FileProperties;
 import cz.mg.backup.exceptions.CompareException;
 import cz.mg.test.Assert;
+import cz.mg.test.Assertions;
 
 import java.nio.file.FileSystemException;
 
@@ -32,7 +33,7 @@ public @Test class StatisticsCounterTest {
     private void testEmpty() {
         Progress progress = new Progress("test");
 
-        Assert.assertThatCode(() -> {
+        Assertions.assertThatCode(() -> {
             statisticsCounter.count(null, progress);
         }).doesNotThrowAnyException();
 

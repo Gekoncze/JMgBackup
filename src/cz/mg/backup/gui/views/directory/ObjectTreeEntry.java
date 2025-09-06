@@ -4,8 +4,8 @@ import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.collections.array.Array;
-import cz.mg.collections.components.CompareFunction;
-import cz.mg.collections.components.HashFunction;
+import cz.mg.functions.EqualsFunction;
+import cz.mg.functions.HashFunction;
 
 import java.util.Objects;
 
@@ -16,7 +16,7 @@ public @Component class ObjectTreeEntry {
     private final int index;
     private final boolean isLeaf;
     private final @Optional Array<ObjectTreeEntry> children;
-    private final @Mandatory CompareFunction compareFunction;
+    private final @Mandatory EqualsFunction equalsFunction;
     private final @Mandatory HashFunction hashFunction;
 
     public <T> ObjectTreeEntry(
@@ -25,7 +25,7 @@ public @Component class ObjectTreeEntry {
         int index,
         boolean isLeaf,
         @Optional Array<ObjectTreeEntry> children,
-        @Mandatory CompareFunction<T> compareFunction,
+        @Mandatory EqualsFunction<T> equalsFunction,
         @Mandatory HashFunction<T> HashFunction
     ) {
         this.object = object;
@@ -33,7 +33,7 @@ public @Component class ObjectTreeEntry {
         this.index = index;
         this.isLeaf = isLeaf;
         this.children = children;
-        this.compareFunction = compareFunction;
+        this.equalsFunction = equalsFunction;
         this.hashFunction = HashFunction;
     }
 
@@ -62,7 +62,7 @@ public @Component class ObjectTreeEntry {
     public boolean equals(Object o) {
         if (o instanceof ObjectTreeEntry e) {
             if (Objects.equals(getClass(object), getClass(e.object))) {
-                return compareFunction.equals(object, e.object);
+                return equalsFunction.equals(object, e.object);
             }
         }
         return false;

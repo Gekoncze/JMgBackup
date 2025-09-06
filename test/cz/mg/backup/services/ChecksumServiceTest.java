@@ -10,6 +10,7 @@ import cz.mg.collections.list.List;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 import cz.mg.test.Assert;
+import cz.mg.test.Assertions;
 
 import java.nio.file.Path;
 import java.util.Calendar;
@@ -176,7 +177,7 @@ public @Test class ChecksumServiceTest {
     private void testRestoreEmpty() {
         Progress progress = new Progress("Test");
 
-        Assert.assertThatCode(() -> {
+        Assertions.assertThatCode(() -> {
             service.restore(null, new Map<>(), progress);
         }).doesNotThrowAnyException();
 

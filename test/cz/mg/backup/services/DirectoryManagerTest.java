@@ -6,6 +6,7 @@ import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.*;
 import cz.mg.backup.exceptions.CompareException;
 import cz.mg.test.Assert;
+import cz.mg.test.Assertions;
 
 import java.nio.file.Path;
 import java.util.Calendar;
@@ -150,7 +151,7 @@ public @Test class DirectoryManagerTest {
     private void testCompareNullBoth() {
         Progress progress = new Progress("test");
 
-        Assert.assertThatCode(() -> {
+        Assertions.assertThatCode(() -> {
             directoryManager.compare(null, null, progress);
         }).doesNotThrowAnyException();
 

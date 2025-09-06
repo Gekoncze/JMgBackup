@@ -31,6 +31,7 @@
         files could have been moved, so consider utilizing some sort of duplicate detection for that
 
 ### CONSIDERATIONS ###
+    consider showing disk usage somewhere near top (if possible)
     consider moving compare itself on directory to directory manager
 
     consider moving remaining logic from main window and directory view to directory manager

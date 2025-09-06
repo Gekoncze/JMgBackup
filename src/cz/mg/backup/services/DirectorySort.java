@@ -5,7 +5,7 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
-import cz.mg.collections.components.Direction;
+import cz.mg.collections.services.sort.Direction;
 import cz.mg.collections.services.sort.ListSort;
 import cz.mg.collections.services.sort.MergeListSort;
 
