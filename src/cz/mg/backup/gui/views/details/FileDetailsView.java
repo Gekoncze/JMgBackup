@@ -3,7 +3,7 @@ package cz.mg.backup.gui.views.details;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.File;
-import cz.mg.backup.gui.components.PlainLabel;
+import cz.mg.backup.gui.components.TextLabel;
 import cz.mg.backup.gui.components.TitleLabel;
 import cz.mg.panel.Panel;
 
@@ -15,21 +15,21 @@ public @Component class FileDetailsView extends Panel {
 
     public FileDetailsView(@Mandatory File file) {
         addVertical(new TitleLabel(file.getPath().getFileName().toString()));
-        addVertical(new PlainLabel("Path: " + file.getPath()));
-        addVertical(new PlainLabel("Size: " + String.format("%,d", file.getProperties().getSize()) + " bytes"));
-        addVertical(new PlainLabel("Created: " + formatDate(file.getProperties().getCreated())));
-        addVertical(new PlainLabel("Modified: " + formatDate(file.getProperties().getModified())));
+        addVertical(new TextLabel("Path: " + file.getPath()));
+        addVertical(new TextLabel("Size: " + String.format("%,d", file.getProperties().getSize()) + " bytes"));
+        addVertical(new TextLabel("Created: " + formatDate(file.getProperties().getCreated())));
+        addVertical(new TextLabel("Modified: " + formatDate(file.getProperties().getModified())));
 
         if (file.getChecksum() != null) {
-            addVertical(new PlainLabel(
+            addVertical(new TextLabel(
                 "Hash: " + file.getChecksum().getHash() + " (" + file.getChecksum().getAlgorithm() + ")"
             ));
         }
 
         if (!file.getErrors().isEmpty()) {
-            addVertical(new PlainLabel("Errors:"));
+            addVertical(new TextLabel("Errors:"));
             for (Exception error : file.getErrors()) {
-                addVertical(new PlainLabel("    " + error.getClass().getSimpleName() + ": " + error.getMessage()));
+                addVertical(new TextLabel("    " + error.getClass().getSimpleName() + ": " + error.getMessage()));
             }
         }
     }

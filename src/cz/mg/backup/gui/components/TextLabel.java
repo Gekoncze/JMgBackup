@@ -6,9 +6,13 @@ import cz.mg.annotations.requirement.Mandatory;
 import javax.swing.*;
 import java.awt.*;
 
-public @Component class PlainLabel extends JLabel {
-    public PlainLabel(@Mandatory String text) {
+public @Component class TextLabel extends JTextField {
+    public TextLabel(@Mandatory String text) {
         super(text);
+        setEditable(false);
+        setOpaque(false);
+        setBorder(null);
+        setBackground(null);
         Font font = getFont();
         setFont(new Font(
             font.getName(),
