@@ -12,6 +12,7 @@ import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.event.*;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
+import cz.mg.backup.gui.services.FileManager;
 import cz.mg.backup.gui.services.SelectionSimplifier;
 import cz.mg.backup.services.*;
 import cz.mg.collections.list.List;
@@ -32,12 +33,14 @@ public @Component class DirectoryView extends Panel {
     private final @Service ChecksumService checksumService = ChecksumService.getInstance();
     private final @Service SelectionSimplifier selectionSimplifier = SelectionSimplifier.getInstance();
     private final @Service DirectoryManager directoryManager = DirectoryManager.getInstance();
+    private final @Service FileManager fileManager = FileManager.getInstance();
 
     private final @Mandatory MainWindow window;
     private final @Mandatory PathSelector pathSelector;
     private final @Mandatory JTree tree;
     private final @Mandatory JPopupMenu popupMenu;
 
+    private @Optional TreePath popupMenuRow;
     private @Optional Directory directory;
 
     public DirectoryView(@Mandatory MainWindow window) {
@@ -63,6 +66,10 @@ public @Component class DirectoryView extends Panel {
         JMenuItem clearChecksumMenuItem = new JMenuItem("Clear checksum");
         clearChecksumMenuItem.addActionListener(new UserActionListener(this::clearChecksum));
         popupMenu.add(clearChecksumMenuItem);
+
+        JMenuItem openInFileManagerMenuItem = new JMenuItem("Open in file manager");
+        openInFileManagerMenuItem.addActionListener(new UserActionListener(this::openInFileManager));
+        popupMenu.add(openInFileManagerMenuItem);
 
         tree.addMouseListener(new UserMouseClickListener(this::onMouseClicked));
         tree.addTreeSelectionListener(new UserTreeSelectionListener(this::onSelectionChanged));
@@ -124,6 +131,7 @@ public @Component class DirectoryView extends Panel {
             tree.setModel(new ObjectTreeModel(null));
         }
         tree.setCellRenderer(new NodeCellRenderer());
+        popupMenuRow = null;
     }
 
     private @Optional Path getDisplayedPath() {
@@ -151,7 +159,7 @@ public @Component class DirectoryView extends Panel {
     private void onMouseClicked(@Mandatory MouseEvent event) {
         if (event.getButton() == MouseEvent.BUTTON1) {
             TreePath path = tree.getPathForLocation(event.getX(), event.getY());
-            Node node = getNodeFrom(path);
+            Node node = getPathNode(path);
             if (node != null) {
                 window.getDetailsView().setNode(node);
             }
@@ -165,7 +173,7 @@ public @Component class DirectoryView extends Panel {
     private void onSelectionChanged(@Mandatory TreeSelectionEvent event) {
         for (TreePath path : event.getPaths()) {
             if (event.isAddedPath(path)) {
-                Node node = getNodeFrom(path);
+                Node node = getPathNode(path);
                 if (node != null) {
                     window.getDetailsView().setNode(node);
                 }
@@ -175,22 +183,23 @@ public @Component class DirectoryView extends Panel {
     }
 
     private void showPopupMenu(@Mandatory MouseEvent event) {
-        if (isRowSelectedAt(event)) {
+        popupMenuRow = getSelectedRowAt(event);
+        if (popupMenuRow != null) {
             popupMenu.show(tree, event.getX(), event.getY());
         }
     }
 
-    private boolean isRowSelectedAt(@Mandatory MouseEvent event) {
+    private @Optional TreePath getSelectedRowAt(@Mandatory MouseEvent event) {
         int row = tree.getRowForLocation(event.getX(), event.getY());
         int[] selectedRows = tree.getSelectionRows();
         if (row != -1 && selectedRows != null) {
             for (int selectedRow : selectedRows) {
                 if (selectedRow == row) {
-                    return true;
+                    return tree.getPathForRow(row);
                 }
             }
         }
-        return false;
+        return null;
     }
 
     private void computeChecksum() {
@@ -220,12 +229,21 @@ public @Component class DirectoryView extends Panel {
         window.compare();
     }
 
+    private void openInFileManager() {
+        if (popupMenuRow != null) {
+            Node node = getPathNode(popupMenuRow);
+            if (node != null) {
+                fileManager.open(node.getPath());
+            }
+        }
+    }
+
     private @Mandatory List<Node> getSelectedNodes() {
         List<Node> selectedNodes = new List<>();
         TreePath[] paths = tree.getSelectionPaths();
         if (paths != null) {
             for (TreePath path : paths) {
-                Node node = getNodeFrom(path);
+                Node node = getPathNode(path);
                 if (node != null) {
                     selectedNodes.addLast(node);
                 }
@@ -243,7 +261,7 @@ public @Component class DirectoryView extends Panel {
         );
     }
 
-    private @Optional Node getNodeFrom(@Optional TreePath path) {
+    private @Optional Node getPathNode(@Optional TreePath path) {
         return path == null ? null : (Node) ((ObjectTreeEntry) path.getLastPathComponent()).get();
     }
 }

@@ -6,7 +6,7 @@ import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.exceptions.CancelException;
-import cz.mg.backup.exceptions.StorageException;
+import cz.mg.backup.exceptions.FileSystemException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -64,7 +64,7 @@ public @Service class ChecksumReader {
             if (e instanceof CancelException ce) {
                 throw ce;
             } else {
-                throw new StorageException("Could not compute checksum.", e);
+                throw new FileSystemException("Could not compute checksum.", e);
             }
         }
     }
