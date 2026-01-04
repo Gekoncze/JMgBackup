@@ -1,5 +1,7 @@
 ### NOW ###
-    ...
+    add support for automatic copy of missing files
+        files could have been moved, so consider utilizing some sort of duplicate detection for that
+        use FileCopy class
 
 ### SOON ###
     ...
@@ -25,9 +27,6 @@
     add duplicate detector
         show different icon for duplicates ?
         allow user to configure duplicate detection (specify key properties)
-
-    add support for automatic copy of missing files
-        files could have been moved, so consider utilizing some sort of duplicate detection for that
 
 ### CONSIDERATIONS ###
     consider showing disk usage somewhere near top (if possible)
