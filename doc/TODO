@@ -1,35 +1,29 @@
 ### NOW ###
-    add support for automatic copy of missing files
+    add support for automatic copy of missing files (in selected paths) to context menu
+        use existing cz.mg.backup.services.FileCopy class
         files could have been moved, so consider utilizing some sort of duplicate detection for that
-        use FileCopy class
+        consider if confirm dialog is necessary before copy (in case of mis-click)
 
 ### SOON ###
-    ...
+    add duplicate detector
+        show different icon for duplicates ?
+        allow user to configure duplicate detection to specify key properties ?
 
 ### LATER ###
     add context menu for tree entries
-        add option to show file or directory details
-        add option to reload / refresh
+        add option to reload / refresh specific file or directory
         add option to show error details
-
-    allow users to choose in main menu bar which kinds of errors they want to see and which to hide
-        might want to add to view menu
-        * missing file or directory
-        * hash does not match
-        * possible duplicate of a file
-        * property not computed
-        * file system error
 
     allow user to show usage in percent relative to parent total
         might want to add preference to view menu
         consider showing colors (for example red high percent, green small percent)
-
-    add duplicate detector
-        show different icon for duplicates ?
-        allow user to configure duplicate detection (specify key properties)
+        could be added to details view too
 
 ### CONSIDERATIONS ###
     consider showing disk usage somewhere near top (if possible)
+        could then show warning when copy operation may fail because of not enough space in target device
+        would need to detect device for path and read its properties somehow
+
     consider moving compare itself on directory to directory manager
 
     consider moving remaining logic from main window and directory view to directory manager
@@ -38,7 +32,12 @@
         consider adding something like actions manager for ui layer
         consider if state should be stored in directory views or in some state object (wild idea)
 
-    consider adding support for symbolic links as files
+    consider adding support for symbolic link copy
+        could be nice to have a separate icon for it
+        would need to add file type to file details view
+        there is a problem of how to handle symlink paths:
+            a) if outside of current work tree, what to do?
+            b) if inside of current work tree, keep original symlink target or update it relative to target work tree?
 
     consider getting rid of directory service
 
@@ -46,13 +45,15 @@
         currently iterating through all elements
         and also not utilizing sorted elements
 
-    consider allowing multiple checksums types to be computed for single file
-
-    consider showing special (warning ?) icon when checksum is not computed on one side
+    consider allowing multiple checksums types to be computed for a single file
 
     consider updatable progress description (or additional updatable field)
         possible use case: include processing speed updated in real time, such as kB/s
 
-    consider updating checksum if it is detected that modified date was changed
-        would require very precise time
-        would require to track timestamp for checksum
+    consider allowing users to choose in main menu bar which kinds of errors they want to see and which to hide
+        configurable via view menu:
+            missing file or directory
+            hash does not match
+            possible duplicate of a file
+            property not computed
+            file system error
