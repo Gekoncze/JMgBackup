@@ -4,6 +4,8 @@
         files could have been moved, so consider utilizing some sort of duplicate detection for that
         consider if confirm dialog is necessary before copy (in case of mis-click)
             it may display the number of files and a scrollable list of files to be copied
+        we may introduce another field in directory and file - relative path
+            it would represent path relative to main directory
 
 ### SOON ###
     add duplicate detector
