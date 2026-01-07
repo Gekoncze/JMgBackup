@@ -7,6 +7,8 @@ import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.exceptions.CompareException;
+import cz.mg.backup.exceptions.MismatchException;
+import cz.mg.backup.exceptions.MissingException;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 import cz.mg.collections.pair.ReadablePair;
@@ -87,22 +89,22 @@ public @Service class DirectoryComparator {
         clearCompareErrors(second);
 
         if (first != null && second == null) {
-            first.getErrors().addLast(new CompareException("Missing corresponding directory."));
+            first.getErrors().addLast(new MissingException("Missing corresponding directory."));
             first.getProperties().setTotalErrorCount(first.getProperties().getTotalErrorCount() + 1);
             progress.step();
         }
 
         if (first == null && second != null) {
-            second.getErrors().addLast(new CompareException("Missing corresponding directory."));
+            second.getErrors().addLast(new MissingException("Missing corresponding directory."));
             second.getProperties().setTotalErrorCount(second.getProperties().getTotalErrorCount() + 1);
             progress.step();
         }
 
         if (first != null && second != null) {
             if (!Objects.equals(first.getPath().getFileName(), second.getPath().getFileName())) {
-                first.getErrors().addLast(new CompareException("Directory name differs."));
+                first.getErrors().addLast(new MismatchException("Directory name differs."));
                 first.getProperties().setTotalErrorCount(first.getProperties().getTotalErrorCount() + 1);
-                second.getErrors().addLast(new CompareException("Directory name differs."));
+                second.getErrors().addLast(new MismatchException("Directory name differs."));
                 second.getProperties().setTotalErrorCount(second.getProperties().getTotalErrorCount() + 1);
             }
             progress.step(2);
@@ -152,10 +154,10 @@ public @Service class DirectoryComparator {
             fileComparator.compare(first, second);
             progress.step(2);
         } else if (first != null) {
-            first.getErrors().addLast(new CompareException("Missing corresponding file."));
+            first.getErrors().addLast(new MissingException("Missing corresponding file."));
             progress.step();
         } else if (second != null) {
-            second.getErrors().addLast(new CompareException("Missing corresponding file."));
+            second.getErrors().addLast(new MissingException("Missing corresponding file."));
             progress.step();
         }
     }

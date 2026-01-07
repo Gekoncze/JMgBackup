@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.exceptions.CompareException;
+import cz.mg.backup.exceptions.MismatchException;
 
 import java.util.Objects;
 
@@ -32,7 +33,7 @@ public @Service class FileComparator {
         second.getErrors().removeIf(e -> e instanceof CompareException);
 
         if (!Objects.equals(first.getProperties().getSize(), second.getProperties().getSize())) {
-            CompareException exception = new CompareException(
+            CompareException exception = new MismatchException(
                 "Expected size " + first.getProperties().getSize() + ", " +
                     "but got " + second.getProperties().getSize() + "."
             );
@@ -42,14 +43,14 @@ public @Service class FileComparator {
 
         if (first.getChecksum() != null && second.getChecksum() != null) {
             if (!Objects.equals(first.getChecksum().getAlgorithm(), second.getChecksum().getAlgorithm())) {
-                CompareException exception = new CompareException(
+                CompareException exception = new MismatchException(
                     "Expected algorithm " + first.getChecksum().getAlgorithm() + ", " +
                         "but got " + second.getChecksum().getAlgorithm() + "."
                 );
                 first.getErrors().addLast(exception);
                 second.getErrors().addLast(exception);
             } else if (!Objects.equals(first.getChecksum().getHash(), second.getChecksum().getHash())) {
-                CompareException exception = new CompareException(
+                CompareException exception = new MismatchException(
                     "Expected hash " + first.getChecksum().getHash() + ", " +
                         "but got " + second.getChecksum().getHash() + "."
                 );
@@ -58,11 +59,11 @@ public @Service class FileComparator {
             }
         } else if (first.getChecksum() != null || second.getChecksum() != null) {
             if (first.getChecksum() == null) {
-                first.getErrors().addLast(new CompareException("Checksum not computed."));
+                first.getErrors().addLast(new MismatchException("Checksum not computed."));
             }
 
             if (second.getChecksum() == null) {
-                second.getErrors().addLast(new CompareException("Checksum not computed."));
+                second.getErrors().addLast(new MismatchException("Checksum not computed."));
             }
         }
     }
