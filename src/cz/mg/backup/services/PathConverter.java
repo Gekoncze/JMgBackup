@@ -24,32 +24,28 @@ public @Service class PathConverter {
     private PathConverter() {
     }
 
-    public @Mandatory Path sourcePathToTargetPath(
-        @Mandatory Path filePath,
-        @Mandatory Path sourceDirectoryPath,
-        @Mandatory Path targetDirectoryPath
-    ) {
+    public @Mandatory Path toRelativePath(@Mandatory Path filePath, @Mandatory Path directoryPath) {
         if (filePath.getNameCount() == 0 || filePath.toString().isEmpty()) {
             throw new IllegalArgumentException("File path cannot be empty.");
         }
 
         Iterator<Path> filePathIterator = filePath.iterator();
-        Iterator<Path> sourcePathIterator = sourceDirectoryPath.iterator();
-        if (!sourceDirectoryPath.toString().isEmpty()) {
-            while (filePathIterator.hasNext() && sourcePathIterator.hasNext()) {
+        Iterator<Path> directoryPathIterator = directoryPath.iterator();
+        if (!directoryPath.toString().isEmpty()) {
+            while (filePathIterator.hasNext() && directoryPathIterator.hasNext()) {
                 Path filePathElement = filePathIterator.next();
-                Path sourcePathElement = sourcePathIterator.next();
-                if (!filePathIterator.hasNext() || !Objects.equals(filePathElement, sourcePathElement)) {
+                Path directoryPathElement = directoryPathIterator.next();
+                if (!filePathIterator.hasNext() || !Objects.equals(filePathElement, directoryPathElement)) {
                     throw new IllegalArgumentException(
-                        "File '" + filePath + "' is not in directory '" + sourceDirectoryPath + "'."
+                        "File '" + filePath + "' is not in directory '" + directoryPath + "'."
                     );
                 }
             }
         }
-        Path targetFilePath = targetDirectoryPath;
+        Path relativePath = Path.of(filePathIterator.next().toString());
         while (filePathIterator.hasNext()) {
-            targetFilePath = targetFilePath.resolve(filePathIterator.next());
+            relativePath = relativePath.resolve(filePathIterator.next());
         }
-        return targetFilePath;
+        return relativePath;
     }
 }
