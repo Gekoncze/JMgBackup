@@ -1,7 +1,7 @@
 ### NOW ###
     add support for automatic copy of missing files (in selected paths) to context menu
-        use existing cz.mg.backup.services.FileCopy class
-        files could have been moved, so consider utilizing some sort of duplicate detection for that
+        might need to use selection simplifier
+        use existing cz.mg.backup.services.FileCopy class and relative paths
         consider if confirm dialog is necessary before copy (in case of mis-click)
             it may display the number of files and a scrollable list of files to be copied
 
@@ -9,6 +9,8 @@
     add duplicate detector
         show different icon for duplicates ?
         allow user to configure duplicate detection to specify key properties ?
+        duplicates are within same work tree
+            but there could be also moved files that when copied would cause duplicates
 
 ### LATER ###
     add context menu for tree entries
