@@ -11,6 +11,7 @@ public @Component class DirectoryDetailsView extends Panel {
     public DirectoryDetailsView(@Mandatory Directory directory) {
         addVertical(new TitleLabel(directory.getPath().getFileName().toString()));
         addVertical(new TextLabel("Path: " + directory.getPath()));
+        addVertical(new TextLabel("Relative path: " + directory.getRelativePath()));
         addVertical(new TextLabel("Directory count: " + directory.getDirectories().count()
             + " (total " + directory.getProperties().getTotalDirectoryCount() + ")"));
         addVertical(new TextLabel("File count: " + directory.getFiles().count()

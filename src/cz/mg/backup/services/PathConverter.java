@@ -2,6 +2,8 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.backup.components.Progress;
+import cz.mg.backup.entities.Directory;
 
 import java.nio.file.Path;
 import java.util.Iterator;
@@ -15,21 +17,34 @@ public @Service class PathConverter {
             synchronized (Service.class) {
                 if (instance == null) {
                     instance = new PathConverter();
+                    instance.directoryService = DirectoryService.getInstance();
                 }
             }
         }
         return instance;
     }
 
+    private @Service DirectoryService directoryService;
+
     private PathConverter() {
     }
 
-    public @Mandatory Path toRelativePath(@Mandatory Path filePath, @Mandatory Path directoryPath) {
-        if (filePath.getNameCount() == 0 || filePath.toString().isEmpty()) {
-            throw new IllegalArgumentException("File path cannot be empty.");
+    public void computeRelativePaths(@Mandatory Directory directory, @Mandatory Progress progress) {
+        directoryService.forEachNode(directory, node -> {
+            node.setRelativePath(toRelativePath(node.getPath(), directory.getPath()));
+        }, progress);
+    }
+
+    public @Mandatory Path toRelativePath(@Mandatory Path nodePath, @Mandatory Path directoryPath) {
+        if (Objects.equals(nodePath, directoryPath)) {
+            return Path.of("");
         }
 
-        Iterator<Path> filePathIterator = filePath.iterator();
+        if (nodePath.getNameCount() == 0 || nodePath.toString().isEmpty()) {
+            throw new IllegalArgumentException("Path cannot be empty.");
+        }
+
+        Iterator<Path> filePathIterator = nodePath.iterator();
         Iterator<Path> directoryPathIterator = directoryPath.iterator();
         if (!directoryPath.toString().isEmpty()) {
             while (filePathIterator.hasNext() && directoryPathIterator.hasNext()) {
@@ -37,7 +52,7 @@ public @Service class PathConverter {
                 Path directoryPathElement = directoryPathIterator.next();
                 if (!filePathIterator.hasNext() || !Objects.equals(filePathElement, directoryPathElement)) {
                     throw new IllegalArgumentException(
-                        "File '" + filePath + "' is not in directory '" + directoryPath + "'."
+                        "Path '" + nodePath + "' is not in directory '" + directoryPath + "'."
                     );
                 }
             }

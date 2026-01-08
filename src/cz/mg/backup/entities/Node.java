@@ -10,6 +10,7 @@ import java.nio.file.Path;
 
 public @Entity class Node {
     private Path path;
+    private Path relativePath;
     private List<Exception> errors = new List<>();
 
     public Node() {
@@ -22,6 +23,15 @@ public @Entity class Node {
 
     public void setPath(Path path) {
         this.path = path;
+    }
+
+    @Required @Value
+    public Path getRelativePath() {
+        return relativePath;
+    }
+
+    public void setRelativePath(Path relativePath) {
+        this.relativePath = relativePath;
     }
 
     @Required @Part

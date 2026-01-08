@@ -16,6 +16,7 @@ public @Component class FileDetailsView extends Panel {
     public FileDetailsView(@Mandatory File file) {
         addVertical(new TitleLabel(file.getPath().getFileName().toString()));
         addVertical(new TextLabel("Path: " + file.getPath()));
+        addVertical(new TextLabel("Relative path: " + file.getRelativePath()));
         addVertical(new TextLabel("Size: " + String.format("%,d", file.getProperties().getSize()) + " bytes"));
         addVertical(new TextLabel("Created: " + formatDate(file.getProperties().getCreated())));
         addVertical(new TextLabel("Modified: " + formatDate(file.getProperties().getModified())));

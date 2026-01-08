@@ -3,6 +3,10 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.backup.components.Progress;
+import cz.mg.backup.entities.Directory;
+import cz.mg.backup.entities.File;
+import cz.mg.test.Assert;
 import cz.mg.test.Assertions;
 
 import java.nio.file.Path;
@@ -12,25 +16,22 @@ public @Test class PathConverterTest {
         System.out.print("Running " + PathConverterTest.class.getSimpleName() + " ... ");
 
         PathConverterTest test = new PathConverterTest();
-        test.testAllEmptyValidation();
-        test.testFileEmptyValidation();
+        test.testEmptyPaths();
         test.testFileElsewhereValidation();
-        test.testConvert();
+        test.testRelativePath();
+        test.testComputeRelativePaths();
 
         System.out.println("OK");
     }
 
     private final @Service PathConverter pathConverter = PathConverter.getInstance();
 
-    private void testAllEmptyValidation() {
-        testIllegal("", "");
-    }
-
-    private void testFileEmptyValidation() {
-        testIllegal("", "foo");
+    private void testEmptyPaths() {
+        testLegal("", "", "");
     }
 
     private void testFileElsewhereValidation() {
+        testIllegal("", "foo");
         testIllegal("Aki", "foo");
         testIllegal("bar/Aki", "foo");
         testIllegal("bar/foo/Aki", "foo");
@@ -39,8 +40,9 @@ public @Test class PathConverterTest {
         testIllegal("foo/a/Aki", "foo/a/b/c");
     }
 
-    private void testConvert() {
+    private void testRelativePath() {
         testLegal("Aki", "", "Aki");
+        testLegal("foo", "foo", "");
         testLegal("foo/Aki", "foo", "Aki");
         testLegal("foo/bar/Aki", "foo/bar", "Aki");
         testLegal("foo/bar/Aki", "foo", "bar/Aki");
@@ -48,6 +50,35 @@ public @Test class PathConverterTest {
         testLegal("foo/a/b/Aki", "foo/a", "b/Aki");
         testLegal("foo/bar/Aki", "foo", "bar/Aki");
         testLegal("1/2/3/4/5/Aki", "1/2/3", "4/5/Aki");
+    }
+
+    private void testComputeRelativePaths() {
+        File firstFile = new File();
+        firstFile.setPath(Path.of("/foo/bar/Fluffy.bmp"));
+
+        File secondFile = new File();
+        secondFile.setPath(Path.of("/foo/bar/67/69"));
+
+        Directory subSubDirectory = new Directory();
+        subSubDirectory.setPath(Path.of("/foo/bar/67/fun"));
+
+        Directory subDirectory = new Directory();
+        subDirectory.setPath(Path.of("/foo/bar/67"));
+        subDirectory.getFiles().addLast(secondFile);
+        subDirectory.getDirectories().addLast(subSubDirectory);
+
+        Directory directory = new Directory();
+        directory.setPath(Path.of("/foo/bar"));
+        directory.getFiles().addLast(firstFile);
+        directory.getDirectories().addLast(subDirectory);
+
+        pathConverter.computeRelativePaths(directory, new Progress("test"));
+
+        Assert.assertEquals(Path.of("Fluffy.bmp"), firstFile.getRelativePath());
+        Assert.assertEquals(Path.of("67/69"), secondFile.getRelativePath());
+        Assert.assertEquals(Path.of(""), directory.getRelativePath());
+        Assert.assertEquals(Path.of("67"), subDirectory.getRelativePath());
+        Assert.assertEquals(Path.of("67/fun"), subSubDirectory.getRelativePath());
     }
 
     private void testIllegal(
@@ -77,7 +108,6 @@ public @Test class PathConverterTest {
     ) {
         testLegalCase(filePath, directoryPath, expectedPath);
         testLegalCase("/" + filePath, "/" + directoryPath, expectedPath);
-        testLegalCase(filePath + ".png", directoryPath, expectedPath + ".png");
     }
 
     private void testLegalCase(

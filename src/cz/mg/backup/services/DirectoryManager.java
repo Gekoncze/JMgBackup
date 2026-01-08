@@ -4,13 +4,9 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
-import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.entities.Directory;
-import cz.mg.collections.map.Map;
-import cz.mg.collections.pair.Pair;
 
 import java.nio.file.Path;
-import java.util.Date;
 
 public @Service class DirectoryManager {
     private static volatile @Service DirectoryManager instance;
@@ -24,6 +20,7 @@ public @Service class DirectoryManager {
                     instance.statisticsCounter = StatisticsCounter.getInstance();
                     instance.checksumService = ChecksumService.getInstance();
                     instance.directoryComparator = DirectoryComparator.getInstance();
+                    instance.pathConverter = PathConverter.getInstance();
                 }
             }
         }
@@ -34,6 +31,7 @@ public @Service class DirectoryManager {
     private @Service StatisticsCounter statisticsCounter;
     private @Service ChecksumService checksumService;
     private @Service DirectoryComparator directoryComparator;
+    private @Service PathConverter pathConverter;
 
     private DirectoryManager() {
     }
@@ -47,26 +45,22 @@ public @Service class DirectoryManager {
         @Mandatory Path path,
         @Mandatory Progress progress
     ) {
-        progress.setLimit(4);
+        progress.setLimit(5);
 
-        Map<Path, Pair<Checksum, Date>> checksums = checksumService.collect(
-            directory,
-            progress.nest("Collect checksums")
-        );
-
-        progress.step();
+        var checksums = checksumService.collect(directory, progress.nest("Collect checksums"));
+        progress.step(); // 1
 
         directory = directoryReader.read(path, progress.nest("Load directory " + path));
+        progress.step(); // 2
 
-        progress.step();
+        pathConverter.computeRelativePaths(directory, progress.nest("Calculate relative path"));
+        progress.step(); // 3
 
         statisticsCounter.count(directory, progress.nest("Gather statistics"));
-
-        progress.step();
+        progress.step(); // 4
 
         checksumService.restore(directory, checksums, progress.nest("Restore checksums"));
-
-        progress.step();
+        progress.step(); // 5
 
         return directory;
     }
