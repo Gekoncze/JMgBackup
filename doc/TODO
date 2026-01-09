@@ -6,6 +6,14 @@
             it may display the number of files and a scrollable list of files to be copied
 
 ### SOON ###
+    consider simplifier and collector optimizations
+        consider moving simplifier to services accepting list of nodes with recursive operation
+        consider merging simplifier and collector
+            get rid of for each, only collect based on filters in collector
+            may introduce shared predicate classes
+            may consider having separate collectors for different types (FileCollector, DirectoryCollector, NodeCollector)
+            should consider performance impact!
+
     add duplicate detector
         show different icon for duplicates ?
         allow user to configure duplicate detection to specify key properties ?
@@ -13,8 +21,6 @@
             but there could be also moved files that when copied would cause duplicates
 
 ### LATER ###
-    consider moving simplifier to services accepting list of nodes with recursive operation
-
     add context menu for tree entries
         add option to reload / refresh specific file or directory
         add option to show error details
