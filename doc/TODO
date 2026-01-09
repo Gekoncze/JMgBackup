@@ -13,6 +13,8 @@
             but there could be also moved files that when copied would cause duplicates
 
 ### LATER ###
+    consider moving simplifier to services accepting list of nodes with recursive operation
+
     add context menu for tree entries
         add option to reload / refresh specific file or directory
         add option to show error details
