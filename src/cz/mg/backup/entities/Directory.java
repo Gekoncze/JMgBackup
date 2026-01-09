@@ -7,7 +7,7 @@ import cz.mg.collections.list.List;
 
 
 public @Entity class Directory extends Node {
-    private DirectoryProperties properties;
+    private DirectoryProperties properties = new DirectoryProperties();
     private List<Directory> directories = new List<>();
     private List<File> files = new List<>();
 

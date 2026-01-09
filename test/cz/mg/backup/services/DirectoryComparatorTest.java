@@ -354,7 +354,6 @@ public @Test class DirectoryComparatorTest {
         directory.setPath(Path.of(name));
         directory.setDirectories(directories);
         directory.setFiles(files);
-        directory.setProperties(new DirectoryProperties());
         statisticsCounter.count(directory, new Progress("test"));
         return directory;
     }
@@ -370,7 +369,6 @@ public @Test class DirectoryComparatorTest {
     ) {
         File file = new File();
         file.setPath(Path.of(name));
-        file.setProperties(new FileProperties());
         file.getProperties().setSize(size);
         file.setChecksum(new Checksum(Algorithm.SHA256, hash));
         return file;

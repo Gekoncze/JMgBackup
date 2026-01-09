@@ -7,7 +7,7 @@ import cz.mg.annotations.storage.Value;
 import java.util.Date;
 
 public @Entity class FileProperties {
-    private Long size;
+    private long size;
     private Date created;
     private Date modified;
 
@@ -15,11 +15,11 @@ public @Entity class FileProperties {
     }
 
     @Required @Value
-    public Long getSize() {
+    public long getSize() {
         return size;
     }
 
-    public void setSize(Long size) {
+    public void setSize(long size) {
         this.size = size;
     }
 

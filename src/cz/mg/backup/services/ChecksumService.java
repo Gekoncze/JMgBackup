@@ -22,7 +22,7 @@ public @Service class ChecksumService {
                 if (instance == null) {
                     instance = new ChecksumService();
                     instance.checksumReader = ChecksumReader.getInstance();
-                    instance.directoryService = DirectoryService.getInstance();
+                    instance.treeIterator = TreeIterator.getInstance();
                 }
             }
         }
@@ -30,7 +30,7 @@ public @Service class ChecksumService {
     }
 
     private @Service ChecksumReader checksumReader;
-    private @Service DirectoryService directoryService;
+    private @Service TreeIterator treeIterator;
 
     private ChecksumService() {
     }
@@ -113,10 +113,8 @@ public @Service class ChecksumService {
         @Optional Directory directory,
         @Mandatory Progress progress
     ) {
-        progress.setLimit(estimate(directory));
-
         Map<Path, Pair<Checksum, Date>> checksums = new Map<>();
-        directoryService.forEachFile(
+        treeIterator.forEachFile(
             directory,
             file -> checksums.set(
                 file.getPath(),
@@ -132,9 +130,7 @@ public @Service class ChecksumService {
         @Mandatory Map<Path, Pair<Checksum, Date>> map,
         @Mandatory Progress progress
     ) {
-        progress.setLimit(estimate(directory));
-
-        directoryService.forEachFile(
+        treeIterator.forEachFile(
             directory,
             file -> {
                 Pair<Checksum, Date> pair = map.getOptional(file.getPath());

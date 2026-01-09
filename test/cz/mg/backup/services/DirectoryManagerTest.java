@@ -90,11 +90,9 @@ public @Test class DirectoryManagerTest {
     private void testCompare() {
         Directory a = new Directory();
         a.setPath(Path.of("foo", "bar"));
-        a.setProperties(new DirectoryProperties());
 
         Directory b = new Directory();
         b.setPath(Path.of("foo", "foo"));
-        b.setProperties(new DirectoryProperties());
 
         Progress progress = new Progress("test");
         directoryManager.compare(a, b, progress);
@@ -115,7 +113,6 @@ public @Test class DirectoryManagerTest {
     private void testCompareNullFirst() {
         Directory a = new Directory();
         a.setPath(Path.of("foo", "bar"));
-        a.setProperties(new DirectoryProperties());
         a.getProperties().setTotalErrorCount(11);
         a.getErrors().addLast(new CompareException("test"));
 
@@ -133,7 +130,6 @@ public @Test class DirectoryManagerTest {
     private void testCompareNullSecond() {
         Directory b = new Directory();
         b.setPath(Path.of("foo", "bar"));
-        b.setProperties(new DirectoryProperties());
         b.getProperties().setTotalErrorCount(11);
         b.getErrors().addLast(new CompareException("test"));
 
@@ -162,7 +158,6 @@ public @Test class DirectoryManagerTest {
     private void testCompareSame() {
         Directory d = new Directory();
         d.setPath(Path.of("foo", "bar"));
-        d.setProperties(new DirectoryProperties());
         d.getProperties().setTotalErrorCount(11);
         d.getErrors().addLast(new CompareException("test"));
 

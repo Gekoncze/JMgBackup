@@ -6,7 +6,7 @@ import cz.mg.annotations.requirement.Required;
 import cz.mg.annotations.storage.Part;
 
 public @Entity class File extends Node {
-    private FileProperties properties;
+    private FileProperties properties = new FileProperties();
     private Checksum checksum;
 
     public File() {

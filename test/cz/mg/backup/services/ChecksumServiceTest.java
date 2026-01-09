@@ -86,7 +86,6 @@ public @Test class ChecksumServiceTest {
 
         Directory directory = new Directory();
         directory.getFiles().addLast(file);
-        directory.setProperties(new DirectoryProperties());
         directory.getProperties().setTotalCount(1L);
 
         Progress progress = new Progress("Test");
@@ -119,7 +118,6 @@ public @Test class ChecksumServiceTest {
 
         Directory directory = new Directory();
         directory.getFiles().addLast(file);
-        directory.setProperties(new DirectoryProperties());
         directory.getProperties().setTotalCount(1L);
 
         Progress progress = new Progress("Test");
@@ -145,22 +143,19 @@ public @Test class ChecksumServiceTest {
         File firstFile = new File();
         firstFile.setPath(Path.of("/foo"));
         firstFile.setChecksum(checksum);
-        firstFile.setProperties(new FileProperties());
         firstFile.getProperties().setCreated(createDate(1));
         firstFile.getProperties().setModified(createDate(2));
 
         File secondFile = new File();
         secondFile.setPath(Path.of("/bar"));
         secondFile.setChecksum(null);
-        secondFile.setProperties(new FileProperties());
         secondFile.getProperties().setCreated(createDate(3));
         secondFile.getProperties().setModified(createDate(4));
 
         Directory directory = new Directory();
         directory.getFiles().addLast(firstFile);
         directory.getFiles().addLast(secondFile);
-        directory.setProperties(new DirectoryProperties());
-        directory.getProperties().setTotalCount(2L);
+        directory.getProperties().setTotalFileCount(2L);
 
         Progress progress = new Progress("Test");
         Map<Path, Pair<Checksum, Date>> map = service.collect(directory, progress);
@@ -170,8 +165,8 @@ public @Test class ChecksumServiceTest {
         Assert.assertEquals(createDate(2), map.get(Path.of("/foo")).getValue());
         Assert.assertEquals(null, map.get(Path.of("/bar")).getKey());
         Assert.assertEquals(createDate(4), map.get(Path.of("/bar")).getValue());
-        Assert.assertEquals(3L, progress.getLimit());
-        Assert.assertEquals(3L, progress.getValue());
+        Assert.assertEquals(2L, progress.getLimit());
+        Assert.assertEquals(2L, progress.getValue());
     }
 
     private void testRestoreEmpty() {
@@ -197,7 +192,6 @@ public @Test class ChecksumServiceTest {
         File firstFile = new File();
         firstFile.setPath(Path.of("/1"));
         firstFile.setChecksum(checksum1);
-        firstFile.setProperties(new FileProperties());
         firstFile.getProperties().setCreated(createDate(1));
         firstFile.getProperties().setModified(createDate(2));
 
@@ -205,7 +199,6 @@ public @Test class ChecksumServiceTest {
         File secondFile = new File();
         secondFile.setPath(Path.of("/2"));
         secondFile.setChecksum(null);
-        secondFile.setProperties(new FileProperties());
         secondFile.getProperties().setCreated(createDate(3));
         secondFile.getProperties().setModified(createDate(4));
 
@@ -213,7 +206,6 @@ public @Test class ChecksumServiceTest {
         File thirdFile = new File();
         thirdFile.setPath(Path.of("/3"));
         thirdFile.setChecksum(checksum3a);
-        thirdFile.setProperties(new FileProperties());
         thirdFile.getProperties().setCreated(createDate(5));
         thirdFile.getProperties().setModified(createDate(6));
 
@@ -221,7 +213,6 @@ public @Test class ChecksumServiceTest {
         File fourthFile = new File();
         fourthFile.setPath(Path.of("/4"));
         fourthFile.setChecksum(null);
-        fourthFile.setProperties(new FileProperties());
         fourthFile.getProperties().setCreated(createDate(7));
         fourthFile.getProperties().setModified(createDate(8));
 
@@ -229,7 +220,6 @@ public @Test class ChecksumServiceTest {
         File fifthFile = new File();
         fifthFile.setPath(Path.of("/5"));
         fifthFile.setChecksum(null);
-        fifthFile.setProperties(new FileProperties());
         fifthFile.getProperties().setCreated(createDate(9));
         fifthFile.getProperties().setModified(createDate(10));
 
@@ -237,7 +227,6 @@ public @Test class ChecksumServiceTest {
         File sixthFile = new File();
         sixthFile.setPath(Path.of("/6"));
         sixthFile.setChecksum(checksum6);
-        sixthFile.setProperties(new FileProperties());
         sixthFile.getProperties().setCreated(createDate(11));
         sixthFile.getProperties().setModified(createDate(12));
 
@@ -248,8 +237,7 @@ public @Test class ChecksumServiceTest {
         directory.getFiles().addLast(fourthFile);
         directory.getFiles().addLast(fifthFile);
         directory.getFiles().addLast(sixthFile);
-        directory.setProperties(new DirectoryProperties());
-        directory.getProperties().setTotalCount(6L);
+        directory.getProperties().setTotalFileCount(6L);
 
         Map<Path, Pair<Checksum, Date>> map = new Map<>();
         map.set(Path.of("/1"), new Pair<>(null, createDate(2)));
@@ -266,8 +254,8 @@ public @Test class ChecksumServiceTest {
         Assert.assertSame(null, fourthFile.getChecksum());
         Assert.assertSame(null, fifthFile.getChecksum());
         Assert.assertSame(checksum6, sixthFile.getChecksum());
-        Assert.assertEquals(7L, progress.getLimit());
-        Assert.assertEquals(7L, progress.getValue());
+        Assert.assertEquals(6L, progress.getLimit());
+        Assert.assertEquals(6L, progress.getValue());
     }
 
     private @Mandatory Date createDate(int day) {

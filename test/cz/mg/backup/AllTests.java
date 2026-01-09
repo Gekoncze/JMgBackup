@@ -16,7 +16,6 @@ public class AllTests {
         DirectoryManagerTest.main(args);
         DirectoryReaderTest.main(args);
         DirectorySearchTest.main(args);
-        DirectoryServiceTest.main(args);
         DirectorySortTest.main(args);
         FileComparatorTest.main(args);
         FileCopyTest.main(args);
@@ -26,5 +25,6 @@ public class AllTests {
         PathConverterTest.main(args);
         SimplifierTest.main(args);
         StatisticsCounterTest.main(args);
+        TreeIteratorTest.main(args);
     }
 }

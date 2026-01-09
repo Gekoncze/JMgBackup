@@ -4,7 +4,6 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
-import cz.mg.backup.entities.DirectoryProperties;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -40,7 +39,6 @@ public @Service class DirectoryReader {
      */
     public @Mandatory Directory read(@Mandatory Path path, @Mandatory Progress progress) {
         Directory directory = new Directory();
-        directory.setProperties(new DirectoryProperties());
         directory.setPath(path);
 
         try (DirectoryStream<Path> childPaths = Files.newDirectoryStream(path)) {

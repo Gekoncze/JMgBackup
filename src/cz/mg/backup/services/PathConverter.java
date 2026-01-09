@@ -17,20 +17,20 @@ public @Service class PathConverter {
             synchronized (Service.class) {
                 if (instance == null) {
                     instance = new PathConverter();
-                    instance.directoryService = DirectoryService.getInstance();
+                    instance.treeIterator = TreeIterator.getInstance();
                 }
             }
         }
         return instance;
     }
 
-    private @Service DirectoryService directoryService;
+    private @Service TreeIterator treeIterator;
 
     private PathConverter() {
     }
 
     public void computeRelativePaths(@Mandatory Directory directory, @Mandatory Progress progress) {
-        directoryService.forEachNode(directory, node -> {
+        treeIterator.forEachNode(directory, node -> {
             node.setRelativePath(toRelativePath(node.getPath(), directory.getPath()));
         }, progress);
     }

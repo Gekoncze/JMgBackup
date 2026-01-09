@@ -7,7 +7,6 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.entities.File;
-import cz.mg.backup.entities.FileProperties;
 import cz.mg.backup.exceptions.CompareException;
 import cz.mg.test.Assert;
 
@@ -26,12 +25,6 @@ public @Test class FileComparatorTest {
 
     private void testCompare() {
         testCompare(
-            createFile(null, null),
-            createFile(null, null),
-            false, false
-        );
-
-        testCompare(
             createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
             createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
             false, false
@@ -40,12 +33,6 @@ public @Test class FileComparatorTest {
         testCompare(
             createFile(1L, null),
             createFile(1L, null),
-            false, false
-        );
-
-        testCompare(
-            createFile(null, new Checksum(Algorithm.SHA256, "gg")),
-            createFile(null, new Checksum(Algorithm.SHA256, "gg")),
             false, false
         );
 
@@ -74,24 +61,6 @@ public @Test class FileComparatorTest {
         );
 
         testCompare(
-            createFile(null, new Checksum(Algorithm.SHA256, "abc")),
-            createFile(null, new Checksum(Algorithm.SHA256, "")),
-            true, true
-        );
-
-        testCompare(
-            createFile(null, null),
-            createFile(null, new Checksum(Algorithm.SHA256, "")),
-            true, false
-        );
-
-        testCompare(
-            createFile(2L, null),
-            createFile(null, null),
-            true, true
-        );
-
-        testCompare(
             createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
             createFile(1L, new Checksum(Algorithm.MD5, "gg")),
             true, true
@@ -100,9 +69,7 @@ public @Test class FileComparatorTest {
 
     private void testCompareClearsCompareErrors() {
         File first = new File();
-        first.setProperties(new FileProperties());
         File second = new File();
-        second.setProperties(new FileProperties());
         Assert.assertEquals(0, first.getErrors().count());
         Assert.assertEquals(0, second.getErrors().count());
         first.getErrors().addLast(new RuntimeException());
@@ -129,9 +96,8 @@ public @Test class FileComparatorTest {
         Assert.assertEquals(secondHasErrors, !second.getErrors().isEmpty());
     }
 
-    private @Mandatory File createFile(@Optional Long size, @Optional Checksum checksum) {
+    private @Mandatory File createFile(long size, @Optional Checksum checksum) {
         File file = new File();
-        file.setProperties(new FileProperties());
         file.getProperties().setSize(size);
         file.setChecksum(checksum);
         return file;

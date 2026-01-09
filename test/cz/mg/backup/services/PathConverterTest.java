@@ -71,14 +71,19 @@ public @Test class PathConverterTest {
         directory.setPath(Path.of("/foo/bar"));
         directory.getFiles().addLast(firstFile);
         directory.getDirectories().addLast(subDirectory);
+        directory.getProperties().setTotalFileCount(2);
+        directory.getProperties().setTotalDirectoryCount(2);
 
-        pathConverter.computeRelativePaths(directory, new Progress("test"));
+        Progress progress = new Progress("test");
+        pathConverter.computeRelativePaths(directory, progress);
 
         Assert.assertEquals(Path.of("Fluffy.bmp"), firstFile.getRelativePath());
         Assert.assertEquals(Path.of("67/69"), secondFile.getRelativePath());
         Assert.assertEquals(Path.of(""), directory.getRelativePath());
         Assert.assertEquals(Path.of("67"), subDirectory.getRelativePath());
         Assert.assertEquals(Path.of("67/fun"), subSubDirectory.getRelativePath());
+        Assert.assertEquals(5, progress.getLimit());
+        Assert.assertEquals(5, progress.getValue());
     }
 
     private void testIllegal(

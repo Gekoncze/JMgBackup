@@ -72,14 +72,12 @@ public @Test class DirectorySearchTest {
         Directory directory = new Directory();
         directory.setPath(path);
         directory.getFiles().addLast(file);
-        directory.setProperties(new DirectoryProperties());
         return directory;
     }
 
     private @Mandatory File createFile(@Mandatory Path path) {
         File file = new File();
         file.setPath(path);
-        file.setProperties(new FileProperties());
         file.getProperties().setSize(1L);
         return file;
     }

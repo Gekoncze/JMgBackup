@@ -4,9 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
-import cz.mg.backup.entities.DirectoryProperties;
 import cz.mg.backup.entities.File;
-import cz.mg.backup.entities.FileProperties;
 import cz.mg.backup.exceptions.CompareException;
 import cz.mg.test.Assert;
 import cz.mg.test.Assertions;
@@ -43,7 +41,6 @@ public @Test class StatisticsCounterTest {
 
     private void testSingleDirectoryEmpty() {
         Directory directory = new Directory();
-        directory.setProperties(new DirectoryProperties());
 
         Progress progress = new Progress("test");
         statisticsCounter.count(directory, progress);
@@ -59,7 +56,6 @@ public @Test class StatisticsCounterTest {
 
     private void testRecompute() {
         Directory directory = new Directory();
-        directory.setProperties(new DirectoryProperties());
         directory.getErrors().addLast(new CompareException("first error"));
         directory.getErrors().addLast(new CompareException("second error"));
         directory.getProperties().setTotalSize(11111L);
@@ -87,14 +83,12 @@ public @Test class StatisticsCounterTest {
 
     private void testSingleDirectorySingleFile() {
         File file = new File();
-        file.setProperties(new FileProperties());
         file.getProperties().setSize(123L);
         file.getErrors().addLast(new CompareException("third error"));
         file.getErrors().addLast(new FileSystemException("fourth error"));
         file.getErrors().addLast(new RuntimeException("fifth error"));
 
         Directory directory = new Directory();
-        directory.setProperties(new DirectoryProperties());
         directory.getErrors().addLast(new CompareException("first error"));
         directory.getErrors().addLast(new CompareException("second error"));
         directory.getFiles().addLast(file);
@@ -113,7 +107,6 @@ public @Test class StatisticsCounterTest {
 
     private void testSingleDirectorySingleSubdirectory() {
         Directory subDirectory = new Directory();
-        subDirectory.setProperties(new DirectoryProperties());
         subDirectory.getProperties().setTotalSize(11111L);
         subDirectory.getProperties().setTotalCount(11111L);
         subDirectory.getProperties().setTotalFileCount(11111L);
@@ -122,7 +115,6 @@ public @Test class StatisticsCounterTest {
         subDirectory.getErrors().addLast(new CompareException("third error"));
 
         Directory directory = new Directory();
-        directory.setProperties(new DirectoryProperties());
         directory.getErrors().addLast(new CompareException("first error"));
         directory.getErrors().addLast(new CompareException("second error"));
         directory.getDirectories().addLast(subDirectory);
@@ -148,23 +140,19 @@ public @Test class StatisticsCounterTest {
 
     private void testMultipleNested() {
         File subDirectoryFile = new File();
-        subDirectoryFile.setProperties(new FileProperties());
         subDirectoryFile.getProperties().setSize(123L);
         subDirectoryFile.getErrors().addLast(new FileSystemException("fourth error"));
         subDirectoryFile.getErrors().addLast(new RuntimeException("fifth error"));
         subDirectoryFile.getErrors().addLast(new CompareException("sixth error"));
 
         File directoryFile = new File();
-        directoryFile.setProperties(new FileProperties());
         directoryFile.getProperties().setSize(7L);
 
         Directory subDirectory = new Directory();
-        subDirectory.setProperties(new DirectoryProperties());
         subDirectory.getErrors().addLast(new CompareException("third error"));
         subDirectory.getFiles().addLast(subDirectoryFile);
 
         Directory directory = new Directory();
-        directory.setProperties(new DirectoryProperties());
         directory.getErrors().addLast(new CompareException("first error"));
         directory.getErrors().addLast(new CompareException("second error"));
         directory.getDirectories().addLast(subDirectory);

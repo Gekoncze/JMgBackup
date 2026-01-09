@@ -11,11 +11,11 @@ import cz.mg.test.exceptions.AssertException;
 
 import java.nio.file.Path;
 
-public @Test class DirectoryServiceTest {
+public @Test class TreeIteratorTest {
     public static void main(String[] args) {
-        System.out.print("Running " + DirectoryServiceTest.class.getSimpleName() + " ... ");
+        System.out.print("Running " + TreeIteratorTest.class.getSimpleName() + " ... ");
 
-        DirectoryServiceTest test = new DirectoryServiceTest();
+        TreeIteratorTest test = new TreeIteratorTest();
         test.testEmpty();
         test.testSingle();
         test.testMultiple();
@@ -23,25 +23,25 @@ public @Test class DirectoryServiceTest {
         System.out.println("OK");
     }
 
-    private final @Service DirectoryService directoryService = DirectoryService.getInstance();
+    private final @Service TreeIterator treeIterator = TreeIterator.getInstance();
 
     private void testEmpty() {
         Progress nodeProgress = new Progress("test");
-        directoryService.forEachNode(null, node -> {
+        treeIterator.forEachNode(null, node -> {
             throw new AssertException("No consumer should be called.");
         }, nodeProgress);
         Assert.assertEquals(0L, nodeProgress.getLimit());
         Assert.assertEquals(0L, nodeProgress.getValue());
 
         Progress fileProgress = new Progress("test");
-        directoryService.forEachFile(null, node -> {
+        treeIterator.forEachFile(null, node -> {
             throw new AssertException("No consumer should be called.");
         }, fileProgress);
         Assert.assertEquals(0L, fileProgress.getLimit());
         Assert.assertEquals(0L, fileProgress.getValue());
 
         Progress directoryProgress = new Progress("test");
-        directoryService.forEachDirectory(null, node -> {
+        treeIterator.forEachDirectory(null, node -> {
             throw new AssertException("No consumer should be called.");
         }, directoryProgress);
         Assert.assertEquals(0L, directoryProgress.getLimit());
@@ -51,30 +51,31 @@ public @Test class DirectoryServiceTest {
     private void testSingle() {
         File file = createFile(Path.of("/f"));
         Directory directory = createDirectory(Path.of("/d"), file);
+        directory.getProperties().setTotalFileCount(1);
 
         Progress nodeProgress = new Progress("test");
-        directoryService.forEachNode(directory, n -> n.setPath(Path.of("/x")), nodeProgress);
+        treeIterator.forEachNode(directory, n -> n.setPath(Path.of("/x")), nodeProgress);
 
         Assert.assertEquals(Path.of("/x"), file.getPath());
         Assert.assertEquals(Path.of("/x"), directory.getPath());
-        Assert.assertEquals(0L, nodeProgress.getLimit()); // set by parent service
+        Assert.assertEquals(2L, nodeProgress.getLimit());
         Assert.assertEquals(2L, nodeProgress.getValue());
 
         Progress fileProgress = new Progress("test");
-        directoryService.forEachFile(directory, f -> f.setPath(Path.of("/f1")), fileProgress);
+        treeIterator.forEachFile(directory, f -> f.setPath(Path.of("/f1")), fileProgress);
 
         Assert.assertEquals(Path.of("/f1"), file.getPath());
         Assert.assertEquals(Path.of("/x"), directory.getPath());
-        Assert.assertEquals(0L, fileProgress.getLimit()); // set by parent service
-        Assert.assertEquals(2L, fileProgress.getValue());
+        Assert.assertEquals(1L, fileProgress.getLimit());
+        Assert.assertEquals(1L, fileProgress.getValue());
 
         Progress directoryProgress = new Progress("test");
-        directoryService.forEachDirectory(directory, d -> d.setPath(Path.of("/d1")), directoryProgress);
+        treeIterator.forEachDirectory(directory, d -> d.setPath(Path.of("/d1")), directoryProgress);
 
         Assert.assertEquals(Path.of("/f1"), file.getPath());
         Assert.assertEquals(Path.of("/d1"), directory.getPath());
-        Assert.assertEquals(0L, directoryProgress.getLimit()); // set by parent service
-        Assert.assertEquals(2L, directoryProgress.getValue());
+        Assert.assertEquals(1L, directoryProgress.getLimit());
+        Assert.assertEquals(1L, directoryProgress.getValue());
     }
 
     private void testMultiple() {
@@ -83,36 +84,38 @@ public @Test class DirectoryServiceTest {
         File secondFile = createFile(Path.of("/ff"));
         Directory secondDirectory = createDirectory(Path.of("/dd"), secondFile);
         directory.getDirectories().addLast(secondDirectory);
+        directory.getProperties().setTotalFileCount(2);
+        directory.getProperties().setTotalDirectoryCount(1);
 
         Progress nodeProgress = new Progress("test");
-        directoryService.forEachNode(directory, n -> n.setPath(Path.of("/x")), nodeProgress);
+        treeIterator.forEachNode(directory, n -> n.setPath(Path.of("/x")), nodeProgress);
 
         Assert.assertEquals(Path.of("/x"), file.getPath());
         Assert.assertEquals(Path.of("/x"), directory.getPath());
         Assert.assertEquals(Path.of("/x"), secondFile.getPath());
         Assert.assertEquals(Path.of("/x"), secondDirectory.getPath());
-        Assert.assertEquals(0L, nodeProgress.getLimit()); // set by parent service
+        Assert.assertEquals(4L, nodeProgress.getLimit());
         Assert.assertEquals(4L, nodeProgress.getValue());
 
         Progress fileProgress = new Progress("test");
-        directoryService.forEachFile(directory, f -> f.setPath(Path.of("/f1")), fileProgress);
+        treeIterator.forEachFile(directory, f -> f.setPath(Path.of("/f1")), fileProgress);
 
         Assert.assertEquals(Path.of("/f1"), file.getPath());
         Assert.assertEquals(Path.of("/x"), directory.getPath());
         Assert.assertEquals(Path.of("/f1"), secondFile.getPath());
         Assert.assertEquals(Path.of("/x"), secondDirectory.getPath());
-        Assert.assertEquals(0L, fileProgress.getLimit()); // set by parent service
-        Assert.assertEquals(4L, fileProgress.getValue());
+        Assert.assertEquals(2L, fileProgress.getLimit());
+        Assert.assertEquals(2L, fileProgress.getValue());
 
         Progress directoryProgress = new Progress("test");
-        directoryService.forEachDirectory(directory, d -> d.setPath(Path.of("/d1")), directoryProgress);
+        treeIterator.forEachDirectory(directory, d -> d.setPath(Path.of("/d1")), directoryProgress);
 
         Assert.assertEquals(Path.of("/f1"), file.getPath());
         Assert.assertEquals(Path.of("/d1"), directory.getPath());
         Assert.assertEquals(Path.of("/f1"), secondFile.getPath());
         Assert.assertEquals(Path.of("/d1"), secondDirectory.getPath());
-        Assert.assertEquals(0L, directoryProgress.getLimit()); // set by parent service
-        Assert.assertEquals(4L, directoryProgress.getValue());
+        Assert.assertEquals(2L, directoryProgress.getLimit());
+        Assert.assertEquals(2L, directoryProgress.getValue());
     }
 
     private @Mandatory Directory createDirectory(@Mandatory Path path, @Mandatory File file) {

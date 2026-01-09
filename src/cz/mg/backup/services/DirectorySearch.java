@@ -18,34 +18,25 @@ public @Service class DirectorySearch {
             synchronized (Service.class) {
                 if (instance == null) {
                     instance = new DirectorySearch();
-                    instance.directoryService = DirectoryService.getInstance();
+                    instance.treeIterator = TreeIterator.getInstance();
                 }
             }
         }
         return instance;
     }
 
-    private @Service DirectoryService directoryService;
+    private @Service TreeIterator treeIterator;
 
     private DirectorySearch() {
     }
 
     public @Optional Node find(@Optional Directory directory, @Mandatory Path path, @Mandatory Progress progress) {
-        progress.setLimit(estimate(directory));
         Node[] wanted = new Node[1];
-        directoryService.forEachNode(directory, node -> {
+        treeIterator.forEachNode(directory, node -> {
             if (Objects.equals(node.getPath(), path)) {
                 wanted[0] = node;
             }
         }, progress);
         return wanted[0];
-    }
-
-    private long estimate(@Optional Directory directory) {
-        if (directory != null) {
-            return directory.getProperties().getTotalCount() + 1;
-        } else {
-            return 0L;
-        }
     }
 }
