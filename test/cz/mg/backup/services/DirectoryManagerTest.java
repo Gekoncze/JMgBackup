@@ -42,8 +42,8 @@ public @Test class DirectoryManagerTest {
         Assert.assertEquals(1, directory.getFiles().count());
         Assert.assertEquals("file", directory.getFiles().get(0).getPath().getFileName().toString());
 
-        Assert.assertEquals(4, progress.getLimit());
-        Assert.assertEquals(4, progress.getValue());
+        Assert.assertEquals(5, progress.getLimit());
+        Assert.assertEquals(5, progress.getValue());
     }
 
     private void testReloadNotModified() {
@@ -63,8 +63,8 @@ public @Test class DirectoryManagerTest {
         Assert.assertEquals("112233", newDirectory.getFiles().get(0).getChecksum().getHash());
         Assert.assertEquals(Algorithm.SHA256, newDirectory.getFiles().get(0).getChecksum().getAlgorithm());
 
-        Assert.assertEquals(4, progress.getLimit());
-        Assert.assertEquals(4, progress.getValue());
+        Assert.assertEquals(5, progress.getLimit());
+        Assert.assertEquals(5, progress.getValue());
     }
 
     private void testReloadModified() {
@@ -83,8 +83,8 @@ public @Test class DirectoryManagerTest {
         Assert.assertEquals("file", newDirectory.getFiles().get(0).getPath().getFileName().toString());
         Assert.assertNull(newDirectory.getFiles().get(0).getChecksum());
 
-        Assert.assertEquals(4, progress.getLimit());
-        Assert.assertEquals(4, progress.getValue());
+        Assert.assertEquals(5, progress.getLimit());
+        Assert.assertEquals(5, progress.getValue());
     }
 
     private void testCompare() {

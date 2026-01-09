@@ -13,7 +13,7 @@ import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.event.*;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
 import cz.mg.backup.gui.services.FileManager;
-import cz.mg.backup.gui.services.SelectionSimplifier;
+import cz.mg.backup.services.Simplifier;
 import cz.mg.backup.services.*;
 import cz.mg.collections.list.List;
 import cz.mg.panel.Panel;
@@ -31,7 +31,7 @@ public @Component class DirectoryView extends Panel {
     private final @Service DirectorySearch directorySearch = DirectorySearch.getInstance();
     private final @Service DirectoryTreeFactory directoryTreeFactory = DirectoryTreeFactory.getInstance();
     private final @Service ChecksumService checksumService = ChecksumService.getInstance();
-    private final @Service SelectionSimplifier selectionSimplifier = SelectionSimplifier.getInstance();
+    private final @Service Simplifier simplifier = Simplifier.getInstance();
     private final @Service DirectoryManager directoryManager = DirectoryManager.getInstance();
     private final @Service FileManager fileManager = FileManager.getInstance();
 
@@ -257,7 +257,7 @@ public @Component class DirectoryView extends Panel {
             window,
             "Simplify selection",
             null,
-            progress -> selectionSimplifier.simplify(getSelectedNodes(), progress)
+            progress -> simplifier.simplify(getSelectedNodes(), progress)
         );
     }
 

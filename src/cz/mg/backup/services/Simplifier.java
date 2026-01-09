@@ -1,5 +1,6 @@
-package cz.mg.backup.gui.services;
+package cz.mg.backup.services;
 
+import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
@@ -9,25 +10,28 @@ import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 import cz.mg.collections.pair.ReadablePair;
 
-public @Service class SelectionSimplifier {
-    private static volatile @Service SelectionSimplifier instance;
+/**
+ * Class to simplify node selection for recursive operations.
+ */
+public @Component class Simplifier {
+    private static volatile @Service Simplifier instance;
 
-    public static @Service SelectionSimplifier getInstance() {
+    public static @Service Simplifier getInstance() {
         if (instance == null) {
             synchronized (Service.class) {
                 if (instance == null) {
-                    instance = new SelectionSimplifier();
+                    instance = new Simplifier();
                 }
             }
         }
         return instance;
     }
 
-    private SelectionSimplifier() {
+    private Simplifier() {
     }
 
     /**
-     * Exclude child nodes where their parent is selected.
+     * Exclude child nodes if parent node is included.
      * Exclude duplicate nodes.
      * Nodes should not have empty paths.
      * @param nodes list of selected nodes

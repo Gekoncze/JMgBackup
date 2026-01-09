@@ -1,4 +1,4 @@
-package cz.mg.backup.gui.services;
+package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
@@ -10,11 +10,11 @@ import cz.mg.test.Assert;
 
 import java.nio.file.Path;
 
-public @Test class SelectionSimplifierTest {
+public @Test class SimplifierTest {
     public static void main(String[] args) {
-        System.out.print("Running " + SelectionSimplifierTest.class.getSimpleName() + " ... ");
+        System.out.print("Running " + SimplifierTest.class.getSimpleName() + " ... ");
 
-        SelectionSimplifierTest test = new SelectionSimplifierTest();
+        SimplifierTest test = new SimplifierTest();
         test.testEmpty();
         test.testRootSingle();
         test.testRootMultiple();
@@ -35,7 +35,7 @@ public @Test class SelectionSimplifierTest {
         System.out.println("OK");
     }
 
-    private final @Service SelectionSimplifier simplifier = SelectionSimplifier.getInstance();
+    private final @Service Simplifier simplifier = Simplifier.getInstance();
 
     private void testEmpty() {
         List<Node> input = new List<>();
