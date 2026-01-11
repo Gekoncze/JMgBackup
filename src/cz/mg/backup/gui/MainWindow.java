@@ -104,8 +104,4 @@ public @Component class MainWindow extends JFrame {
 
         compare();
     }
-
-    public static void main(String[] args) {
-        new MainWindow().setVisible(true);
-    }
 }

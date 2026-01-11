@@ -120,7 +120,12 @@ public @Component class DirectoryView extends Panel {
             List<TreePath> selectedPaths = TreeUtils.getSelectedPaths(tree);
 
             tree.setModel(new ObjectTreeModel(
-                directoryTreeFactory.create(directory, new Progress("Build directory tree")))
+                ProgressDialog.compute(
+                    window,
+                    "Build directory tree",
+                    null,
+                    progress -> directoryTreeFactory.create(directory, progress))
+                )
             );
 
             TreeUtils.expandPaths(tree, expandedPaths);
