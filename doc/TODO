@@ -6,6 +6,8 @@
             it may display the number of files and a scrollable list of files to be copied
 
 ### SOON ###
+    add test for ChecksumActions
+
     we might be forgetting to unnest, which might cause leftover progress bars in UI
 
     consider simplifier and collector optimizations
