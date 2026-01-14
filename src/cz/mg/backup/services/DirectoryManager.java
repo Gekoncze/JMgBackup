@@ -18,7 +18,7 @@ public @Service class DirectoryManager {
                     instance = new DirectoryManager();
                     instance.directoryReader = DirectoryReader.getInstance();
                     instance.statisticsCounter = StatisticsCounter.getInstance();
-                    instance.checksumService = ChecksumService.getInstance();
+                    instance.checksumManager = ChecksumManager.getInstance();
                     instance.directoryComparator = DirectoryComparator.getInstance();
                     instance.pathConverter = PathConverter.getInstance();
                 }
@@ -29,7 +29,7 @@ public @Service class DirectoryManager {
 
     private @Service DirectoryReader directoryReader;
     private @Service StatisticsCounter statisticsCounter;
-    private @Service ChecksumService checksumService;
+    private @Service ChecksumManager checksumManager;
     private @Service DirectoryComparator directoryComparator;
     private @Service PathConverter pathConverter;
 
@@ -47,7 +47,7 @@ public @Service class DirectoryManager {
     ) {
         progress.setLimit(5);
 
-        var checksums = checksumService.collect(directory, progress.nest("Collect checksums"));
+        var checksums = checksumManager.collect(directory, progress.nest("Collect checksums"));
         progress.step(); // 1
 
         directory = directoryReader.read(path, progress.nest("Load directory " + path));
@@ -59,7 +59,7 @@ public @Service class DirectoryManager {
         statisticsCounter.count(directory, progress.nest("Gather statistics"));
         progress.step(); // 4
 
-        checksumService.restore(directory, checksums, progress.nest("Restore checksums"));
+        checksumManager.restore(directory, checksums, progress.nest("Restore checksums"));
         progress.step(); // 5
 
         return directory;

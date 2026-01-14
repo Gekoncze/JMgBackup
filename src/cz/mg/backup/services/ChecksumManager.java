@@ -5,7 +5,6 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.*;
-import cz.mg.collections.list.List;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 
@@ -13,14 +12,14 @@ import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
 
-public @Service class ChecksumService {
-    private static volatile @Service ChecksumService instance;
+public @Service class ChecksumManager {
+    private static volatile @Service ChecksumManager instance;
 
-    public static @Service ChecksumService getInstance() {
+    public static @Service ChecksumManager getInstance() {
         if (instance == null) {
             synchronized (Service.class) {
                 if (instance == null) {
-                    instance = new ChecksumService();
+                    instance = new ChecksumManager();
                     instance.checksumReader = ChecksumReader.getInstance();
                     instance.treeIterator = TreeIterator.getInstance();
                 }
@@ -32,14 +31,10 @@ public @Service class ChecksumService {
     private @Service ChecksumReader checksumReader;
     private @Service TreeIterator treeIterator;
 
-    private ChecksumService() {
+    private ChecksumManager() {
     }
 
-    public void compute(@Mandatory List<Node> nodes, @Mandatory Algorithm algorithm, @Mandatory Progress progress) {
-        treeIterator.forEachFile(nodes, f -> compute(f, algorithm, progress), progress);
-    }
-
-    private void compute(@Mandatory File file, @Mandatory Algorithm algorithm, @Mandatory Progress progress) {
+    public void compute(@Mandatory File file, @Mandatory Algorithm algorithm, @Mandatory Progress progress) {
         if (file.getChecksum() == null || file.getChecksum().getAlgorithm() != algorithm) {
             file.setChecksum(checksumReader.read(
                 file.getPath(),
@@ -49,8 +44,8 @@ public @Service class ChecksumService {
         }
     }
 
-    public void clear(@Mandatory List<Node> nodes, @Mandatory Progress progress) {
-        treeIterator.forEachFile(nodes, f -> f.setChecksum(null), progress);
+    public void clear(@Mandatory File file) {
+        file.setChecksum(null);
     }
 
     public @Mandatory Map<Path, Pair<Checksum, Date>> collect(

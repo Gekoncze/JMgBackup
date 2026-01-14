@@ -4,7 +4,6 @@ import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
-import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
@@ -13,7 +12,6 @@ import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.event.*;
 import cz.mg.backup.gui.services.DirectoryTreeFactory;
 import cz.mg.backup.gui.services.FileManager;
-import cz.mg.backup.services.Simplifier;
 import cz.mg.backup.services.*;
 import cz.mg.collections.list.List;
 import cz.mg.panel.Panel;
@@ -30,8 +28,7 @@ public @Component class DirectoryView extends Panel {
 
     private final @Service DirectorySearch directorySearch = DirectorySearch.getInstance();
     private final @Service DirectoryTreeFactory directoryTreeFactory = DirectoryTreeFactory.getInstance();
-    private final @Service ChecksumService checksumService = ChecksumService.getInstance();
-    private final @Service Simplifier simplifier = Simplifier.getInstance();
+    private final @Service ChecksumActions checksumActions = ChecksumActions.getInstance();
     private final @Service DirectoryManager directoryManager = DirectoryManager.getInstance();
     private final @Service FileManager fileManager = FileManager.getInstance();
 
@@ -164,7 +161,7 @@ public @Component class DirectoryView extends Panel {
     private void onMouseClicked(@Mandatory MouseEvent event) {
         if (event.getButton() == MouseEvent.BUTTON1) {
             TreePath path = tree.getPathForLocation(event.getX(), event.getY());
-            Node node = getPathNode(path);
+            Node node = getNode(path);
             if (node != null) {
                 window.getDetailsView().setNode(node);
             }
@@ -178,7 +175,7 @@ public @Component class DirectoryView extends Panel {
     private void onSelectionChanged(@Mandatory TreeSelectionEvent event) {
         for (TreePath path : event.getPaths()) {
             if (event.isAddedPath(path)) {
-                Node node = getPathNode(path);
+                Node node = getNode(path);
                 if (node != null) {
                     window.getDetailsView().setNode(node);
                 }
@@ -208,27 +205,27 @@ public @Component class DirectoryView extends Panel {
     }
 
     private void computeChecksum() {
-        List<Node> nodes = getSimplifiedSelectedNodes();
+        List<Node> nodes = getSelectedNodes();
         Algorithm algorithm = window.getSettings().getAlgorithm();
 
         ProgressDialog.run(
             window,
             "Compute checksum",
             null,
-            progress -> checksumService.compute(nodes, algorithm, progress)
+            progress -> checksumActions.compute(nodes, algorithm, progress)
         );
 
         window.compare();
     }
 
     private void clearChecksum() {
-        List<Node> nodes = getSimplifiedSelectedNodes();
+        List<Node> nodes = getSelectedNodes();
 
         ProgressDialog.run(
             window,
             "Clear checksum",
             null,
-            progress -> checksumService.clear(nodes, progress)
+            progress -> checksumActions.clear(nodes, progress)
         );
 
         window.compare();
@@ -236,7 +233,7 @@ public @Component class DirectoryView extends Panel {
 
     private void openInFileManager() {
         if (popupMenuRow != null) {
-            Node node = getPathNode(popupMenuRow);
+            Node node = getNode(popupMenuRow);
             if (node != null) {
                 fileManager.open(node.getPath());
             }
@@ -248,7 +245,7 @@ public @Component class DirectoryView extends Panel {
         TreePath[] paths = tree.getSelectionPaths();
         if (paths != null) {
             for (TreePath path : paths) {
-                Node node = getPathNode(path);
+                Node node = getNode(path);
                 if (node != null) {
                     selectedNodes.addLast(node);
                 }
@@ -257,16 +254,7 @@ public @Component class DirectoryView extends Panel {
         return selectedNodes;
     }
 
-    private @Mandatory List<Node> getSimplifiedSelectedNodes() {
-        return ProgressDialog.compute(
-            window,
-            "Simplify selection",
-            null,
-            progress -> simplifier.simplify(getSelectedNodes(), progress)
-        );
-    }
-
-    private @Optional Node getPathNode(@Optional TreePath path) {
+    private @Optional Node getNode(@Optional TreePath path) {
         return path == null ? null : (Node) ((ObjectTreeEntry) path.getLastPathComponent()).get();
     }
 }
