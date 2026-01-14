@@ -6,6 +6,8 @@
             it may display the number of files and a scrollable list of files to be copied
 
 ### SOON ###
+    we might be forgetting to unnest, which might cause leftover progress bars in UI
+
     consider simplifier and collector optimizations
         consider moving simplifier to services accepting list of nodes with recursive operation
         consider merging simplifier and collector

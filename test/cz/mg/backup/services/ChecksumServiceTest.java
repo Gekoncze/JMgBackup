@@ -86,7 +86,7 @@ public @Test class ChecksumServiceTest {
 
         Directory directory = new Directory();
         directory.getFiles().addLast(file);
-        directory.getProperties().setTotalCount(1L);
+        directory.getProperties().setTotalFileCount(1L);
 
         Progress progress = new Progress("Test");
         service.compute(new List<>(directory), Algorithm.SHA256, progress);
@@ -94,8 +94,8 @@ public @Test class ChecksumServiceTest {
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
         Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
-        Assert.assertEquals(2L, progress.getLimit());
-        Assert.assertEquals(2L, progress.getValue());
+        Assert.assertEquals(1L, progress.getLimit());
+        Assert.assertEquals(1L, progress.getValue());
     }
 
     private void testClearFile() {
@@ -118,14 +118,14 @@ public @Test class ChecksumServiceTest {
 
         Directory directory = new Directory();
         directory.getFiles().addLast(file);
-        directory.getProperties().setTotalCount(1L);
+        directory.getProperties().setTotalFileCount(1L);
 
         Progress progress = new Progress("Test");
         service.clear(new List<>(directory), progress);
 
         Assert.assertNull(file.getChecksum());
-        Assert.assertEquals(2L, progress.getLimit());
-        Assert.assertEquals(2L, progress.getValue());
+        Assert.assertEquals(1L, progress.getLimit());
+        Assert.assertEquals(1L, progress.getValue());
     }
 
     private void testCollectEmpty() {
