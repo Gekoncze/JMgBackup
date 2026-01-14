@@ -66,8 +66,9 @@ public @Service class DirectoryManager {
     }
 
     /**
-     * Compares given directories.
-     * Statistics are updated afterward.
+     * Compares given directories recursively.
+     * If one directory is null, then the other directory will have its compare errors cleared recursively.
+     * Statistics are updated afterward for both directories.
      */
     public void compare(
         @Optional Directory a,
