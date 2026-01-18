@@ -6,17 +6,14 @@
             it may display the number of files and a scrollable list of files to be copied
 
 ### SOON ###
-    add test for ChecksumActions
+    add more unit tests
+        add test for ChecksumActions
 
-    we might be forgetting to unnest, which might cause leftover progress bars in UI
+    improve progress handling
+        we might be forgetting to unnest, which might cause leftover progress bars in UI
+        we might want to set progress label inside the service, just like limit and value
 
-    consider simplifier and collector optimizations
-        consider moving simplifier to services accepting list of nodes with recursive operation
-        consider merging simplifier and collector
-            get rid of for each, only collect based on filters in collector
-            may introduce shared predicate classes
-            may consider having separate collectors for different types (FileCollector, DirectoryCollector, NodeCollector)
-            should consider performance impact!
+    move logic from ui components to ui action classes
 
     add duplicate detector
         show different icon for duplicates ?
@@ -36,6 +33,8 @@
         could be added to details view too
 
 ### CONSIDERATIONS ###
+    consider merging simplifier and collector somehow
+
     consider showing disk usage somewhere near top (if possible)
         could then show warning when copy operation may fail because of not enough space in target device
         would need to detect device for path and read its properties somehow
