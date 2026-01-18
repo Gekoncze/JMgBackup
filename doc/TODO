@@ -12,6 +12,9 @@
     improve progress handling
         we might be forgetting to unnest, which might cause leftover progress bars in UI
         we might want to set progress label inside the service, just like limit and value
+            in directory manager and file copy
+                replace fixed number of steps with overwrite of previous progress for each step
+                do not nest there
 
     move logic from ui components to ui action classes
 
