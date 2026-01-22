@@ -40,8 +40,22 @@ public @Service class DirectoryReader {
     public @Mandatory Directory read(@Mandatory Path path, @Mandatory Progress progress) {
         Directory directory = new Directory();
         directory.setPath(path);
+        read(directory, progress);
+        return directory;
+    }
 
-        try (DirectoryStream<Path> childPaths = Files.newDirectoryStream(path)) {
+    /**
+     * Reads directory tree from its path.
+     * Files included.
+     * Symbolic links skipped, except for the explicitly given path.
+     * Files and directories are sorted alphabetically.
+     */
+    public void read(@Mandatory Directory directory, @Mandatory Progress progress) {
+        directory.getDirectories().clear();
+        directory.getFiles().clear();
+        directory.getErrors().clear();
+
+        try (DirectoryStream<Path> childPaths = Files.newDirectoryStream(directory.getPath())) {
             for (Path childPath : childPaths) {
                 progress.step();
                 try {
@@ -55,8 +69,6 @@ public @Service class DirectoryReader {
         }
 
         sort.sort(directory, progress.nest("Sort directory"));
-
-        return directory;
     }
 
     private void read(@Mandatory Directory directory, @Mandatory Path childPath, @Mandatory Progress progress) {
