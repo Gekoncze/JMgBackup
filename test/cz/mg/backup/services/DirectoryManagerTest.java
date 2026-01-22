@@ -2,6 +2,8 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
+import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.backup.Configuration;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.*;
 import cz.mg.backup.exceptions.CompareException;
@@ -13,6 +15,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 public @Test class DirectoryManagerTest {
+    private static final @Mandatory Path PATH = Configuration.getRoot(DirectoryReaderTest.class).resolve("one");
+
     public static void main(String[] args) {
         System.out.print("Running " + DirectoryManagerTest.class.getSimpleName() + " ... ");
 
@@ -32,10 +36,8 @@ public @Test class DirectoryManagerTest {
     private final @Service DirectoryManager directoryManager = DirectoryManager.getInstance();
 
     private void testReloadNull() {
-        Path path = Path.of("test", "cz", "mg", "backup", "test", "one");
-
         Progress progress = new Progress("test");
-        Directory directory = directoryManager.reload(null, path, progress);
+        Directory directory = directoryManager.reload(null, PATH, progress);
 
         Assert.assertEquals("one", directory.getPath().getFileName().toString());
         Assert.assertEquals(0, directory.getDirectories().count());
@@ -47,13 +49,11 @@ public @Test class DirectoryManagerTest {
     }
 
     private void testReloadNotModified() {
-        Path path = Path.of("test", "cz", "mg", "backup", "test", "one");
-
-        Directory oldDirectory = directoryManager.reload(null, path, new Progress("test"));
+        Directory oldDirectory = directoryManager.reload(null, PATH, new Progress("test"));
         oldDirectory.getFiles().get(0).setChecksum(new Checksum(Algorithm.SHA256, "112233"));
 
         Progress progress = new Progress("test");
-        Directory newDirectory = directoryManager.reload(oldDirectory, path, progress);
+        Directory newDirectory = directoryManager.reload(oldDirectory, PATH, progress);
 
         Assert.assertEquals("one", newDirectory.getPath().getFileName().toString());
         Assert.assertEquals(0, newDirectory.getDirectories().count());
@@ -68,14 +68,12 @@ public @Test class DirectoryManagerTest {
     }
 
     private void testReloadModified() {
-        Path path = Path.of("test", "cz", "mg", "backup", "test", "one");
-
-        Directory oldDirectory = directoryManager.reload(null, path, new Progress("test"));
+        Directory oldDirectory = directoryManager.reload(null, PATH, new Progress("test"));
         oldDirectory.getFiles().get(0).setChecksum(new Checksum(Algorithm.SHA256, "112233"));
         oldDirectory.getFiles().get(0).getProperties().setModified(new Date(2000, Calendar.DECEMBER, 31));
 
         Progress progress = new Progress("test");
-        Directory newDirectory = directoryManager.reload(oldDirectory, path, progress);
+        Directory newDirectory = directoryManager.reload(oldDirectory, PATH, progress);
 
         Assert.assertEquals("one", newDirectory.getPath().getFileName().toString());
         Assert.assertEquals(0, newDirectory.getDirectories().count());
