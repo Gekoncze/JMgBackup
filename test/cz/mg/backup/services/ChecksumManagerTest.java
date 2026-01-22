@@ -3,9 +3,9 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.backup.Configuration;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.*;
+import cz.mg.backup.test.common.Common;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 import cz.mg.test.Assert;
@@ -36,20 +36,20 @@ public @Test class ChecksumManagerTest {
 
     private void testComputeFileMissing() {
         File file = new File();
-        file.setPath(Configuration.FLYING_AKI_PATH);
+        file.setPath(Common.FLYING_AKI_PATH);
 
         Progress progress = new Progress("Test");
         manager.compute(file, Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
-        Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
+        Assert.assertEquals(Common.FLYING_AKI_HASH, file.getChecksum().getHash());
         Assert.assertEquals(0L, progress.getLimit());
         Assert.assertEquals(0L, progress.getValue());
     }
 
     private void testComputeFileExisting() {
         File file = new File();
-        file.setPath(Configuration.FLYING_AKI_PATH);
+        file.setPath(Common.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
 
         Progress progress = new Progress("Test");
@@ -64,7 +64,7 @@ public @Test class ChecksumManagerTest {
 
     private void testComputeFileDifferentAlgorithm() {
         File file = new File();
-        file.setPath(Configuration.FLYING_AKI_PATH);
+        file.setPath(Common.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.MD5, "FF"));
 
         Progress progress = new Progress("Test");
@@ -72,14 +72,14 @@ public @Test class ChecksumManagerTest {
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
-        Assert.assertEquals(Configuration.FLYING_AKI_HASH, file.getChecksum().getHash());
+        Assert.assertEquals(Common.FLYING_AKI_HASH, file.getChecksum().getHash());
         Assert.assertEquals(0L, progress.getLimit());
         Assert.assertEquals(0L, progress.getValue());
     }
 
     private void testClearFile() {
         File file = new File();
-        file.setPath(Configuration.FLYING_AKI_PATH);
+        file.setPath(Common.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
 
         manager.clear(file);

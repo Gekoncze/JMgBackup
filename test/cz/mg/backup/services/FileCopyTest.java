@@ -3,9 +3,9 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.backup.Configuration;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
+import cz.mg.backup.test.common.Common;
 import cz.mg.test.Assert;
 import cz.mg.test.Assertions;
 import cz.mg.test.exceptions.AssertException;
@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public @Test class FileCopyTest {
-    private static final @Mandatory Path SOURCE_FILE = Configuration.FLYING_AKI_PATH;
+    private static final @Mandatory Path SOURCE_FILE = Common.FLYING_AKI_PATH;
     private static final @Mandatory Path SOURCE_DIRECTORY = SOURCE_FILE.getParent();
     private static final @Mandatory Path TARGET_DIRECTORY = SOURCE_DIRECTORY.resolve("copy");
     private static final @Mandatory Path TARGET_FILE = TARGET_DIRECTORY.resolve(SOURCE_FILE.getFileName());
