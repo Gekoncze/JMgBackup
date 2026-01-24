@@ -5,7 +5,6 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.components.Status;
 import cz.mg.backup.components.Task;
-import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.components.ProgressBar;
 import cz.mg.backup.gui.components.TextButton;
 import cz.mg.backup.gui.event.UserEscapeKeyPressListener;
@@ -35,7 +34,7 @@ public @Component class ProgressDialog extends Dialog {
     private final @Mandatory List<ProgressBar> progressBars = new List<>();
 
     private ProgressDialog(
-        @Mandatory MainWindow window,
+        @Mandatory JFrame window,
         @Mandatory String title,
         @Mandatory Task<?> task
     ) {
@@ -123,7 +122,7 @@ public @Component class ProgressDialog extends Dialog {
     }
 
     public static void run(
-        @Mandatory MainWindow window,
+        @Mandatory JFrame window,
         @Mandatory String title,
         @Mandatory Consumer<Progress> runnable
     ) {
@@ -135,7 +134,7 @@ public @Component class ProgressDialog extends Dialog {
     }
 
     public static <R> R compute(
-        @Mandatory MainWindow window,
+        @Mandatory JFrame window,
         @Mandatory String title,
         @Mandatory Function<Progress, R> runnable
     ) {
