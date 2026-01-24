@@ -40,7 +40,7 @@ public @Test class SimplifierTest {
     private void testEmpty() {
         List<Node> input = new List<>();
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(true, output.isEmpty());
@@ -53,7 +53,7 @@ public @Test class SimplifierTest {
             create("cat")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
@@ -69,7 +69,7 @@ public @Test class SimplifierTest {
             create("pangolin")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(3, output.count());
@@ -86,7 +86,7 @@ public @Test class SimplifierTest {
             create("cat")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
@@ -102,7 +102,7 @@ public @Test class SimplifierTest {
             create("cat")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(2, output.count());
@@ -119,7 +119,7 @@ public @Test class SimplifierTest {
             create("cat", "gray")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
@@ -135,7 +135,7 @@ public @Test class SimplifierTest {
             create("cat", "gray")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
@@ -151,7 +151,7 @@ public @Test class SimplifierTest {
             create("cat")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
@@ -167,7 +167,7 @@ public @Test class SimplifierTest {
             create("cat", "black")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(3, output.count());
@@ -184,7 +184,7 @@ public @Test class SimplifierTest {
             create("cat", "yellow", "sleepy", "rare")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
@@ -198,7 +198,7 @@ public @Test class SimplifierTest {
             create("cat", "yellow")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
@@ -214,7 +214,7 @@ public @Test class SimplifierTest {
             create("pangolin", "brown")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(3, output.count());
@@ -232,7 +232,7 @@ public @Test class SimplifierTest {
             create("pangolin", "brown")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
@@ -248,7 +248,7 @@ public @Test class SimplifierTest {
             create("pangolin", "brown")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(2, output.count());
@@ -265,7 +265,7 @@ public @Test class SimplifierTest {
             create("animal", "cat", "gray")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
@@ -289,7 +289,7 @@ public @Test class SimplifierTest {
             create("fox", "orange", "medium", "sleepy", "rare")
         );
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(7, output.count());

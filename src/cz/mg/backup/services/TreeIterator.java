@@ -33,49 +33,55 @@ public @Service class TreeIterator {
     public void forEachFile(
         @Optional Node node,
         @Mandatory Consumer<File> consumer,
-        @Mandatory Progress progress
+        @Mandatory Progress progress,
+        @Mandatory String description
     ) {
-        forEachMain(toCollection(node), (Consumer) consumer, progress, true, false);
+        forEachMain(toCollection(node), (Consumer) consumer, progress, description, true, false);
     }
 
     public void forEachDirectory(
         @Optional Node node,
         @Mandatory Consumer<Directory> consumer,
-        @Mandatory Progress progress
+        @Mandatory Progress progress,
+        @Mandatory String description
     ) {
-        forEachMain(toCollection(node), (Consumer) consumer, progress, false, true);
+        forEachMain(toCollection(node), (Consumer) consumer, progress, description, false, true);
     }
 
     public void forEachNode(
         @Optional Node node,
         @Mandatory Consumer<Node> consumer,
-        @Mandatory Progress progress
+        @Mandatory Progress progress,
+        @Mandatory String description
     ) {
-        forEachMain(toCollection(node), consumer, progress, true, true);
+        forEachMain(toCollection(node), consumer, progress, description, true, true);
     }
 
     public void forEachFile(
         @Mandatory Collection<? extends Node> nodes,
         @Mandatory Consumer<File> consumer,
-        @Mandatory Progress progress
+        @Mandatory Progress progress,
+        @Mandatory String description
     ) {
-        forEachMain(nodes, (Consumer) consumer, progress, true, false);
+        forEachMain(nodes, (Consumer) consumer, progress, description, true, false);
     }
 
     public void forEachDirectory(
         @Mandatory Collection<? extends Node> nodes,
         @Mandatory Consumer<Directory> consumer,
-        @Mandatory Progress progress
+        @Mandatory Progress progress,
+        @Mandatory String description
     ) {
-        forEachMain(nodes, (Consumer) consumer, progress, false, true);
+        forEachMain(nodes, (Consumer) consumer, progress, description, false, true);
     }
 
     public void forEachNode(
         @Mandatory Collection<? extends Node> nodes,
         @Mandatory Consumer<Node> consumer,
-        @Mandatory Progress progress
+        @Mandatory Progress progress,
+        @Mandatory String description
     ) {
-        forEachMain(nodes, consumer, progress, true, true);
+        forEachMain(nodes, consumer, progress, description, true, true);
     }
 
     private @Mandatory Collection<? extends Node> toCollection(@Optional Node node) {
@@ -86,14 +92,16 @@ public @Service class TreeIterator {
         @Mandatory Collection<? extends Node> nodes,
         @Mandatory Consumer<Node> consumer,
         @Mandatory Progress progress,
+        @Mandatory String description,
         boolean files,
         boolean directories
     ) {
+        progress.setDescription(description);
         progress.setLimit(estimate(nodes, files, directories));
 
         for (Node node : nodes) {
             if (node instanceof Directory directory) {
-                forEach(directory, consumer, progress, files, directories);
+                forEachRecursive(directory, consumer, progress, files, directories);
             } else if (node instanceof File file) {
                 if (files) {
                     consumer.accept(file);
@@ -103,7 +111,7 @@ public @Service class TreeIterator {
         }
     }
 
-    private void forEach(
+    private void forEachRecursive(
         @Mandatory Directory directory,
         @Mandatory Consumer<Node> consumer,
         @Mandatory Progress progress,
@@ -123,7 +131,7 @@ public @Service class TreeIterator {
         }
 
         for (Directory subdirectory : directory.getDirectories()) {
-            forEach(subdirectory, consumer, progress, files, directories);
+            forEachRecursive(subdirectory, consumer, progress, files, directories);
         }
     }
 

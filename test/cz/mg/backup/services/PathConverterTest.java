@@ -74,7 +74,7 @@ public @Test class PathConverterTest {
         directory.getProperties().setTotalFileCount(2);
         directory.getProperties().setTotalDirectoryCount(2);
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         pathConverter.computeRelativePaths(directory, progress);
 
         Assert.assertEquals(Path.of("Fluffy.bmp"), firstFile.getRelativePath());

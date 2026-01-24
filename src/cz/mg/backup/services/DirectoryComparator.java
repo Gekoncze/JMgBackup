@@ -17,6 +17,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public @Service class DirectoryComparator {
+    private static final String DESCRIPTION = "Compare";
+
     private static volatile @Service DirectoryComparator instance;
 
     public static @Service DirectoryComparator getInstance() {
@@ -44,6 +46,7 @@ public @Service class DirectoryComparator {
         @Optional Directory second,
         @Mandatory Progress progress
     ) {
+        progress.setDescription(DESCRIPTION);
         progress.setLimit(estimate(first, second));
         comparePairedDirectories(first, second, progress);
     }

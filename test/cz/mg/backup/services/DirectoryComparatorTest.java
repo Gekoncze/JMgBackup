@@ -70,7 +70,7 @@ public @Test class DirectoryComparatorTest {
         long expectedLimit,
         long expectedValue
     ) {
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         service.compare(first, second, progress);
         assertNoErrors(first);
         assertNoErrors(second);
@@ -113,7 +113,7 @@ public @Test class DirectoryComparatorTest {
         Directory secondL2 = createDirectory("L2");
         Directory secondL1 = createDirectory("L1", new List<>(secondL2), new List<>());
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         service.compare(firstL1, secondL1, progress);
 
         Assert.assertEquals(0, firstL1.getErrors().count());
@@ -128,7 +128,7 @@ public @Test class DirectoryComparatorTest {
         Directory firstL1 = createDirectory("L1", new List<>(firstL2), new List<>());
         Directory secondL1 = createDirectory("L1", new List<>(), new List<>());
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         service.compare(firstL1, secondL1, progress);
 
         Assert.assertEquals(1, firstL2.getErrors().count());
@@ -144,7 +144,7 @@ public @Test class DirectoryComparatorTest {
         Directory secondL2 = createDirectory("L2 second");
         Directory secondL1 = createDirectory("L1", new List<>(secondL2), new List<>());
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         service.compare(firstL1, secondL1, progress);
 
         Assert.assertEquals(1, firstL2.getErrors().count());
@@ -166,7 +166,7 @@ public @Test class DirectoryComparatorTest {
         File secondL2 = createFile("L2");
         Directory secondL1 = createDirectory("L1", new List<>(), new List<>(secondL2));
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         service.compare(firstL1, secondL1, progress);
 
         Assert.assertEquals(0, firstL1.getErrors().count());
@@ -181,7 +181,7 @@ public @Test class DirectoryComparatorTest {
         Directory firstL1 = createDirectory("L1", new List<>(), new List<>(firstL2));
         Directory secondL1 = createDirectory("L1", new List<>(), new List<>());
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         service.compare(firstL1, secondL1, progress);
 
         Assert.assertEquals(1, firstL2.getErrors().count());
@@ -197,7 +197,7 @@ public @Test class DirectoryComparatorTest {
         File secondL2 = createFile("L2 second");
         Directory secondL1 = createDirectory("L1", new List<>(), new List<>(secondL2));
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         service.compare(firstL1, secondL1, progress);
 
         Assert.assertEquals(1, firstL2.getErrors().count());
@@ -214,7 +214,7 @@ public @Test class DirectoryComparatorTest {
         Directory firstDirectory = createDirectory("root", new List<>(), new List<>(firstFile));
         Directory secondDirectory = createDirectory("root", new List<>(), new List<>(secondFile));
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         service.compare(firstDirectory, secondDirectory, progress);
 
         Assert.assertEquals(0, firstDirectory.getErrors().count());
@@ -260,7 +260,7 @@ public @Test class DirectoryComparatorTest {
             new List<>()
         );
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         service.compare(firstL1, secondL1, progress);
 
         Assert.assertEquals(0, firstL1.getErrors().count());
@@ -298,7 +298,7 @@ public @Test class DirectoryComparatorTest {
         Assert.assertEquals(2, first.getProperties().getTotalErrorCount());
         Assert.assertEquals(2, second.getProperties().getTotalErrorCount());
 
-        service.compare(first, second, new Progress("Test"));
+        service.compare(first, second, new Progress());
 
         Assert.assertEquals(1, first.getErrors().count());
         Assert.assertEquals(1, second.getErrors().count());
@@ -319,7 +319,7 @@ public @Test class DirectoryComparatorTest {
         Assert.assertEquals(1, subdirectory.getErrors().count());
         Assert.assertEquals(4, directory.getErrors().count());
 
-        service.compare(directory, null, new Progress("Test"));
+        service.compare(directory, null, new Progress());
 
         Assert.assertEquals(1, subdirectory.getErrors().count());
         Assert.assertEquals(3, directory.getErrors().count());
@@ -333,7 +333,7 @@ public @Test class DirectoryComparatorTest {
         Assert.assertEquals(2, subdirectory.getErrors().count());
         Assert.assertEquals(5, directory.getErrors().count());
 
-        service.compare(null, directory, new Progress("Test"));
+        service.compare(null, directory, new Progress());
 
         Assert.assertEquals(1, subdirectory.getErrors().count());
         Assert.assertEquals(3, directory.getErrors().count());
@@ -354,7 +354,7 @@ public @Test class DirectoryComparatorTest {
         directory.setPath(Path.of(name));
         directory.setDirectories(directories);
         directory.setFiles(files);
-        statisticsCounter.count(directory, new Progress("test"));
+        statisticsCounter.count(directory, new Progress());
         return directory;
     }
 

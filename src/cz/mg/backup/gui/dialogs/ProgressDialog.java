@@ -2,7 +2,6 @@ package cz.mg.backup.gui.dialogs;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.components.Status;
 import cz.mg.backup.components.Task;
@@ -126,10 +125,9 @@ public @Component class ProgressDialog extends Dialog {
     public static void run(
         @Mandatory MainWindow window,
         @Mandatory String title,
-        @Optional String description,
         @Mandatory Consumer<Progress> runnable
     ) {
-        Task<?> task = new Task<>(description != null ? description : title, runnable);
+        Task<?> task = new Task<>(runnable);
         ProgressDialog dialog = new ProgressDialog(window, title, task);
         dialog.start();
         dialog.setVisible(true);
@@ -139,10 +137,9 @@ public @Component class ProgressDialog extends Dialog {
     public static <R> R compute(
         @Mandatory MainWindow window,
         @Mandatory String title,
-        @Optional String description,
         @Mandatory Function<Progress, R> runnable
     ) {
-        Task<R> task = new Task<>(description != null ? description : title, runnable);
+        Task<R> task = new Task<>(runnable);
         ProgressDialog dialog = new ProgressDialog(window, title, task);
         dialog.start();
         dialog.setVisible(true);

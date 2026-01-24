@@ -7,17 +7,20 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.exceptions.CancelException;
 
 public @Component class Progress {
-    private final @Mandatory String description;
+    private volatile @Mandatory String description = "...";
     private volatile long value;
     private volatile long limit;
     private volatile @Optional Progress next;
 
-    public Progress(@Mandatory String description) {
-        this.description = description;
+    public Progress() {
     }
 
     public @Mandatory String getDescription() {
         return description;
+    }
+
+    public void setDescription(@Mandatory String description) {
+        this.description = description;
     }
 
     public long getValue() {
@@ -48,8 +51,8 @@ public @Component class Progress {
         return limit > 0 ? (((double)value / (double)limit) * 100) : null;
     }
 
-    public @Mandatory Progress nest(@Mandatory String name) {
-        Progress subProgress = new Progress(name);
+    public @Mandatory Progress nest() {
+        Progress subProgress = new Progress();
         setNext(subProgress);
         return subProgress;
     }

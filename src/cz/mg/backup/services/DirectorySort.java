@@ -10,6 +10,8 @@ import cz.mg.collections.services.sort.ListSort;
 import cz.mg.collections.services.sort.MergeListSort;
 
 public @Service class DirectorySort {
+    private static final String DESCRIPTION = "Sort";
+
     private static volatile @Service DirectorySort instance;
 
     public static @Service DirectorySort getInstance() {
@@ -30,6 +32,7 @@ public @Service class DirectorySort {
     }
 
     public void sort(@Mandatory Directory directory, @Mandatory Progress progress) {
+        progress.setDescription(DESCRIPTION);
         progress.setLimit(estimate(directory));
         listSort.sort(directory.getDirectories(), (n1, n2) -> order(n1, n2, progress), Direction.ASCENDING);
         listSort.sort(directory.getFiles(), (n1, n2) -> order(n1, n2, progress), Direction.ASCENDING);

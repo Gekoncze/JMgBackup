@@ -9,7 +9,6 @@ import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.exceptions.FileSystemException;
 import cz.mg.test.Assert;
-import cz.mg.test.Assertions;
 
 import java.nio.file.Path;
 
@@ -30,7 +29,7 @@ public @Test class DirectoryReaderTest {
     private final @Service DirectoryReader reader = DirectoryReader.getInstance();
 
     private void testReadUsingPath() {
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         Directory directory = reader.read(PATH, progress);
 
         Assert.assertEquals(true, directory.getErrors().isEmpty());
@@ -66,7 +65,7 @@ public @Test class DirectoryReaderTest {
         directory.getDirectories().addLast(new Directory());
         directory.getErrors().addLast(new FileSystemException("test"));
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         reader.read(directory, progress);
 
         Assert.assertEquals(true, directory.getErrors().isEmpty());
@@ -97,7 +96,7 @@ public @Test class DirectoryReaderTest {
 
     private void testReadSymbolicLink() {
         // symbolic link for given path only is followed for convenience
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         Directory directory = reader.read(PATH.resolve("directoryLink"), progress);
 
         Assert.assertEquals("directoryLink", directory.getPath().getFileName().toString());

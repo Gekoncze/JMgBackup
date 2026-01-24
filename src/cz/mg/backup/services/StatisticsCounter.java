@@ -9,6 +9,8 @@ import cz.mg.backup.entities.DirectoryProperties;
 import cz.mg.backup.entities.File;
 
 public @Service class StatisticsCounter {
+    private static final String DESCRIPTION = "Collect statistics";
+
     private static volatile @Service StatisticsCounter instance;
 
     public static @Service StatisticsCounter getInstance() {
@@ -29,6 +31,8 @@ public @Service class StatisticsCounter {
      * Gathers statistics for given directory and its subdirectories.
      */
     public void count(@Optional Directory directory, @Mandatory Progress progress) {
+        progress.setDescription(DESCRIPTION);
+
         if (directory != null) {
             initialize(directory);
 

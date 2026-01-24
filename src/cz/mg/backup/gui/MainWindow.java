@@ -83,7 +83,6 @@ public @Component class MainWindow extends JFrame {
             ProgressDialog.run(
                 this,
                 "Compare",
-                null,
                 progress -> directoryManager.compare(a, b, progress)
             );
 

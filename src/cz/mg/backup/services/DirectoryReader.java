@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public @Service class DirectoryReader {
+    private static final String DESCRIPTION = "Load directory";
+
     private static volatile @Service DirectoryReader instance;
 
     public static @Service DirectoryReader getInstance() {
@@ -40,6 +42,7 @@ public @Service class DirectoryReader {
     public @Mandatory Directory read(@Mandatory Path path, @Mandatory Progress progress) {
         Directory directory = new Directory();
         directory.setPath(path);
+        progress.setDescription(DESCRIPTION + " " + path);
         read(directory, progress);
         return directory;
     }
@@ -68,7 +71,7 @@ public @Service class DirectoryReader {
             directory.getErrors().addLast(e);
         }
 
-        sort.sort(directory, progress.nest("Sort directory"));
+        sort.sort(directory, progress.nest());
     }
 
     private void read(@Mandatory Directory directory, @Mandatory Path childPath, @Mandatory Progress progress) {

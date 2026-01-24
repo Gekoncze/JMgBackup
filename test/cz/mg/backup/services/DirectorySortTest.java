@@ -25,7 +25,7 @@ public @Test class DirectorySortTest {
     private void testEmpty() {
         Directory directory = new Directory();
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         sort.sort(directory, progress);
 
         Assert.assertEquals(0L, progress.getLimit());
@@ -45,7 +45,7 @@ public @Test class DirectorySortTest {
         directory.getFiles().addLast(createFile(Path.of("y", "B")));
         directory.getFiles().addLast(createFile(Path.of("Z", "A")));
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         sort.sort(directory, progress);
 
         checkName("A", directory.getDirectories().get(0));

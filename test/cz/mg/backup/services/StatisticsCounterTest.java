@@ -29,7 +29,7 @@ public @Test class StatisticsCounterTest {
     private final @Service StatisticsCounter statisticsCounter = StatisticsCounter.getInstance();
 
     private void testEmpty() {
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
 
         Assertions.assertThatCode(() -> {
             statisticsCounter.count(null, progress);
@@ -42,7 +42,7 @@ public @Test class StatisticsCounterTest {
     private void testSingleDirectoryEmpty() {
         Directory directory = new Directory();
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         statisticsCounter.count(directory, progress);
 
         Assert.assertEquals(0L, directory.getProperties().getTotalSize());
@@ -64,7 +64,7 @@ public @Test class StatisticsCounterTest {
         directory.getProperties().setTotalDirectoryCount(11111L);
         directory.getProperties().setTotalErrorCount(11111L);
 
-        statisticsCounter.count(directory, new Progress("test"));
+        statisticsCounter.count(directory, new Progress());
 
         Assert.assertEquals(0L, directory.getProperties().getTotalSize());
         Assert.assertEquals(0L, directory.getProperties().getTotalCount());
@@ -72,7 +72,7 @@ public @Test class StatisticsCounterTest {
         Assert.assertEquals(0L, directory.getProperties().getTotalDirectoryCount());
         Assert.assertEquals(2L, directory.getProperties().getTotalErrorCount());
 
-        statisticsCounter.count(directory, new Progress("test"));
+        statisticsCounter.count(directory, new Progress());
 
         Assert.assertEquals(0L, directory.getProperties().getTotalSize());
         Assert.assertEquals(0L, directory.getProperties().getTotalCount());
@@ -93,7 +93,7 @@ public @Test class StatisticsCounterTest {
         directory.getErrors().addLast(new CompareException("second error"));
         directory.getFiles().addLast(file);
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         statisticsCounter.count(directory, progress);
 
         Assert.assertEquals(123L, directory.getProperties().getTotalSize());
@@ -119,7 +119,7 @@ public @Test class StatisticsCounterTest {
         directory.getErrors().addLast(new CompareException("second error"));
         directory.getDirectories().addLast(subDirectory);
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         statisticsCounter.count(directory, progress);
 
         Assert.assertEquals(0L, directory.getProperties().getTotalSize());
@@ -158,7 +158,7 @@ public @Test class StatisticsCounterTest {
         directory.getDirectories().addLast(subDirectory);
         directory.getFiles().addLast(directoryFile);
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         statisticsCounter.count(directory, progress);
 
         Assert.assertEquals(130L, directory.getProperties().getTotalSize());

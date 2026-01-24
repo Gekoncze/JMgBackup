@@ -14,6 +14,8 @@ import cz.mg.collections.pair.ReadablePair;
  * Class to simplify node selection for recursive operations.
  */
 public @Component class Simplifier {
+    private static final String DESCRIPTION = "Simplify";
+
     private static volatile @Service Simplifier instance;
 
     public static @Service Simplifier getInstance() {
@@ -41,6 +43,7 @@ public @Component class Simplifier {
         @Mandatory List<Node> nodes,
         @Mandatory Progress progress
     ) {
+        progress.setDescription(DESCRIPTION);
         List<Pair<Node, Boolean>> markedNodes = markTrue(nodes, progress);
         markRedundantFalse(markedNodes, 0, progress);
         return getMarkedTrue(markedNodes, progress);

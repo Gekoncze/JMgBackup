@@ -38,7 +38,7 @@ public @Test class ChecksumManagerTest {
         File file = new File();
         file.setPath(Common.FLYING_AKI_PATH);
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         manager.compute(file, Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
@@ -52,7 +52,7 @@ public @Test class ChecksumManagerTest {
         file.setPath(Common.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         manager.compute(file, Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
@@ -67,7 +67,7 @@ public @Test class ChecksumManagerTest {
         file.setPath(Common.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.MD5, "FF"));
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         manager.compute(file, Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
@@ -88,7 +88,7 @@ public @Test class ChecksumManagerTest {
     }
 
     private void testCollectEmpty() {
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         var map = manager.collect(null, progress);
 
         Assert.assertEquals(true, map.isEmpty());
@@ -116,7 +116,7 @@ public @Test class ChecksumManagerTest {
         directory.getFiles().addLast(secondFile);
         directory.getProperties().setTotalFileCount(2L);
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         Map<Path, Pair<Checksum, Date>> map = manager.collect(directory, progress);
 
         Assert.assertEquals(2, map.count());
@@ -129,7 +129,7 @@ public @Test class ChecksumManagerTest {
     }
 
     private void testRestoreEmpty() {
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
 
         Assertions.assertThatCode(() -> {
             manager.restore(null, new Map<>(), progress);
@@ -204,7 +204,7 @@ public @Test class ChecksumManagerTest {
         map.set(Path.of("/3"), new Pair<>(checksum3b, createDate(6)));
         map.set(Path.of("/4"), new Pair<>(checksum4, createDate(100)));
 
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         manager.restore(directory, map, progress);
 
         Assert.assertSame(null, firstFile.getChecksum());

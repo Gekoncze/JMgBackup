@@ -13,6 +13,9 @@ import java.util.Date;
 import java.util.Objects;
 
 public @Service class ChecksumManager {
+    private static final String COLLECT_DESCRIPTION = "Collect checksums";
+    private static final String RESTORE_DESCRIPTION = "Restore checksums";
+
     private static volatile @Service ChecksumManager instance;
 
     public static @Service ChecksumManager getInstance() {
@@ -39,7 +42,7 @@ public @Service class ChecksumManager {
             file.setChecksum(checksumReader.read(
                 file.getPath(),
                 algorithm,
-                progress.nest("Checksum " + file.getPath().getFileName())
+                progress.nest()
             ));
         }
     }
@@ -59,7 +62,8 @@ public @Service class ChecksumManager {
                 file.getPath(),
                 new Pair<>(file.getChecksum(), file.getProperties().getModified())
             ),
-            progress
+            progress,
+            COLLECT_DESCRIPTION
         );
         return checksums;
     }
@@ -79,7 +83,8 @@ public @Service class ChecksumManager {
                     }
                 }
             },
-            progress
+            progress,
+            RESTORE_DESCRIPTION
         );
     }
 }

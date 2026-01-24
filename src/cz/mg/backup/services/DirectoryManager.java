@@ -47,19 +47,19 @@ public @Service class DirectoryManager {
     ) {
         progress.setLimit(5);
 
-        var checksums = checksumManager.collect(directory, progress.nest("Collect checksums"));
+        var checksums = checksumManager.collect(directory, progress.nest());
         progress.step(); // 1
 
-        directory = directoryReader.read(path, progress.nest("Load directory " + path));
+        directory = directoryReader.read(path, progress.nest());
         progress.step(); // 2
 
-        pathConverter.computeRelativePaths(directory, progress.nest("Calculate relative path"));
+        pathConverter.computeRelativePaths(directory, progress.nest());
         progress.step(); // 3
 
-        statisticsCounter.count(directory, progress.nest("Gather statistics"));
+        statisticsCounter.count(directory, progress.nest());
         progress.step(); // 4
 
-        checksumManager.restore(directory, checksums, progress.nest("Restore checksums"));
+        checksumManager.restore(directory, checksums, progress.nest());
         progress.step(); // 5
 
         return directory;
@@ -78,20 +78,20 @@ public @Service class DirectoryManager {
         progress.setLimit(3);
 
         if (a != null && b != null) {
-            directoryComparator.compare(a, b, progress.nest("Compare"));
+            directoryComparator.compare(a, b, progress.nest());
         } else if (a != null) {
-            directoryComparator.compare(a, a, progress.nest("Compare"));
+            directoryComparator.compare(a, a, progress.nest());
         } else if (b != null) {
-            directoryComparator.compare(b, b, progress.nest("Compare"));
+            directoryComparator.compare(b, b, progress.nest());
         }
 
         progress.step();
 
-        statisticsCounter.count(a, progress.nest("Gather statistics"));
+        statisticsCounter.count(a, progress.nest());
 
         progress.step();
 
-        statisticsCounter.count(b, progress.nest("Gather statistics"));
+        statisticsCounter.count(b, progress.nest());
 
         progress.step();
     }

@@ -44,7 +44,7 @@ public @Test class DirectoryTreeFactoryTest {
         childDirectory.getFiles().addLast(firstFile);
         root.getProperties().setTotalCount(4L);
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         ObjectTreeEntry rootEntry = factory.create(root, progress);
 
         Assert.assertEquals(root, rootEntry.get());

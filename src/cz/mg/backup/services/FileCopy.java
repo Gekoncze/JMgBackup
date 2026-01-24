@@ -19,6 +19,7 @@ import java.util.Objects;
 
 public @Service class FileCopy {
     private static final long BUFFER_SIZE = 1000 * 1000 * 10;
+    private static final String COPY_DESCRIPTION = "Copy file";
 
     private static volatile @Service FileCopy instance;
 
@@ -53,16 +54,16 @@ public @Service class FileCopy {
         createMissingDirectories(target);
         progress.step(); // 2
 
-        Checksum sourceChecksum = checksumReader.read(source, algorithm, progress.nest("Source Checksum"));
+        Checksum sourceChecksum = checksumReader.read(source, algorithm, progress.nest());
         progress.step(); // 3
 
-        copySourceToTarget(source, target, progress.nest("Copy Data"));
+        copySourceToTarget(source, target, progress.nest());
         progress.step(); // 4
 
         copySourceAttributesToTarget(source, target);
         progress.step(); // 5
 
-        Checksum targetChecksum = checksumReader.read(target, algorithm, progress.nest("Target Checksum"));
+        Checksum targetChecksum = checksumReader.read(target, algorithm, progress.nest());
         progress.step(); // 6
 
         validateChecksums(sourceChecksum, targetChecksum);
@@ -96,6 +97,7 @@ public @Service class FileCopy {
         ) {
             long size = getFileSize(source);
             if (size > 0) {
+                progress.setDescription(COPY_DESCRIPTION);
                 progress.setLimit(Math.max(1, size / BUFFER_SIZE));
                 long position = 0;
                 while (position < size) {

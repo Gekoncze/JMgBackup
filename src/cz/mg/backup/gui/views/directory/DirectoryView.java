@@ -98,7 +98,6 @@ public @Component class DirectoryView extends Panel {
                 ProgressDialog.compute(
                     window,
                     "Reload directory",
-                    null,
                     progress -> directoryManager.reload(directory, path, progress)
                 )
             );
@@ -120,7 +119,6 @@ public @Component class DirectoryView extends Panel {
                 ProgressDialog.compute(
                     window,
                     "Build directory tree",
-                    null,
                     progress -> directoryTreeFactory.create(directory, progress))
                 )
             );
@@ -151,7 +149,6 @@ public @Component class DirectoryView extends Panel {
                 ProgressDialog.compute(
                     window,
                     "Search",
-                    null,
                     progress -> directorySearch.find(directory, path, progress)
                 )
             );
@@ -211,7 +208,6 @@ public @Component class DirectoryView extends Panel {
         ProgressDialog.run(
             window,
             "Compute checksum",
-            null,
             progress -> checksumActions.compute(nodes, algorithm, progress)
         );
 
@@ -224,7 +220,6 @@ public @Component class DirectoryView extends Panel {
         ProgressDialog.run(
             window,
             "Clear checksum",
-            null,
             progress -> checksumActions.clear(nodes, progress)
         );
 

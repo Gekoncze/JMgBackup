@@ -45,7 +45,7 @@ public @Test class FileCopyTest {
         Assert.assertNotEquals(TARGET_FILE, TARGET_DIRECTORY);
 
         try {
-            fileCopy.copy(SOURCE_FILE, TARGET_FILE, Algorithm.SHA256, new Progress("test"));
+            fileCopy.copy(SOURCE_FILE, TARGET_FILE, Algorithm.SHA256, new Progress());
             Assert.assertEquals(true, Files.exists(TARGET_DIRECTORY));
             Assert.assertEquals(true, Files.exists(TARGET_FILE));
             Assert.assertEquals(Files.size(SOURCE_FILE), Files.size(TARGET_FILE));
@@ -56,7 +56,7 @@ public @Test class FileCopyTest {
             Assert.assertEquals(sourceAttributes.lastModifiedTime(), targetAttributes.lastModifiedTime());
             Assert.assertEquals(sourceAttributes.lastAccessTime(), targetAttributes.lastAccessTime());
 
-            Assertions.assertThatCode(() -> fileCopy.copy(SOURCE_FILE, TARGET_FILE, Algorithm.SHA256, new Progress("test")))
+            Assertions.assertThatCode(() -> fileCopy.copy(SOURCE_FILE, TARGET_FILE, Algorithm.SHA256, new Progress()))
                 .withMessage("Missing validation for existing target file.")
                 .throwsException(IllegalArgumentException.class);
         } catch (IOException e) {
@@ -80,7 +80,7 @@ public @Test class FileCopyTest {
         try {
             Path source = SOURCE_FILE.getParent();
             Assert.assertEquals(true, Files.isDirectory(source));
-            Assertions.assertThatCode(() -> fileCopy.copy(source, TARGET_FILE, Algorithm.SHA256, new Progress("test")))
+            Assertions.assertThatCode(() -> fileCopy.copy(source, TARGET_FILE, Algorithm.SHA256, new Progress()))
                 .withMessage("Missing validation for source file type.")
                 .throwsException(IllegalArgumentException.class);
         } finally {
@@ -96,7 +96,7 @@ public @Test class FileCopyTest {
         try {
             Path source = SOURCE_FILE.getParent().resolve(SOURCE_FILE.getFileName().toString() + "x");
             Assert.assertEquals(false, Files.exists(source));
-            Assertions.assertThatCode(() -> fileCopy.copy(source, TARGET_FILE, Algorithm.SHA256, new Progress("test")))
+            Assertions.assertThatCode(() -> fileCopy.copy(source, TARGET_FILE, Algorithm.SHA256, new Progress()))
                 .withMessage("Missing validation for missing source file.")
                 .throwsException(IllegalArgumentException.class);
         } finally {

@@ -17,12 +17,12 @@ public @Test class ProgressDialogTest {
 
     private void test() {
         MainWindow window = new MainWindow();
-        SwingUtilities.invokeLater(() -> ProgressDialog.run(window, "Test Task", null, progress -> testTask()));
+        SwingUtilities.invokeLater(() -> ProgressDialog.run(window, "Test Task", progress -> testTask()));
         window.setVisible(true);
     }
 
     private void testTask() {
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         for (int i = 0; i < 5; i++) {
             progress.step();
             System.out.println(System.currentTimeMillis());

@@ -21,7 +21,7 @@ public @Test class ChecksumReaderTest {
     private final @Service ChecksumReader reader = ChecksumReader.getInstance();
 
     private void testRead() {
-        Progress progress = new Progress("Test");
+        Progress progress = new Progress();
         Checksum checksum = reader.read(Common.FLYING_AKI_PATH, Algorithm.SHA256, progress);
 
         Assert.assertEquals(Algorithm.SHA256, checksum.getAlgorithm());

@@ -19,29 +19,29 @@ public @Component class Task<R> {
     private @Optional RuntimeException exception;
     private @Optional Thread thread;
 
-    public Task(@Mandatory String description, @Mandatory Runnable runnable) {
-        this(description, progress -> {
+    public Task(@Mandatory Runnable runnable) {
+        this(progress -> {
             runnable.run();
             return null;
         });
     }
 
-    public Task(@Mandatory String description, @Mandatory Consumer<Progress> runnable) {
-        this(description, progress -> {
+    public Task(@Mandatory Consumer<Progress> runnable) {
+        this(progress -> {
             runnable.accept(progress);
             return null;
         });
     }
 
-    public Task(@Mandatory String description, @Mandatory Supplier<R> runnable) {
-        this(description, progress -> {
+    public Task(@Mandatory Supplier<R> runnable) {
+        this(progress -> {
             return runnable.get();
         });
     }
 
-    public Task(@Mandatory String description, @Mandatory Function<Progress, R> runnable) {
+    public Task(@Mandatory Function<Progress, R> runnable) {
         this.runnable = runnable;
-        this.progress = new Progress(description);
+        this.progress = new Progress();
         this.status = Status.PENDING;
     }
 

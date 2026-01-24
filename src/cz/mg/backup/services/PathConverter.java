@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.Objects;
 
 public @Service class PathConverter {
+    private static final String DESCRIPTION = "Update relative path";
+
     private static volatile @Service PathConverter instance;
 
     public static @Service PathConverter getInstance() {
@@ -32,7 +34,7 @@ public @Service class PathConverter {
     public void computeRelativePaths(@Mandatory Directory directory, @Mandatory Progress progress) {
         treeIterator.forEachNode(directory, node -> {
             node.setRelativePath(toRelativePath(node.getPath(), directory.getPath()));
-        }, progress);
+        }, progress, DESCRIPTION);
     }
 
     public @Mandatory Path toRelativePath(@Mandatory Path nodePath, @Mandatory Path directoryPath) {

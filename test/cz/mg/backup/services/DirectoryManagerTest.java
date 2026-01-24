@@ -36,7 +36,7 @@ public @Test class DirectoryManagerTest {
     private final @Service DirectoryManager directoryManager = DirectoryManager.getInstance();
 
     private void testReloadNull() {
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         Directory directory = directoryManager.reload(null, PATH, progress);
 
         Assert.assertEquals("one", directory.getPath().getFileName().toString());
@@ -49,10 +49,10 @@ public @Test class DirectoryManagerTest {
     }
 
     private void testReloadNotModified() {
-        Directory oldDirectory = directoryManager.reload(null, PATH, new Progress("test"));
+        Directory oldDirectory = directoryManager.reload(null, PATH, new Progress());
         oldDirectory.getFiles().get(0).setChecksum(new Checksum(Algorithm.SHA256, "112233"));
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         Directory newDirectory = directoryManager.reload(oldDirectory, PATH, progress);
 
         Assert.assertEquals("one", newDirectory.getPath().getFileName().toString());
@@ -68,11 +68,11 @@ public @Test class DirectoryManagerTest {
     }
 
     private void testReloadModified() {
-        Directory oldDirectory = directoryManager.reload(null, PATH, new Progress("test"));
+        Directory oldDirectory = directoryManager.reload(null, PATH, new Progress());
         oldDirectory.getFiles().get(0).setChecksum(new Checksum(Algorithm.SHA256, "112233"));
         oldDirectory.getFiles().get(0).getProperties().setModified(new Date(2000, Calendar.DECEMBER, 31));
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         Directory newDirectory = directoryManager.reload(oldDirectory, PATH, progress);
 
         Assert.assertEquals("one", newDirectory.getPath().getFileName().toString());
@@ -92,7 +92,7 @@ public @Test class DirectoryManagerTest {
         Directory b = new Directory();
         b.setPath(Path.of("foo", "foo"));
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         directoryManager.compare(a, b, progress);
 
         Assert.assertNotNull(a.getProperties());
@@ -114,7 +114,7 @@ public @Test class DirectoryManagerTest {
         a.getProperties().setTotalErrorCount(11);
         a.getErrors().addLast(new CompareException("test"));
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         directoryManager.compare(a, null, progress);
 
         Assert.assertNotNull(a.getProperties());
@@ -131,7 +131,7 @@ public @Test class DirectoryManagerTest {
         b.getProperties().setTotalErrorCount(11);
         b.getErrors().addLast(new CompareException("test"));
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         directoryManager.compare(null, b, progress);
 
         Assert.assertNotNull(b.getProperties());
@@ -143,7 +143,7 @@ public @Test class DirectoryManagerTest {
     }
 
     private void testCompareNullBoth() {
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
 
         Assertions.assertThatCode(() -> {
             directoryManager.compare(null, null, progress);
@@ -159,7 +159,7 @@ public @Test class DirectoryManagerTest {
         d.getProperties().setTotalErrorCount(11);
         d.getErrors().addLast(new CompareException("test"));
 
-        Progress progress = new Progress("test");
+        Progress progress = new Progress();
         directoryManager.compare(d, d, progress);
 
         Assert.assertNotNull(d.getProperties());
