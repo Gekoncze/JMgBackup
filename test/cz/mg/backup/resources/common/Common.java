@@ -1,4 +1,4 @@
-package cz.mg.backup.test.common;
+package cz.mg.backup.resources.common;
 
 import cz.mg.annotations.classes.Static;
 import cz.mg.backup.Configuration;

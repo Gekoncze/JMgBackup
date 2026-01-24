@@ -5,7 +5,7 @@ import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
-import cz.mg.backup.test.common.Common;
+import cz.mg.backup.resources.common.Common;
 import cz.mg.test.Assert;
 import cz.mg.test.Assertions;
 import cz.mg.test.exceptions.AssertException;

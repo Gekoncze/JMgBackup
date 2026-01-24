@@ -5,7 +5,7 @@ import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.*;
-import cz.mg.backup.test.common.Common;
+import cz.mg.backup.resources.common.Common;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 import cz.mg.test.Assert;

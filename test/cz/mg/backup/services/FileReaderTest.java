@@ -3,7 +3,7 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.entities.File;
-import cz.mg.backup.test.common.Common;
+import cz.mg.backup.resources.common.Common;
 import cz.mg.test.Assert;
 
 import java.nio.file.Path;

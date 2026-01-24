@@ -5,7 +5,7 @@ import cz.mg.annotations.classes.Test;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Checksum;
-import cz.mg.backup.test.common.Common;
+import cz.mg.backup.resources.common.Common;
 import cz.mg.test.Assert;
 
 public @Test class ChecksumReaderTest {
