@@ -18,7 +18,7 @@ import cz.mg.backup.exceptions.CancelException;
  * When task is cancelled, a {@link CancelException} is thrown.
  */
 public @Component class Progress {
-    private volatile @Mandatory String description = "...";
+    private volatile @Mandatory String description = "Initialization...";
     private volatile long value;
     private volatile long limit;
     private volatile @Optional Progress next;
