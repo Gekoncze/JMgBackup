@@ -11,7 +11,10 @@
         add test for FileCopy
 
     move logic from ui components to ui action classes
+        improve progress dialog - should be "shown" only once for each action and then updated accordingly
+            to prevent blinking
 
+### LATER ###
     add duplicate detector
         show different icon for duplicates ?
         allow user to configure duplicate detection to specify key properties ?
@@ -19,7 +22,6 @@
             but there could be also moved files that when copied would cause duplicates
         might need to also implement data comparison for precise detection between found suspects
 
-### LATER ###
     add context menu for tree entries
         add option to reload / refresh specific file or directory
         add option to show error details
