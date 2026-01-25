@@ -2,9 +2,6 @@ package cz.mg.backup.gui.event;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.annotations.requirement.Optional;
-
-import java.nio.file.Path;
 
 public @Component class UserPathChangeListener implements UserListener {
     private final @Mandatory Handler handler;
@@ -13,11 +10,11 @@ public @Component class UserPathChangeListener implements UserListener {
         this.handler = handler;
     }
 
-    public void pathChanged(@Optional Path path) {
-        handleExceptions(() -> handler.run(path));
+    public void pathChanged() {
+        handleExceptions(() -> handler.run());
     }
 
     public interface Handler {
-        void run(@Optional Path path);
+        void run();
     }
 }

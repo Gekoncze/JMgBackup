@@ -46,12 +46,12 @@ public @Component class DirectoryView extends Panel {
         setPadding(PADDING);
 
         pathSelector = new PathSelector();
-        pathSelector.addPathSelectionListener(new UserPathChangeListener(this::onPathSelected));
+        pathSelector.addPathSelectionListener(new UserPathChangeListener(this::reload));
         addVertical(pathSelector, 1, 0);
 
         tree = new JTree();
         tree.setBorder(BorderFactory.createEtchedBorder());
-        tree.setTransferHandler(new UserFileDragAndDrop(this::onFileDropped));
+        tree.setTransferHandler(new UserDragAndDropListener(this::onFileDropped));
         addVertical(new JScrollPane(tree), 1, 1);
 
         popupMenu = new JPopupMenu();
@@ -81,10 +81,6 @@ public @Component class DirectoryView extends Panel {
     public void setDirectory(@Optional Directory directory) {
         this.directory = directory;
         refresh();
-    }
-
-    private void onPathSelected(@Optional Path path) {
-        reload();
     }
 
     private void onFileDropped(@Mandatory Path path) {

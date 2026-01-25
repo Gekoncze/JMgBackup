@@ -75,7 +75,7 @@ public @Component class PathSelector extends Panel {
 
     private void triggerListeners() {
         for (var listener : listeners) {
-            listener.pathChanged(path);
+            listener.pathChanged();
         }
     }
 

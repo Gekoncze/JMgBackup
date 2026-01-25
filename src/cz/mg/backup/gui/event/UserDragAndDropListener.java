@@ -10,10 +10,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class UserFileDragAndDrop extends TransferHandler {
+public class UserDragAndDropListener extends TransferHandler {
     private final @Mandatory Handler handler;
 
-    public UserFileDragAndDrop(@Mandatory Handler handler) {
+    public UserDragAndDropListener(@Mandatory Handler handler) {
         this.handler = handler;
     }
 
