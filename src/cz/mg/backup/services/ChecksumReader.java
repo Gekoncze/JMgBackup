@@ -44,10 +44,11 @@ public @Service class ChecksumReader {
         @Mandatory Progress progress
     ) {
         try {
-            MessageDigest messageDigest = MessageDigest.getInstance(algorithm.getCode());
-
             progress.setDescription(DESCRIPTION + " " + path.getFileName());
             progress.setLimit(estimate(path));
+            progress.setValue(0L);
+
+            MessageDigest messageDigest = MessageDigest.getInstance(algorithm.getCode());
 
             try (
                 DigestInputStream stream = new DigestInputStream(

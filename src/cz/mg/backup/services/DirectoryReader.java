@@ -34,55 +34,49 @@ public @Service class DirectoryReader {
     }
 
     /**
-     * Reads directory tree from given path.
-     * Files included.
-     * Symbolic links skipped, except for the explicitly given path.
+     * Reads directory tree with files from given path.
+     * Symbolic links are skipped, except for given path.
      * Files and directories are sorted alphabetically.
      */
     public @Mandatory Directory read(@Mandatory Path path, @Mandatory Progress progress) {
-        Directory directory = new Directory();
-        directory.setPath(path);
         progress.setDescription(DESCRIPTION + " " + path);
-        read(directory, progress);
-        return directory;
+        progress.setLimit(0L);
+        progress.setValue(0L);
+        return readDirectoryRecursively(path, progress);
     }
 
-    /**
-     * Reads directory tree from its path.
-     * Files included.
-     * Symbolic links skipped, except for the explicitly given path.
-     * Files and directories are sorted alphabetically.
-     */
-    public void read(@Mandatory Directory directory, @Mandatory Progress progress) {
-        directory.getDirectories().clear();
-        directory.getFiles().clear();
-        directory.getErrors().clear();
+    private @Mandatory Directory readDirectoryRecursively(@Mandatory Path path, @Mandatory Progress progress) {
+        Directory directory = new Directory();
+        directory.setPath(path);
 
-        try (DirectoryStream<Path> childPaths = Files.newDirectoryStream(directory.getPath())) {
-            for (Path childPath : childPaths) {
-                progress.step();
+        try (DirectoryStream<Path> nestedPaths = Files.newDirectoryStream(directory.getPath())) {
+            for (Path nestedPath : nestedPaths) {
                 try {
-                    read(directory, childPath, progress);
+                    readChildRecursively(directory, nestedPath, progress);
                 } catch (Exception e) {
                     directory.getErrors().addLast(e);
                 }
+                progress.step();
             }
         } catch (Exception e) {
             directory.getErrors().addLast(e);
         }
 
         sort.sort(directory, progress.nest());
+        progress.unnest();
+
+        return directory;
     }
 
-    private void read(@Mandatory Directory directory, @Mandatory Path childPath, @Mandatory Progress progress) {
-        if (!Files.isSymbolicLink(childPath)) {
-            if (Files.isDirectory(childPath)) {
+    private void readChildRecursively(@Mandatory Directory directory, @Mandatory Path nestedPath, @Mandatory Progress progress) {
+        if (!Files.isSymbolicLink(nestedPath)) {
+            if (Files.isDirectory(nestedPath)) {
                 directory.getDirectories().addLast(
-                    read(childPath, progress)
+                    readDirectoryRecursively(nestedPath, progress)
                 );
             } else {
                 directory.getFiles().addLast(
-                    fileReader.read(childPath)
+                    fileReader.read(nestedPath)
                 );
             }
         }

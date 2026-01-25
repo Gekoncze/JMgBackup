@@ -37,12 +37,15 @@ public @Service class ChecksumManager {
     private ChecksumManager() {
     }
 
+    /**
+     * Computes checksum for given file in case it's checksum is missing or is using different algorithm.
+     */
     public void compute(@Mandatory File file, @Mandatory Algorithm algorithm, @Mandatory Progress progress) {
         if (file.getChecksum() == null || file.getChecksum().getAlgorithm() != algorithm) {
             file.setChecksum(checksumReader.read(
                 file.getPath(),
                 algorithm,
-                progress.nest()
+                progress
             ));
         }
     }

@@ -2,10 +2,10 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
-import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.resources.common.Common;
+import cz.mg.backup.test.TestProgress;
 import cz.mg.test.Assert;
 
 public @Test class ChecksumReaderTest {
@@ -21,12 +21,11 @@ public @Test class ChecksumReaderTest {
     private final @Service ChecksumReader reader = ChecksumReader.getInstance();
 
     private void testRead() {
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         Checksum checksum = reader.read(Common.FLYING_AKI_PATH, Algorithm.SHA256, progress);
 
         Assert.assertEquals(Algorithm.SHA256, checksum.getAlgorithm());
         Assert.assertEquals(Common.FLYING_AKI_HASH, checksum.getHash());
-        Assert.assertEquals(1L, progress.getLimit());
-        Assert.assertEquals(1L, progress.getValue());
+        progress.verify(1L, 1L);
     }
 }

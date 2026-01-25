@@ -98,6 +98,7 @@ public @Service class TreeIterator {
     ) {
         progress.setDescription(description);
         progress.setLimit(estimate(nodes, files, directories));
+        progress.setValue(0L);
 
         for (Node node : nodes) {
             if (node instanceof Directory directory) {

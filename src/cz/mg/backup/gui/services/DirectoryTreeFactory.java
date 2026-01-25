@@ -12,6 +12,8 @@ import cz.mg.collections.array.Array;
 import java.util.Objects;
 
 public @Service class DirectoryTreeFactory {
+    private static final String DESCRIPTION = "Build directory tree";
+
     private static volatile @Service DirectoryTreeFactory instance;
 
     public static @Service DirectoryTreeFactory getInstance() {
@@ -29,7 +31,10 @@ public @Service class DirectoryTreeFactory {
     }
 
     public @Mandatory ObjectTreeEntry create(@Mandatory Directory directory, @Mandatory Progress progress) {
+        progress.setDescription(DESCRIPTION);
         progress.setLimit(estimate(directory));
+        progress.setValue(0L);
+
         ObjectTreeEntry entry = create(directory, 0, progress);
         progress.step();
         return entry;

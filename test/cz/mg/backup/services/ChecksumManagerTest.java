@@ -3,9 +3,9 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.*;
 import cz.mg.backup.resources.common.Common;
+import cz.mg.backup.test.TestProgress;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 import cz.mg.test.Assert;
@@ -20,9 +20,9 @@ public @Test class ChecksumManagerTest {
         System.out.print("Running " + ChecksumManagerTest.class.getSimpleName() + " ... ");
 
         ChecksumManagerTest test = new ChecksumManagerTest();
-        test.testComputeFileMissing();
-        test.testComputeFileExisting();
-        test.testComputeFileDifferentAlgorithm();
+        test.testComputeMissingChecksum();
+        test.testComputeExistingChecksum();
+        test.testComputeExistingChecksumWithDifferentAlgorithm();
         test.testClearFile();
         test.testCollectEmpty();
         test.testCollect();
@@ -34,47 +34,44 @@ public @Test class ChecksumManagerTest {
 
     private final @Service ChecksumManager manager = ChecksumManager.getInstance();
 
-    private void testComputeFileMissing() {
+    private void testComputeMissingChecksum() {
         File file = new File();
         file.setPath(Common.FLYING_AKI_PATH);
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         manager.compute(file, Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Common.FLYING_AKI_HASH, file.getChecksum().getHash());
-        Assert.assertEquals(0L, progress.getLimit());
-        Assert.assertEquals(0L, progress.getValue());
+        progress.verify(1L, 1L);
     }
 
-    private void testComputeFileExisting() {
+    private void testComputeExistingChecksum() {
         File file = new File();
         file.setPath(Common.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         manager.compute(file, Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
         Assert.assertEquals("FF", file.getChecksum().getHash());
-        Assert.assertEquals(0L, progress.getLimit());
-        Assert.assertEquals(0L, progress.getValue());
+        progress.verifySkip();
     }
 
-    private void testComputeFileDifferentAlgorithm() {
+    private void testComputeExistingChecksumWithDifferentAlgorithm() {
         File file = new File();
         file.setPath(Common.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.MD5, "FF"));
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         manager.compute(file, Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
         Assert.assertEquals(Common.FLYING_AKI_HASH, file.getChecksum().getHash());
-        Assert.assertEquals(0L, progress.getLimit());
-        Assert.assertEquals(0L, progress.getValue());
+        progress.verify(1L, 1L);
     }
 
     private void testClearFile() {
@@ -88,12 +85,11 @@ public @Test class ChecksumManagerTest {
     }
 
     private void testCollectEmpty() {
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         var map = manager.collect(null, progress);
 
         Assert.assertEquals(true, map.isEmpty());
-        Assert.assertEquals(0L, progress.getLimit());
-        Assert.assertEquals(0L, progress.getValue());
+        progress.verify(0L, 0L);
     }
 
     private void testCollect() {
@@ -116,7 +112,7 @@ public @Test class ChecksumManagerTest {
         directory.getFiles().addLast(secondFile);
         directory.getProperties().setTotalFileCount(2L);
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         Map<Path, Pair<Checksum, Date>> map = manager.collect(directory, progress);
 
         Assert.assertEquals(2, map.count());
@@ -124,12 +120,11 @@ public @Test class ChecksumManagerTest {
         Assert.assertEquals(createDate(2), map.get(Path.of("/foo")).getValue());
         Assert.assertEquals(null, map.get(Path.of("/bar")).getKey());
         Assert.assertEquals(createDate(4), map.get(Path.of("/bar")).getValue());
-        Assert.assertEquals(2L, progress.getLimit());
-        Assert.assertEquals(2L, progress.getValue());
+        progress.verify(2L, 2L);
     }
 
     private void testRestoreEmpty() {
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
 
         Assertions.assertThatCode(() -> {
             manager.restore(null, new Map<>(), progress);
@@ -204,7 +199,7 @@ public @Test class ChecksumManagerTest {
         map.set(Path.of("/3"), new Pair<>(checksum3b, createDate(6)));
         map.set(Path.of("/4"), new Pair<>(checksum4, createDate(100)));
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         manager.restore(directory, map, progress);
 
         Assert.assertSame(null, firstFile.getChecksum());
@@ -213,8 +208,7 @@ public @Test class ChecksumManagerTest {
         Assert.assertSame(null, fourthFile.getChecksum());
         Assert.assertSame(null, fifthFile.getChecksum());
         Assert.assertSame(checksum6, sixthFile.getChecksum());
-        Assert.assertEquals(6L, progress.getLimit());
-        Assert.assertEquals(6L, progress.getValue());
+        progress.verify(6L, 6L);
     }
 
     private @Mandatory Date createDate(int day) {

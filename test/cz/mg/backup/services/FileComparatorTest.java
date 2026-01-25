@@ -3,11 +3,10 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Algorithm;
-import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.exceptions.CompareException;
+import cz.mg.backup.test.TestFactory;
 import cz.mg.test.Assert;
 
 public @Test class FileComparatorTest {
@@ -22,47 +21,48 @@ public @Test class FileComparatorTest {
     }
 
     private final @Service FileComparator service = FileComparator.getInstance();
+    private final @Service TestFactory f = TestFactory.getInstance();
 
     private void testCompare() {
         testCompare(
-            createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
-            createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
+            f.file("1", f.properties(1L), f.checksum(Algorithm.SHA256, "gg")),
+            f.file("2", f.properties(1L), f.checksum(Algorithm.SHA256, "gg")),
             false, false
         );
 
         testCompare(
-            createFile(1L, null),
-            createFile(1L, null),
+            f.file("3", f.properties(1L), null),
+            f.file("4", f.properties(1L), null),
             false, false
         );
 
         testCompare(
-            createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
-            createFile(3L, new Checksum(Algorithm.SHA256, "gg")),
+            f.file("5", f.properties(1L), f.checksum(Algorithm.SHA256, "gg")),
+            f.file("6", f.properties(3L), f.checksum(Algorithm.SHA256, "gg")),
             true, true
         );
 
         testCompare(
-            createFile(1L, new Checksum(Algorithm.SHA256, "abc")),
-            createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
+            f.file("7", f.properties(1L), f.checksum(Algorithm.SHA256, "abc")),
+            f.file("8", f.properties(1L), f.checksum(Algorithm.SHA256, "gg")),
             true, true
         );
 
         testCompare(
-            createFile(2L, new Checksum(Algorithm.SHA256, "abc")),
-            createFile(78L, new Checksum(Algorithm.SHA256, "")),
+            f.file("9", f.properties(2L), f.checksum(Algorithm.SHA256, "abc")),
+            f.file("10", f.properties(78L), f.checksum(Algorithm.SHA256, "")),
             true, true
         );
 
         testCompare(
-            createFile(2L, null),
-            createFile(78L, null),
+            f.file("11", f.properties(2L), null),
+            f.file("12", f.properties(78L), null),
             true, true
         );
 
         testCompare(
-            createFile(1L, new Checksum(Algorithm.SHA256, "gg")),
-            createFile(1L, new Checksum(Algorithm.MD5, "gg")),
+            f.file("13", f.properties(1L), f.checksum(Algorithm.SHA256, "gg")),
+            f.file("14", f.properties(1L), f.checksum(Algorithm.MD5, "gg")),
             true, true
         );
     }
@@ -94,12 +94,5 @@ public @Test class FileComparatorTest {
         service.compare(first, second);
         Assert.assertEquals(firstHasErrors, !first.getErrors().isEmpty());
         Assert.assertEquals(secondHasErrors, !second.getErrors().isEmpty());
-    }
-
-    private @Mandatory File createFile(long size, @Optional Checksum checksum) {
-        File file = new File();
-        file.getProperties().setSize(size);
-        file.setChecksum(checksum);
-        return file;
     }
 }

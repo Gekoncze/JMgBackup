@@ -1,7 +1,5 @@
 ### NOW ###
     improve progress handling
-        replace all progress instances in tests with TestProgress and its verify method
-        we might be forgetting to unnest, which might cause leftover progress bars in UI
         replace fixed number of steps with overwrite of previous progress for each step, do not nest there
 
     add support for automatic copy of missing files (in selected paths) to context menu

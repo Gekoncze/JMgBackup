@@ -3,10 +3,10 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
+import cz.mg.backup.test.TestProgress;
 import cz.mg.collections.list.List;
 import cz.mg.test.Assert;
 import cz.mg.test.exceptions.AssertException;
@@ -38,70 +38,61 @@ public @Test class TreeIteratorTest {
     }
 
     private void testEmpty() {
-        Progress nodeProgress = new Progress();
+        TestProgress nodeProgress = new TestProgress();
         treeIterator.forEachNode((Node) null, this::fail, nodeProgress, "test");
-        Assert.assertEquals(0L, nodeProgress.getLimit());
-        Assert.assertEquals(0L, nodeProgress.getValue());
+        nodeProgress.verify(0L, 0L);
 
-        Progress fileProgress = new Progress();
+        TestProgress fileProgress = new TestProgress();
         treeIterator.forEachFile((Node) null, this::fail, fileProgress, "test");
-        Assert.assertEquals(0L, fileProgress.getLimit());
-        Assert.assertEquals(0L, fileProgress.getValue());
+        fileProgress.verify(0L, 0L);
 
-        Progress directoryProgress = new Progress();
+        TestProgress directoryProgress = new TestProgress();
         treeIterator.forEachDirectory((Node) null, this::fail, directoryProgress, "test");
-        Assert.assertEquals(0L, directoryProgress.getLimit());
-        Assert.assertEquals(0L, directoryProgress.getValue());
+        directoryProgress.verify(0L, 0L);
     }
 
     private void testFile() {
         File file = createFile(Path.of("f"));
 
-        Progress nodeProgress = new Progress();
+        TestProgress nodeProgress = new TestProgress();
         treeIterator.forEachNode(file, this::add, nodeProgress, "test");
 
         Assert.assertEquals(Path.of("ff"), file.getPath());
-        Assert.assertEquals(1L, nodeProgress.getLimit());
-        Assert.assertEquals(1L, nodeProgress.getValue());
+        nodeProgress.verify(1L, 1L);
 
-        Progress fileProgress = new Progress();
+        TestProgress fileProgress = new TestProgress();
         treeIterator.forEachFile(file, this::add, fileProgress, "test");
 
         Assert.assertEquals(Path.of("ffff"), file.getPath());
-        Assert.assertEquals(1L, fileProgress.getLimit());
-        Assert.assertEquals(1L, fileProgress.getValue());
+        fileProgress.verify(1L, 1L);
 
-        Progress directoryProgress = new Progress();
+        TestProgress directoryProgress = new TestProgress();
         treeIterator.forEachDirectory(file, this::add, directoryProgress, "test");
 
         Assert.assertEquals(Path.of("ffff"), file.getPath());
-        Assert.assertEquals(0L, directoryProgress.getLimit());
-        Assert.assertEquals(0L, directoryProgress.getValue());
+        directoryProgress.verify(0L, 0L);
     }
 
     private void testDirectory() {
         Directory directory = createDirectory(Path.of("d"));
 
-        Progress nodeProgress = new Progress();
+        TestProgress nodeProgress = new TestProgress();
         treeIterator.forEachNode(directory, this::add, nodeProgress, "test");
 
         Assert.assertEquals(Path.of("dd"), directory.getPath());
-        Assert.assertEquals(1L, nodeProgress.getLimit());
-        Assert.assertEquals(1L, nodeProgress.getValue());
+        nodeProgress.verify(1L, 1L);
 
-        Progress fileProgress = new Progress();
+        TestProgress fileProgress = new TestProgress();
         treeIterator.forEachFile(directory, this::add, fileProgress, "test");
 
         Assert.assertEquals(Path.of("dd"), directory.getPath());
-        Assert.assertEquals(0L, fileProgress.getLimit());
-        Assert.assertEquals(0L, fileProgress.getValue());
+        fileProgress.verify(0L, 0L);
 
-        Progress directoryProgress = new Progress();
+        TestProgress directoryProgress = new TestProgress();
         treeIterator.forEachDirectory(directory, this::add, directoryProgress, "test");
 
         Assert.assertEquals(Path.of("dddd"), directory.getPath());
-        Assert.assertEquals(1L, directoryProgress.getLimit());
-        Assert.assertEquals(1L, directoryProgress.getValue());
+        directoryProgress.verify(1L, 1L);
     }
 
     private void testFileInDirectory() {
@@ -109,29 +100,26 @@ public @Test class TreeIteratorTest {
         Directory directory = createDirectory(Path.of("d"), file);
         directory.getProperties().setTotalFileCount(1);
 
-        Progress nodeProgress = new Progress();
+        TestProgress nodeProgress = new TestProgress();
         treeIterator.forEachNode(directory, this::add, nodeProgress, "test");
 
         Assert.assertEquals(Path.of("ff"), file.getPath());
         Assert.assertEquals(Path.of("dd"), directory.getPath());
-        Assert.assertEquals(2L, nodeProgress.getLimit());
-        Assert.assertEquals(2L, nodeProgress.getValue());
+        nodeProgress.verify(2L, 2L);
 
-        Progress fileProgress = new Progress();
+        TestProgress fileProgress = new TestProgress();
         treeIterator.forEachFile(directory, this::add, fileProgress, "test");
 
         Assert.assertEquals(Path.of("ffff"), file.getPath());
         Assert.assertEquals(Path.of("dd"), directory.getPath());
-        Assert.assertEquals(1L, fileProgress.getLimit());
-        Assert.assertEquals(1L, fileProgress.getValue());
+        fileProgress.verify(1L, 1L);
 
-        Progress directoryProgress = new Progress();
+        TestProgress directoryProgress = new TestProgress();
         treeIterator.forEachDirectory(directory, this::add, directoryProgress, "test");
 
         Assert.assertEquals(Path.of("ffff"), file.getPath());
         Assert.assertEquals(Path.of("dddd"), directory.getPath());
-        Assert.assertEquals(1L, directoryProgress.getLimit());
-        Assert.assertEquals(1L, directoryProgress.getValue());
+        directoryProgress.verify(1L, 1L);
     }
 
     private void testNodesInDirectory() {
@@ -143,35 +131,32 @@ public @Test class TreeIteratorTest {
         directory.getProperties().setTotalFileCount(2);
         directory.getProperties().setTotalDirectoryCount(1);
 
-        Progress nodeProgress = new Progress();
+        TestProgress nodeProgress = new TestProgress();
         treeIterator.forEachNode(directory, this::add, nodeProgress, "test");
 
         Assert.assertEquals(Path.of("f1f1"), file.getPath());
         Assert.assertEquals(Path.of("d1d1"), directory.getPath());
         Assert.assertEquals(Path.of("f2f2"), secondFile.getPath());
         Assert.assertEquals(Path.of("d2d2"), secondDirectory.getPath());
-        Assert.assertEquals(4L, nodeProgress.getLimit());
-        Assert.assertEquals(4L, nodeProgress.getValue());
+        nodeProgress.verify(4L, 4L);
 
-        Progress fileProgress = new Progress();
+        TestProgress fileProgress = new TestProgress();
         treeIterator.forEachFile(directory, this::add, fileProgress, "test");
 
         Assert.assertEquals(Path.of("f1f1f1f1"), file.getPath());
         Assert.assertEquals(Path.of("d1d1"), directory.getPath());
         Assert.assertEquals(Path.of("f2f2f2f2"), secondFile.getPath());
         Assert.assertEquals(Path.of("d2d2"), secondDirectory.getPath());
-        Assert.assertEquals(2L, fileProgress.getLimit());
-        Assert.assertEquals(2L, fileProgress.getValue());
+        fileProgress.verify(2L, 2L);
 
-        Progress directoryProgress = new Progress();
+        TestProgress directoryProgress = new TestProgress();
         treeIterator.forEachDirectory(directory, this::add, directoryProgress, "test");
 
         Assert.assertEquals(Path.of("f1f1f1f1"), file.getPath());
         Assert.assertEquals(Path.of("d1d1d1d1"), directory.getPath());
         Assert.assertEquals(Path.of("f2f2f2f2"), secondFile.getPath());
         Assert.assertEquals(Path.of("d2d2d2d2"), secondDirectory.getPath());
-        Assert.assertEquals(2L, directoryProgress.getLimit());
-        Assert.assertEquals(2L, directoryProgress.getValue());
+        directoryProgress.verify(2L, 2L);
     }
 
     private void testNestedDirectories() {
@@ -182,32 +167,29 @@ public @Test class TreeIteratorTest {
         directory2.getDirectories().addLast(directory3);
         directory1.getProperties().setTotalDirectoryCount(2);
 
-        Progress nodeProgress = new Progress();
+        TestProgress nodeProgress = new TestProgress();
         treeIterator.forEachNode(directory1, this::add, nodeProgress, "test");
 
         Assert.assertEquals(Path.of("d1d1"), directory1.getPath());
         Assert.assertEquals(Path.of("d2d2"), directory2.getPath());
         Assert.assertEquals(Path.of("d3d3"), directory3.getPath());
-        Assert.assertEquals(3L, nodeProgress.getLimit());
-        Assert.assertEquals(3L, nodeProgress.getValue());
+        nodeProgress.verify(3L, 3L);
 
-        Progress fileProgress = new Progress();
+        TestProgress fileProgress = new TestProgress();
         treeIterator.forEachFile(directory1, this::add, fileProgress, "test");
 
         Assert.assertEquals(Path.of("d1d1"), directory1.getPath());
         Assert.assertEquals(Path.of("d2d2"), directory2.getPath());
         Assert.assertEquals(Path.of("d3d3"), directory3.getPath());
-        Assert.assertEquals(0L, fileProgress.getLimit());
-        Assert.assertEquals(0L, fileProgress.getValue());
+        fileProgress.verify(0L, 0L);
 
-        Progress directoryProgress = new Progress();
+        TestProgress directoryProgress = new TestProgress();
         treeIterator.forEachDirectory(directory1, this::add, directoryProgress, "test");
 
         Assert.assertEquals(Path.of("d1d1d1d1"), directory1.getPath());
         Assert.assertEquals(Path.of("d2d2d2d2"), directory2.getPath());
         Assert.assertEquals(Path.of("d3d3d3d3"), directory3.getPath());
-        Assert.assertEquals(3L, directoryProgress.getLimit());
-        Assert.assertEquals(3L, directoryProgress.getValue());
+        directoryProgress.verify(3L, 3L);
     }
 
     private void testFiles() {
@@ -216,32 +198,29 @@ public @Test class TreeIteratorTest {
         File file3 = createFile(Path.of("f3"));
         List<File> files = new List<>(file1, file2, file3);
 
-        Progress nodeProgress = new Progress();
+        TestProgress nodeProgress = new TestProgress();
         treeIterator.forEachNode(files, this::add, nodeProgress, "test");
 
         Assert.assertEquals(Path.of("f1f1"), file1.getPath());
         Assert.assertEquals(Path.of("f2f2"), file2.getPath());
         Assert.assertEquals(Path.of("f3f3"), file3.getPath());
-        Assert.assertEquals(3L, nodeProgress.getLimit());
-        Assert.assertEquals(3L, nodeProgress.getValue());
+        nodeProgress.verify(3L, 3L);
 
-        Progress fileProgress = new Progress();
+        TestProgress fileProgress = new TestProgress();
         treeIterator.forEachFile(files, this::add, fileProgress, "test");
 
         Assert.assertEquals(Path.of("f1f1f1f1"), file1.getPath());
         Assert.assertEquals(Path.of("f2f2f2f2"), file2.getPath());
         Assert.assertEquals(Path.of("f3f3f3f3"), file3.getPath());
-        Assert.assertEquals(3L, fileProgress.getLimit());
-        Assert.assertEquals(3L, fileProgress.getValue());
+        fileProgress.verify(3L, 3L);
 
-        Progress directoryProgress = new Progress();
+        TestProgress directoryProgress = new TestProgress();
         treeIterator.forEachDirectory(files, this::add, directoryProgress, "test");
 
         Assert.assertEquals(Path.of("f1f1f1f1"), file1.getPath());
         Assert.assertEquals(Path.of("f2f2f2f2"), file2.getPath());
         Assert.assertEquals(Path.of("f3f3f3f3"), file3.getPath());
-        Assert.assertEquals(0L, directoryProgress.getLimit());
-        Assert.assertEquals(0L, directoryProgress.getValue());
+        directoryProgress.verify(0L, 0L);
     }
 
     private void testDirectories() {
@@ -250,54 +229,45 @@ public @Test class TreeIteratorTest {
         Directory directory3 = createDirectory(Path.of("d3"));
         List<Directory> directories = new List<>(directory1, directory2, directory3);
 
-        Progress nodeProgress = new Progress();
+        TestProgress nodeProgress = new TestProgress();
         treeIterator.forEachNode(directories, this::add, nodeProgress, "test");
 
         Assert.assertEquals(Path.of("d1d1"), directory1.getPath());
         Assert.assertEquals(Path.of("d2d2"), directory2.getPath());
         Assert.assertEquals(Path.of("d3d3"), directory3.getPath());
-        Assert.assertEquals(3L, nodeProgress.getLimit());
-        Assert.assertEquals(3L, nodeProgress.getValue());
+        nodeProgress.verify(3L, 3L);
 
-        Progress fileProgress = new Progress();
+        TestProgress fileProgress = new TestProgress();
         treeIterator.forEachFile(directories, this::add, fileProgress, "test");
 
         Assert.assertEquals(Path.of("d1d1"), directory1.getPath());
         Assert.assertEquals(Path.of("d2d2"), directory2.getPath());
         Assert.assertEquals(Path.of("d3d3"), directory3.getPath());
-        Assert.assertEquals(0L, fileProgress.getLimit());
-        Assert.assertEquals(0L, fileProgress.getValue());
+        fileProgress.verify(0L, 0L);
 
-        Progress directoryProgress = new Progress();
+        TestProgress directoryProgress = new TestProgress();
         treeIterator.forEachDirectory(directories, this::add, directoryProgress, "test");
 
         Assert.assertEquals(Path.of("d1d1d1d1"), directory1.getPath());
         Assert.assertEquals(Path.of("d2d2d2d2"), directory2.getPath());
         Assert.assertEquals(Path.of("d3d3d3d3"), directory3.getPath());
-        Assert.assertEquals(3L, directoryProgress.getLimit());
-        Assert.assertEquals(3L, directoryProgress.getValue());
+        directoryProgress.verify(3L, 3L);
     }
 
     private void testEmptyCollection() {
         List<Node> directories = new List<>();
 
-        Progress nodeProgress = new Progress();
+        TestProgress nodeProgress = new TestProgress();
         treeIterator.forEachNode(directories, this::fail, nodeProgress, "test");
+        nodeProgress.verify(0L, 0L);
 
-        Assert.assertEquals(0L, nodeProgress.getLimit());
-        Assert.assertEquals(0L, nodeProgress.getValue());
-
-        Progress fileProgress = new Progress();
+        TestProgress fileProgress = new TestProgress();
         treeIterator.forEachFile(directories, this::fail, fileProgress, "test");
+        fileProgress.verify(0L, 0L);
 
-        Assert.assertEquals(0L, fileProgress.getLimit());
-        Assert.assertEquals(0L, fileProgress.getValue());
-
-        Progress directoryProgress = new Progress();
+        TestProgress directoryProgress = new TestProgress();
         treeIterator.forEachDirectory(directories, this::fail, directoryProgress, "test");
-
-        Assert.assertEquals(0L, directoryProgress.getLimit());
-        Assert.assertEquals(0L, directoryProgress.getValue());
+        directoryProgress.verify(0L, 0L);
     }
 
     private void add(@Mandatory Node n) {

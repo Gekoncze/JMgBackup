@@ -6,6 +6,17 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.exceptions.CancelException;
 
+/**
+ * Class to track progress of a task with a description.
+ * Limit represents the expected number of steps.
+ * Limit should be estimated where possible.
+ * Limit should be 0 for indefinite tasks.
+ * Value represents the number of completed steps.
+ * Value should be incremented after each step is completed.
+ * Progress may nest when there is a subtask. Don't forget to un-nest when it finishes.
+ * After each step the current {@link Task} is retrieved to check if it is cancelled.
+ * When task is cancelled, a {@link CancelException} is thrown.
+ */
 public @Component class Progress {
     private volatile @Mandatory String description = "...";
     private volatile long value;
@@ -52,9 +63,15 @@ public @Component class Progress {
     }
 
     public @Mandatory Progress nest() {
-        Progress subProgress = new Progress();
-        setNext(subProgress);
-        return subProgress;
+        Progress nestedProgress = new Progress();
+        setNext(nestedProgress);
+        return nestedProgress;
+    }
+
+    public @Optional Progress unnest() {
+        Progress nestedProgress = getNext();
+        setNext(null);
+        return nestedProgress;
     }
 
     public void step() {

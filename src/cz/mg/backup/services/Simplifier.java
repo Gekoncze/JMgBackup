@@ -44,6 +44,9 @@ public @Component class Simplifier {
         @Mandatory Progress progress
     ) {
         progress.setDescription(DESCRIPTION);
+        progress.setLimit(0L);
+        progress.setValue(0L);
+
         List<Pair<Node, Boolean>> markedNodes = markTrue(nodes, progress);
         markRedundantFalse(markedNodes, 0, progress);
         return getMarkedTrue(markedNodes, progress);

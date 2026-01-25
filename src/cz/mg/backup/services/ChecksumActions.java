@@ -34,7 +34,7 @@ public @Service class ChecksumActions {
     public void compute(@Mandatory List<Node> nodes, @Mandatory Algorithm algorithm, @Mandatory Progress progress) {
         treeIterator.forEachFile(
             simplifier.simplify(nodes, progress.nest()),
-            file -> checksumManager.compute(file, algorithm, progress),
+            file -> checksumManager.compute(file, algorithm, progress.nest()),
             progress,
             COMPUTE_DESCRIPTION
         );

@@ -46,7 +46,9 @@ public @Service class FileCopy {
         @Mandatory Algorithm algorithm,
         @Mandatory Progress progress
     ) {
-        progress.setLimit(7);
+        progress.setDescription(COPY_DESCRIPTION);
+        progress.setLimit(7L);
+        progress.setValue(0L);
 
         validateParameters(source, target);
         progress.step(); // 1
@@ -56,15 +58,18 @@ public @Service class FileCopy {
 
         Checksum sourceChecksum = checksumReader.read(source, algorithm, progress.nest());
         progress.step(); // 3
+        progress.unnest();
 
         copySourceToTarget(source, target, progress.nest());
         progress.step(); // 4
+        progress.unnest();
 
         copySourceAttributesToTarget(source, target);
         progress.step(); // 5
 
         Checksum targetChecksum = checksumReader.read(target, algorithm, progress.nest());
         progress.step(); // 6
+        progress.unnest();
 
         validateChecksums(sourceChecksum, targetChecksum);
         progress.step(); // 7

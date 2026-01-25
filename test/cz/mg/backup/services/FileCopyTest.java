@@ -6,6 +6,7 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.resources.common.Common;
+import cz.mg.backup.test.TestProgress;
 import cz.mg.test.Assert;
 import cz.mg.test.Assertions;
 import cz.mg.test.exceptions.AssertException;
@@ -45,7 +46,9 @@ public @Test class FileCopyTest {
         Assert.assertNotEquals(TARGET_FILE, TARGET_DIRECTORY);
 
         try {
-            fileCopy.copy(SOURCE_FILE, TARGET_FILE, Algorithm.SHA256, new Progress());
+            TestProgress progress = new TestProgress();
+            fileCopy.copy(SOURCE_FILE, TARGET_FILE, Algorithm.SHA256, progress);
+
             Assert.assertEquals(true, Files.exists(TARGET_DIRECTORY));
             Assert.assertEquals(true, Files.exists(TARGET_FILE));
             Assert.assertEquals(Files.size(SOURCE_FILE), Files.size(TARGET_FILE));
@@ -55,6 +58,8 @@ public @Test class FileCopyTest {
             // creation time cannot be copied on linux
             Assert.assertEquals(sourceAttributes.lastModifiedTime(), targetAttributes.lastModifiedTime());
             Assert.assertEquals(sourceAttributes.lastAccessTime(), targetAttributes.lastAccessTime());
+
+            progress.verify(7L, 7L);
 
             Assertions.assertThatCode(() -> fileCopy.copy(SOURCE_FILE, TARGET_FILE, Algorithm.SHA256, new Progress()))
                 .withMessage("Missing validation for existing target file.")

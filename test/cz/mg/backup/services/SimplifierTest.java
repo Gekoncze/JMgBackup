@@ -3,8 +3,10 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Node;
+import cz.mg.backup.test.TestProgress;
+import cz.mg.backup.test.predicates.Equals;
+import cz.mg.backup.test.predicates.Greater;
 import cz.mg.collections.list.List;
 import cz.mg.test.Assert;
 
@@ -40,12 +42,11 @@ public @Test class SimplifierTest {
     private void testEmpty() {
         List<Node> input = new List<>();
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(true, output.isEmpty());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(0L, progress.getValue()); // indefinite
+        progress.verify(0L, 0L);
     }
 
     private void testRootSingle() {
@@ -53,13 +54,12 @@ public @Test class SimplifierTest {
             create("cat")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
         Assert.assertEquals("cat", output.get(0).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 1L);
+        progress.verify(new Equals(0L), new Greater(1L));
     }
 
     private void testRootMultiple() {
@@ -69,15 +69,14 @@ public @Test class SimplifierTest {
             create("pangolin")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(3, output.count());
         Assert.assertEquals("cat", output.get(0).getPath().toString());
         Assert.assertEquals("dog", output.get(1).getPath().toString());
         Assert.assertEquals("pangolin", output.get(2).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 3L);
+        progress.verify(new Equals(0L), new Greater(3L));
     }
 
     private void testRootAllDuplicates() {
@@ -86,13 +85,12 @@ public @Test class SimplifierTest {
             create("cat")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
         Assert.assertEquals("cat", output.get(0).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 2L);
+        progress.verify(new Equals(0L), new Greater(2L));
     }
 
     private void testRootSomeDuplicates() {
@@ -102,14 +100,13 @@ public @Test class SimplifierTest {
             create("cat")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(2, output.count());
         Assert.assertEquals("cat", output.get(0).getPath().toString());
         Assert.assertEquals("dog", output.get(1).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 3L);
+        progress.verify(new Equals(0L), new Greater(3L));
     }
 
     private void testChildrenWithSelectedParentFirst() {
@@ -119,13 +116,12 @@ public @Test class SimplifierTest {
             create("cat", "gray")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
         Assert.assertEquals("cat", output.get(0).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 5L);
+        progress.verify(new Equals(0L), new Greater(5L));
     }
 
     private void testChildrenWithSelectedParentMiddle() {
@@ -135,13 +131,12 @@ public @Test class SimplifierTest {
             create("cat", "gray")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
         Assert.assertEquals("cat", output.get(0).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 5L);
+        progress.verify(new Equals(0L), new Greater(5L));
     }
 
     private void testChildrenWithSelectedParentLast() {
@@ -151,13 +146,12 @@ public @Test class SimplifierTest {
             create("cat")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
         Assert.assertEquals("cat", output.get(0).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 5L);
+        progress.verify(new Equals(0L), new Greater(5L));
     }
 
     private void testChildrenWithoutSelectedParent() {
@@ -167,15 +161,14 @@ public @Test class SimplifierTest {
             create("cat", "black")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(3, output.count());
         Assert.assertEquals("cat/yellow", output.get(0).getPath().toString());
         Assert.assertEquals("cat/gray", output.get(1).getPath().toString());
         Assert.assertEquals("cat/black", output.get(2).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 6L);
+        progress.verify(new Equals(0L), new Greater(6L));
     }
 
     private void testChildWithDistantSelectedParent() {
@@ -184,13 +177,12 @@ public @Test class SimplifierTest {
             create("cat", "yellow", "sleepy", "rare")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
         Assert.assertEquals("cat", output.get(0).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 5L);
+        progress.verify(new Equals(0L), new Greater(5L));
     }
 
     private void testNestedSingle() {
@@ -198,13 +190,12 @@ public @Test class SimplifierTest {
             create("cat", "yellow")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
         Assert.assertEquals("cat/yellow", output.get(0).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 2L);
+        progress.verify(new Equals(0L), new Greater(2L));
     }
 
     private void testNestedMultiple() {
@@ -214,15 +205,14 @@ public @Test class SimplifierTest {
             create("pangolin", "brown")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(3, output.count());
         Assert.assertEquals("cat/yellow", output.get(0).getPath().toString());
         Assert.assertEquals("dog/gray", output.get(1).getPath().toString());
         Assert.assertEquals("pangolin/brown", output.get(2).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 6L);
+        progress.verify(new Equals(0L), new Greater(6L));
     }
 
     private void testNestedAllDuplicates() {
@@ -232,13 +222,12 @@ public @Test class SimplifierTest {
             create("pangolin", "brown")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
         Assert.assertEquals("pangolin/brown", output.get(0).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 6L);
+        progress.verify(new Equals(0L), new Greater(6L));
     }
 
     private void testNestedSomeDuplicates() {
@@ -248,14 +237,13 @@ public @Test class SimplifierTest {
             create("pangolin", "brown")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(2, output.count());
         Assert.assertEquals("pangolin/white", output.get(0).getPath().toString());
         Assert.assertEquals("pangolin/brown", output.get(1).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 6L);
+        progress.verify(new Equals(0L), new Greater(6L));
     }
 
     private void testNestedChildrenWithSelectedParent() {
@@ -265,13 +253,12 @@ public @Test class SimplifierTest {
             create("animal", "cat", "gray")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(1, output.count());
         Assert.assertEquals("animal/cat", output.get(0).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 8L);
+        progress.verify(new Equals(0L), new Greater(8L));
     }
 
     private void testMixed() {
@@ -289,7 +276,7 @@ public @Test class SimplifierTest {
             create("fox", "orange", "medium", "sleepy", "rare")
         );
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         List<Node> output = simplifier.simplify(input, progress);
 
         Assert.assertEquals(7, output.count());
@@ -300,8 +287,7 @@ public @Test class SimplifierTest {
         Assert.assertEquals("pangolin/white", output.get(4).getPath().toString());
         Assert.assertEquals("bird/blue/small", output.get(5).getPath().toString());
         Assert.assertEquals("fox/orange/medium/sleepy/rare", output.get(6).getPath().toString());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(true, progress.getValue() > 29L);
+        progress.verify(new Equals(0L), new Greater(29L));
     }
 
     private @Mandatory Node create(String first, String... path) {

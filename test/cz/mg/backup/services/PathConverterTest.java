@@ -3,9 +3,9 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
+import cz.mg.backup.test.TestProgress;
 import cz.mg.test.Assert;
 import cz.mg.test.Assertions;
 
@@ -74,7 +74,7 @@ public @Test class PathConverterTest {
         directory.getProperties().setTotalFileCount(2);
         directory.getProperties().setTotalDirectoryCount(2);
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         pathConverter.computeRelativePaths(directory, progress);
 
         Assert.assertEquals(Path.of("Fluffy.bmp"), firstFile.getRelativePath());
@@ -82,8 +82,7 @@ public @Test class PathConverterTest {
         Assert.assertEquals(Path.of(""), directory.getRelativePath());
         Assert.assertEquals(Path.of("67"), subDirectory.getRelativePath());
         Assert.assertEquals(Path.of("67/fun"), subSubDirectory.getRelativePath());
-        Assert.assertEquals(5, progress.getLimit());
-        Assert.assertEquals(5, progress.getValue());
+        progress.verify(5L, 5L);
     }
 
     private void testIllegal(

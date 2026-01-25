@@ -34,6 +34,7 @@ public @Service class DirectorySort {
     public void sort(@Mandatory Directory directory, @Mandatory Progress progress) {
         progress.setDescription(DESCRIPTION);
         progress.setLimit(estimate(directory));
+        progress.setValue(0L);
         listSort.sort(directory.getDirectories(), (n1, n2) -> order(n1, n2, progress), Direction.ASCENDING);
         listSort.sort(directory.getFiles(), (n1, n2) -> order(n1, n2, progress), Direction.ASCENDING);
     }

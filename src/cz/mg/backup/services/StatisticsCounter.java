@@ -32,6 +32,8 @@ public @Service class StatisticsCounter {
      */
     public void count(@Optional Directory directory, @Mandatory Progress progress) {
         progress.setDescription(DESCRIPTION);
+        progress.setLimit(0L);
+        progress.setValue(0L);
 
         if (directory != null) {
             initialize(directory);

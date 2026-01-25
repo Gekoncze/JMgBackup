@@ -2,10 +2,10 @@ package cz.mg.backup.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
-import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.exceptions.CompareException;
+import cz.mg.backup.test.TestProgress;
 import cz.mg.test.Assert;
 import cz.mg.test.Assertions;
 
@@ -29,20 +29,19 @@ public @Test class StatisticsCounterTest {
     private final @Service StatisticsCounter statisticsCounter = StatisticsCounter.getInstance();
 
     private void testEmpty() {
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
 
         Assertions.assertThatCode(() -> {
             statisticsCounter.count(null, progress);
         }).doesNotThrowAnyException();
 
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(0L, progress.getValue());
+        progress.verify(0L, 0L);
     }
 
     private void testSingleDirectoryEmpty() {
         Directory directory = new Directory();
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         statisticsCounter.count(directory, progress);
 
         Assert.assertEquals(0L, directory.getProperties().getTotalSize());
@@ -50,8 +49,7 @@ public @Test class StatisticsCounterTest {
         Assert.assertEquals(0L, directory.getProperties().getTotalFileCount());
         Assert.assertEquals(0L, directory.getProperties().getTotalDirectoryCount());
         Assert.assertEquals(0L, directory.getProperties().getTotalErrorCount());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(1L, progress.getValue());
+        progress.verify(0L, 1L);
     }
 
     private void testRecompute() {
@@ -64,7 +62,7 @@ public @Test class StatisticsCounterTest {
         directory.getProperties().setTotalDirectoryCount(11111L);
         directory.getProperties().setTotalErrorCount(11111L);
 
-        statisticsCounter.count(directory, new Progress());
+        statisticsCounter.count(directory, new TestProgress());
 
         Assert.assertEquals(0L, directory.getProperties().getTotalSize());
         Assert.assertEquals(0L, directory.getProperties().getTotalCount());
@@ -72,7 +70,7 @@ public @Test class StatisticsCounterTest {
         Assert.assertEquals(0L, directory.getProperties().getTotalDirectoryCount());
         Assert.assertEquals(2L, directory.getProperties().getTotalErrorCount());
 
-        statisticsCounter.count(directory, new Progress());
+        statisticsCounter.count(directory, new TestProgress());
 
         Assert.assertEquals(0L, directory.getProperties().getTotalSize());
         Assert.assertEquals(0L, directory.getProperties().getTotalCount());
@@ -93,7 +91,7 @@ public @Test class StatisticsCounterTest {
         directory.getErrors().addLast(new CompareException("second error"));
         directory.getFiles().addLast(file);
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         statisticsCounter.count(directory, progress);
 
         Assert.assertEquals(123L, directory.getProperties().getTotalSize());
@@ -101,8 +99,7 @@ public @Test class StatisticsCounterTest {
         Assert.assertEquals(1L, directory.getProperties().getTotalFileCount());
         Assert.assertEquals(0L, directory.getProperties().getTotalDirectoryCount());
         Assert.assertEquals(5L, directory.getProperties().getTotalErrorCount());
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(2L, progress.getValue());
+        progress.verify(0L, 2L);
     }
 
     private void testSingleDirectorySingleSubdirectory() {
@@ -119,7 +116,7 @@ public @Test class StatisticsCounterTest {
         directory.getErrors().addLast(new CompareException("second error"));
         directory.getDirectories().addLast(subDirectory);
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         statisticsCounter.count(directory, progress);
 
         Assert.assertEquals(0L, directory.getProperties().getTotalSize());
@@ -134,8 +131,7 @@ public @Test class StatisticsCounterTest {
         Assert.assertEquals(0L, subDirectory.getProperties().getTotalDirectoryCount());
         Assert.assertEquals(1L, subDirectory.getProperties().getTotalErrorCount());
 
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(2L, progress.getValue());
+        progress.verify(0L, 2L);
     }
 
     private void testMultipleNested() {
@@ -158,7 +154,7 @@ public @Test class StatisticsCounterTest {
         directory.getDirectories().addLast(subDirectory);
         directory.getFiles().addLast(directoryFile);
 
-        Progress progress = new Progress();
+        TestProgress progress = new TestProgress();
         statisticsCounter.count(directory, progress);
 
         Assert.assertEquals(130L, directory.getProperties().getTotalSize());
@@ -173,7 +169,6 @@ public @Test class StatisticsCounterTest {
         Assert.assertEquals(0L, subDirectory.getProperties().getTotalDirectoryCount());
         Assert.assertEquals(4L, subDirectory.getProperties().getTotalErrorCount());
 
-        Assert.assertEquals(0L, progress.getLimit()); // indefinite
-        Assert.assertEquals(4L, progress.getValue());
+        progress.verify(0L, 4L);
     }
 }

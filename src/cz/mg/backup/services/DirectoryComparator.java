@@ -48,6 +48,7 @@ public @Service class DirectoryComparator {
     ) {
         progress.setDescription(DESCRIPTION);
         progress.setLimit(estimate(first, second));
+        progress.setValue(0L);
         comparePairedDirectories(first, second, progress);
     }
 
