@@ -6,7 +6,7 @@ import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
-import cz.mg.backup.gui.views.directory.ObjectTreeEntry;
+import cz.mg.backup.gui.views.directory.DirectoryTreeEntry;
 import cz.mg.collections.array.Array;
 
 import java.util.Objects;
@@ -30,18 +30,18 @@ public @Service class DirectoryTreeFactory {
     private DirectoryTreeFactory() {
     }
 
-    public @Mandatory ObjectTreeEntry create(@Mandatory Directory directory, @Mandatory Progress progress) {
+    public @Mandatory DirectoryTreeEntry create(@Mandatory Directory directory, @Mandatory Progress progress) {
         progress.setDescription(DESCRIPTION);
         progress.setLimit(estimate(directory));
         progress.setValue(0L);
 
-        ObjectTreeEntry entry = create(directory, 0, progress);
+        DirectoryTreeEntry entry = create(directory, 0, progress);
         progress.step();
         return entry;
     }
 
-    private @Mandatory ObjectTreeEntry create(@Mandatory Directory directory, int index, @Mandatory Progress progress) {
-        Array<ObjectTreeEntry> children = new Array<>(
+    private @Mandatory DirectoryTreeEntry create(@Mandatory Directory directory, int index, @Mandatory Progress progress) {
+        Array<DirectoryTreeEntry> children = new Array<>(
             directory.getDirectories().count() + directory.getFiles().count()
         );
 
@@ -59,11 +59,27 @@ public @Service class DirectoryTreeFactory {
             i++;
         }
 
-        return new ObjectTreeEntry(directory, getName(directory), index, false, children, this::compare, this::hash);
+        return new DirectoryTreeEntry(
+            directory,
+            getName(directory),
+            index,
+            false,
+            children,
+            this::compare,
+            this::hash
+        );
     }
 
-    private @Mandatory ObjectTreeEntry create(@Mandatory File file, int index) {
-        return new ObjectTreeEntry(file, getName(file), index, true, null, this::compare, this::hash);
+    private @Mandatory DirectoryTreeEntry create(@Mandatory File file, int index) {
+        return new DirectoryTreeEntry(
+            file,
+            getName(file),
+            index,
+            true,
+            new Array<>(),
+            this::compare,
+            this::hash
+        );
     }
 
     private @Mandatory String getName(@Mandatory Node node) {

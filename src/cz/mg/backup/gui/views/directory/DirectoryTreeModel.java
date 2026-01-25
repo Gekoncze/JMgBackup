@@ -9,11 +9,11 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-public @Component class ObjectTreeModel implements TreeModel {
-    private final @Optional ObjectTreeEntry root;
+public @Component class DirectoryTreeModel implements TreeModel {
+    private final @Optional DirectoryTreeEntry root;
     private final @Mandatory List<TreeModelListener> listeners = new List<>();
 
-    public ObjectTreeModel(@Optional ObjectTreeEntry root) {
+    public DirectoryTreeModel(@Optional DirectoryTreeEntry root) {
         this.root = root;
     }
 
@@ -24,28 +24,17 @@ public @Component class ObjectTreeModel implements TreeModel {
 
     @Override
     public @Mandatory Object getChild(@Mandatory Object object, int i) {
-        ObjectTreeEntry entry = (ObjectTreeEntry) object;
-        if (entry.getChildren() != null) {
-            return entry.getChildren().get(i);
-        } else {
-            throw new IllegalStateException();
-        }
+        return ((DirectoryTreeEntry) object).getChildren().get(i);
     }
 
     @Override
     public int getChildCount(@Mandatory Object object) {
-        ObjectTreeEntry entry = (ObjectTreeEntry) object;
-        if (entry.getChildren() != null) {
-            return entry.getChildren().count();
-        } else {
-            return 0;
-        }
+        return ((DirectoryTreeEntry) object).getChildren().count();
     }
 
     @Override
     public boolean isLeaf(@Mandatory Object object) {
-        ObjectTreeEntry entry = (ObjectTreeEntry) object;
-        return entry.isLeaf();
+        return ((DirectoryTreeEntry) object).isLeaf();
     }
 
     @Override
@@ -54,9 +43,8 @@ public @Component class ObjectTreeModel implements TreeModel {
     }
 
     @Override
-    public int getIndexOfChild(@Mandatory Object object, @Mandatory Object childObject) {
-        ObjectTreeEntry childEntry = (ObjectTreeEntry) childObject;
-        return childEntry.getIndex();
+    public int getIndexOfChild(@Mandatory Object parent, @Mandatory Object child) {
+        return ((DirectoryTreeEntry) child).getIndex();
     }
 
     @Override

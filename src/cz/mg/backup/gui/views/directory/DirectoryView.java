@@ -115,7 +115,7 @@ public @Component class DirectoryView extends Panel {
             TreePath collapsedRootPath = TreeUtils.getCollapsedRootPath(tree);
             List<TreePath> selectedPaths = TreeUtils.getSelectedPaths(tree);
 
-            tree.setModel(new ObjectTreeModel(
+            tree.setModel(new DirectoryTreeModel(
                 ProgressDialog.compute(
                     window,
                     "Build directory tree",
@@ -128,9 +128,9 @@ public @Component class DirectoryView extends Panel {
             TreeUtils.selectPaths(tree, selectedPaths);
             restoreDisplayedPath(displayedPath);
         } else {
-            tree.setModel(new ObjectTreeModel(null));
+            tree.setModel(new DirectoryTreeModel(null));
         }
-        tree.setCellRenderer(new NodeCellRenderer());
+        tree.setCellRenderer(new DirectoryTreeCellRenderer());
         popupMenuRow = null;
     }
 
@@ -250,6 +250,6 @@ public @Component class DirectoryView extends Panel {
     }
 
     private @Optional Node getNode(@Optional TreePath path) {
-        return path == null ? null : (Node) ((ObjectTreeEntry) path.getLastPathComponent()).get();
+        return path == null ? null : (Node) ((DirectoryTreeEntry) path.getLastPathComponent()).get();
     }
 }

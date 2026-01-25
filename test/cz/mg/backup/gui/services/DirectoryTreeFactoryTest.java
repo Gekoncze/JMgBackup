@@ -4,7 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
-import cz.mg.backup.gui.views.directory.ObjectTreeEntry;
+import cz.mg.backup.gui.views.directory.DirectoryTreeEntry;
 import cz.mg.backup.test.TestProgress;
 import cz.mg.test.Assert;
 
@@ -45,7 +45,7 @@ public @Test class DirectoryTreeFactoryTest {
         root.getProperties().setTotalCount(4L);
 
         TestProgress progress = new TestProgress();
-        ObjectTreeEntry rootEntry = factory.create(root, progress);
+        DirectoryTreeEntry rootEntry = factory.create(root, progress);
 
         Assert.assertEquals(root, rootEntry.get());
         Assert.assertEquals(0, rootEntry.getIndex());
@@ -54,27 +54,27 @@ public @Test class DirectoryTreeFactoryTest {
         Assert.assertNotNull(rootEntry.getChildren());
         Assert.assertEquals(3, rootEntry.getChildren().count());
 
-        ObjectTreeEntry childDirectoryEntry = rootEntry.getChildren().get(0);
+        DirectoryTreeEntry childDirectoryEntry = rootEntry.getChildren().get(0);
         Assert.assertEquals(0, childDirectoryEntry.getIndex());
         Assert.assertEquals(false, childDirectoryEntry.isLeaf());
         Assert.assertEquals("child directory", childDirectoryEntry.toString());
         Assert.assertNotNull(childDirectoryEntry.getChildren());
         Assert.assertEquals(1, childDirectoryEntry.getChildren().count());
 
-        ObjectTreeEntry firstFileEntry = childDirectoryEntry.getChildren().get(0);
+        DirectoryTreeEntry firstFileEntry = childDirectoryEntry.getChildren().get(0);
         Assert.assertEquals(0, firstFileEntry.getIndex());
         Assert.assertEquals(true, firstFileEntry.isLeaf());
         Assert.assertEquals("first file", firstFileEntry.toString());
         Assert.assertNull(firstFileEntry.getChildren());
 
-        ObjectTreeEntry emptyDirectoryEntry = rootEntry.getChildren().get(1);
+        DirectoryTreeEntry emptyDirectoryEntry = rootEntry.getChildren().get(1);
         Assert.assertEquals(1, emptyDirectoryEntry.getIndex());
         Assert.assertEquals(false, emptyDirectoryEntry.isLeaf());
         Assert.assertEquals("empty directory", emptyDirectoryEntry.toString());
         Assert.assertNotNull(emptyDirectoryEntry.getChildren());
         Assert.assertEquals(0, emptyDirectoryEntry.getChildren().count());
 
-        ObjectTreeEntry secondFileEntry = rootEntry.getChildren().get(2);
+        DirectoryTreeEntry secondFileEntry = rootEntry.getChildren().get(2);
         Assert.assertEquals(2, secondFileEntry.getIndex());
         Assert.assertEquals(true, secondFileEntry.isLeaf());
         Assert.assertEquals("second file", secondFileEntry.toString());
