@@ -34,7 +34,7 @@ public @Component class DirectoryView extends Panel {
 
     private final @Mandatory MainWindow window;
     private final @Mandatory PathSelector pathSelector;
-    private final @Mandatory JTree tree;
+    private final @Mandatory DirectoryTree tree;
     private final @Mandatory JPopupMenu popupMenu;
 
     private @Optional TreePath popupMenuRow;
@@ -49,9 +49,10 @@ public @Component class DirectoryView extends Panel {
         pathSelector.addPathSelectionListener(new UserPathChangeListener(this::reload));
         addVertical(pathSelector, 1, 0);
 
-        tree = new JTree();
-        tree.setBorder(BorderFactory.createEtchedBorder());
+        tree = new DirectoryTree();
         tree.setTransferHandler(new UserDragAndDropListener(this::onFileDropped));
+        tree.addMouseListener(new UserMouseClickListener(this::onMouseClicked));
+        tree.addTreeSelectionListener(new UserTreeSelectionListener(this::onSelectionChanged));
         addVertical(new JScrollPane(tree), 1, 1);
 
         popupMenu = new JPopupMenu();
@@ -67,11 +68,6 @@ public @Component class DirectoryView extends Panel {
         JMenuItem openInFileManagerMenuItem = new JMenuItem("Open in file manager");
         openInFileManagerMenuItem.addActionListener(new UserActionListener(this::openInFileManager));
         popupMenu.add(openInFileManagerMenuItem);
-
-        tree.addMouseListener(new UserMouseClickListener(this::onMouseClicked));
-        tree.addTreeSelectionListener(new UserTreeSelectionListener(this::onSelectionChanged));
-
-        refresh();
     }
 
     public @Optional Directory getDirectory() {
