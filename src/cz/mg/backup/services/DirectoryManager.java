@@ -9,9 +9,6 @@ import cz.mg.backup.entities.Directory;
 import java.nio.file.Path;
 
 public @Service class DirectoryManager {
-    private static final String RELOAD_DESCRIPTION = "Reload directory";
-    private static final String COMPARE_DESCRIPTION = "Compare directories";
-
     private static volatile @Service DirectoryManager instance;
 
     public static @Service DirectoryManager getInstance() {
@@ -48,30 +45,11 @@ public @Service class DirectoryManager {
         @Mandatory Path path,
         @Mandatory Progress progress
     ) {
-        progress.setDescription(RELOAD_DESCRIPTION);
-        progress.setLimit(5L);
-        progress.setValue(0L);
-
-        var checksums = checksumManager.collect(directory, progress.nest());
-        progress.unnest();
-        progress.step(); // 1
-
-        directory = directoryReader.read(path, progress.nest());
-        progress.unnest();
-        progress.step(); // 2
-
-        pathConverter.computeRelativePaths(directory, progress.nest());
-        progress.unnest();
-        progress.step(); // 3
-
-        statisticsCounter.count(directory, progress.nest());
-        progress.unnest();
-        progress.step(); // 4
-
-        checksumManager.restore(directory, checksums, progress.nest());
-        progress.unnest();
-        progress.step(); // 5
-
+        var checksums = checksumManager.collect(directory, progress);
+        directory = directoryReader.read(path, progress);
+        pathConverter.computeRelativePaths(directory, progress);
+        statisticsCounter.count(directory, progress);
+        checksumManager.restore(directory, checksums, progress);
         return directory;
     }
 
@@ -85,26 +63,15 @@ public @Service class DirectoryManager {
         @Optional Directory b,
         @Mandatory Progress progress
     ) {
-        progress.setDescription(COMPARE_DESCRIPTION);
-        progress.setLimit(3L);
-        progress.setValue(0L);
-
         if (a != null && b != null) {
-            directoryComparator.compare(a, b, progress.nest());
+            directoryComparator.compare(a, b, progress);
         } else if (a != null) {
-            directoryComparator.compare(a, a, progress.nest());
+            directoryComparator.compare(a, a, progress);
         } else if (b != null) {
-            directoryComparator.compare(b, b, progress.nest());
+            directoryComparator.compare(b, b, progress);
         }
-        progress.unnest();
-        progress.step();
 
-        statisticsCounter.count(a, progress.nest());
-        progress.unnest();
-        progress.step();
-
-        statisticsCounter.count(b, progress.nest());
-        progress.unnest();
-        progress.step();
+        statisticsCounter.count(a, progress);
+        statisticsCounter.count(b, progress);
     }
 }

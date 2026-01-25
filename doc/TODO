@@ -1,16 +1,14 @@
 ### NOW ###
-    improve progress handling
-        replace fixed number of steps with overwrite of previous progress for each step, do not nest there
-
     add support for automatic copy of missing files (in selected paths) to context menu
         might need to use selection simplifier
-        use existing cz.mg.backup.services.FileCopy class and relative paths
+        use existing cz.mg.backup.services.FileManager class and relative paths
         consider if confirm dialog is necessary before copy (in case of mis-click)
             it may display the number of files and a scrollable list of files to be copied
 
 ### SOON ###
     add more unit tests
         add test for ChecksumActions
+        add test for FileCopy
 
     move logic from ui components to ui action classes
 

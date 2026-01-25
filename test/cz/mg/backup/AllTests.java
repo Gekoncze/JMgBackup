@@ -18,7 +18,7 @@ public class AllTests {
         DirectorySearchTest.main(args);
         DirectorySortTest.main(args);
         FileComparatorTest.main(args);
-        FileCopyTest.main(args);
+        FileManagerTest.main(args);
         FilePropertiesReaderTest.main(args);
         FileReaderTest.main(args);
         HashConverterTest.main(args);

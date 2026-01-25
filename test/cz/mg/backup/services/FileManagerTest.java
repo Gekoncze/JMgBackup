@@ -16,16 +16,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
-public @Test class FileCopyTest {
+public @Test class FileManagerTest {
     private static final @Mandatory Path SOURCE_FILE = Common.FLYING_AKI_PATH;
     private static final @Mandatory Path SOURCE_DIRECTORY = SOURCE_FILE.getParent();
     private static final @Mandatory Path TARGET_DIRECTORY = SOURCE_DIRECTORY.resolve("copy");
     private static final @Mandatory Path TARGET_FILE = TARGET_DIRECTORY.resolve(SOURCE_FILE.getFileName());
 
     public static void main(String[] args) {
-        System.out.print("Running " + FileCopyTest.class.getSimpleName() + " ... ");
+        System.out.print("Running " + FileManagerTest.class.getSimpleName() + " ... ");
 
-        FileCopyTest test = new FileCopyTest();
+        FileManagerTest test = new FileManagerTest();
         test.testCopy();
         test.testValidateSourceFileType();
         test.testValidateMissingSourceFile();
@@ -33,7 +33,7 @@ public @Test class FileCopyTest {
         System.out.println("OK");
     }
 
-    private final @Service FileCopy fileCopy = FileCopy.getInstance();
+    private final @Service FileManager fileManager = FileManager.getInstance();
 
     private void testCopy() {
         Assert.assertEquals(true, Files.exists(SOURCE_DIRECTORY));
@@ -47,7 +47,7 @@ public @Test class FileCopyTest {
 
         try {
             TestProgress progress = new TestProgress();
-            fileCopy.copy(SOURCE_FILE, TARGET_FILE, Algorithm.SHA256, progress);
+            fileManager.copy(SOURCE_FILE, TARGET_FILE, Algorithm.SHA256, progress);
 
             Assert.assertEquals(true, Files.exists(TARGET_DIRECTORY));
             Assert.assertEquals(true, Files.exists(TARGET_FILE));
@@ -59,9 +59,9 @@ public @Test class FileCopyTest {
             Assert.assertEquals(sourceAttributes.lastModifiedTime(), targetAttributes.lastModifiedTime());
             Assert.assertEquals(sourceAttributes.lastAccessTime(), targetAttributes.lastAccessTime());
 
-            progress.verify(7L, 7L);
+            progress.verify();
 
-            Assertions.assertThatCode(() -> fileCopy.copy(SOURCE_FILE, TARGET_FILE, Algorithm.SHA256, new Progress()))
+            Assertions.assertThatCode(() -> fileManager.copy(SOURCE_FILE, TARGET_FILE, Algorithm.SHA256, new Progress()))
                 .withMessage("Missing validation for existing target file.")
                 .throwsException(IllegalArgumentException.class);
         } catch (IOException e) {
@@ -85,7 +85,7 @@ public @Test class FileCopyTest {
         try {
             Path source = SOURCE_FILE.getParent();
             Assert.assertEquals(true, Files.isDirectory(source));
-            Assertions.assertThatCode(() -> fileCopy.copy(source, TARGET_FILE, Algorithm.SHA256, new Progress()))
+            Assertions.assertThatCode(() -> fileManager.copy(source, TARGET_FILE, Algorithm.SHA256, new Progress()))
                 .withMessage("Missing validation for source file type.")
                 .throwsException(IllegalArgumentException.class);
         } finally {
@@ -101,7 +101,7 @@ public @Test class FileCopyTest {
         try {
             Path source = SOURCE_FILE.getParent().resolve(SOURCE_FILE.getFileName().toString() + "x");
             Assert.assertEquals(false, Files.exists(source));
-            Assertions.assertThatCode(() -> fileCopy.copy(source, TARGET_FILE, Algorithm.SHA256, new Progress()))
+            Assertions.assertThatCode(() -> fileManager.copy(source, TARGET_FILE, Algorithm.SHA256, new Progress()))
                 .withMessage("Missing validation for missing source file.")
                 .throwsException(IllegalArgumentException.class);
         } finally {

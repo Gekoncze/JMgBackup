@@ -46,7 +46,7 @@ public @Test class DirectoryManagerTest {
         Assert.assertEquals(0, directory.getDirectories().count());
         Assert.assertEquals(1, directory.getFiles().count());
         Assert.assertEquals("file", directory.getFiles().get(0).getPath().getFileName().toString());
-        progress.verify(5L, 5L);
+        progress.verify();
     }
 
     private void testReloadNotModified() {
@@ -63,7 +63,7 @@ public @Test class DirectoryManagerTest {
         Assert.assertNotNull(newDirectory.getFiles().get(0).getChecksum());
         Assert.assertEquals("112233", newDirectory.getFiles().get(0).getChecksum().getHash());
         Assert.assertEquals(Algorithm.SHA256, newDirectory.getFiles().get(0).getChecksum().getAlgorithm());
-        progress.verify(5L, 5L);
+        progress.verify();
     }
 
     private void testReloadModified() {
@@ -79,7 +79,7 @@ public @Test class DirectoryManagerTest {
         Assert.assertEquals(1, newDirectory.getFiles().count());
         Assert.assertEquals("file", newDirectory.getFiles().get(0).getPath().getFileName().toString());
         Assert.assertNull(newDirectory.getFiles().get(0).getChecksum());
-        progress.verify(5L, 5L);
+        progress.verify();
     }
 
     private void testCompare() {
@@ -95,7 +95,7 @@ public @Test class DirectoryManagerTest {
         Assert.assertEquals(1, b.getProperties().getTotalErrorCount());
         Assert.assertEquals("Directory name differs.", a.getErrors().get(0).getMessage());
         Assert.assertEquals("Directory name differs.", b.getErrors().get(0).getMessage());
-        progress.verify(3L, 3L);
+        progress.verify();
     }
 
     private void testCompareNullFirst() {
@@ -109,7 +109,7 @@ public @Test class DirectoryManagerTest {
         Assert.assertNotNull(a.getProperties());
         Assert.assertEquals(0, a.getProperties().getTotalErrorCount());
         Assert.assertEquals(0, a.getErrors().count());
-        progress.verify(3L, 3L);
+        progress.verify();
     }
 
     private void testCompareNullSecond() {
@@ -123,7 +123,7 @@ public @Test class DirectoryManagerTest {
         Assert.assertNotNull(b.getProperties());
         Assert.assertEquals(0, b.getProperties().getTotalErrorCount());
         Assert.assertEquals(0, b.getErrors().count());
-        progress.verify(3L, 3L);
+        progress.verify();
     }
 
     private void testCompareNullBoth() {
@@ -133,7 +133,7 @@ public @Test class DirectoryManagerTest {
             directoryManager.compare(null, null, progress);
         }).doesNotThrowAnyException();
 
-        progress.verify(3L, 3L);
+        progress.verify();
     }
 
     private void testCompareSame() {
@@ -147,6 +147,6 @@ public @Test class DirectoryManagerTest {
         Assert.assertNotNull(d.getProperties());
         Assert.assertEquals(0, d.getProperties().getTotalErrorCount());
         Assert.assertEquals(0, d.getErrors().count());
-        progress.verify(3L, 3L);
+        progress.verify();
     }
 }
