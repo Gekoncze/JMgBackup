@@ -15,7 +15,6 @@ public @Component class UserFocusLostListener implements UserListener, FocusList
 
     @Override
     public void focusGained(@Mandatory FocusEvent focusEvent) {
-
     }
 
     @Override

@@ -27,6 +27,6 @@ public @Component class UserKeyPressListener implements UserListener, KeyListene
     }
 
     public interface Handler {
-        void run(KeyEvent event);
+        void run(@Mandatory KeyEvent event);
     }
 }

@@ -1,5 +1,6 @@
 package cz.mg.backup.gui.event;
 
+import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 
@@ -10,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class UserDragAndDropListener extends TransferHandler {
+public @Component class UserDragAndDropListener extends TransferHandler {
     private final @Mandatory Handler handler;
 
     public UserDragAndDropListener(@Mandatory Handler handler) {
@@ -18,12 +19,12 @@ public class UserDragAndDropListener extends TransferHandler {
     }
 
     @Override
-    public boolean canImport(TransferSupport support) {
+    public boolean canImport(@Mandatory TransferSupport support) {
         return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
     }
 
     @Override
-    public boolean importData(TransferSupport support) {
+    public boolean importData(@Mandatory TransferSupport support) {
         Path directory = getSingleDirectory(support);
         if (directory != null) {
             handler.run(directory);
@@ -37,6 +38,7 @@ public class UserDragAndDropListener extends TransferHandler {
     private Path getSingleDirectory(@Mandatory TransferSupport support) {
         try {
             if (canImport(support)) {
+                @SuppressWarnings("unchecked")
                 List<File> files = (List<File>) support.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
                 if (files.size() == 1) {
                     Path path = files.get(0).toPath();

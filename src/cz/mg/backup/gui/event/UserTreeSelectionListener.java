@@ -14,12 +14,12 @@ public @Component class UserTreeSelectionListener implements UserListener, TreeS
     }
 
     @Override
-    public void valueChanged(TreeSelectionEvent event) {
+    public void valueChanged(@Mandatory TreeSelectionEvent event) {
         handleExceptions(() -> handler.run(event));
 
     }
 
     public interface Handler {
-        void run(TreeSelectionEvent event);
+        void run(@Mandatory TreeSelectionEvent event);
     }
 }
