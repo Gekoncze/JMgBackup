@@ -3,7 +3,6 @@ package cz.mg.backup.gui.views.directory;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
-import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.components.IconButton;
 import cz.mg.backup.gui.event.*;
 import cz.mg.backup.gui.icons.Icons;
@@ -23,16 +22,14 @@ public @Component class PathSelector extends Panel {
     private static final int PADDING = 4;
 
     private final @Mandatory List<UserPathChangeListener> listeners = new List<>();
-    private final @Mandatory MainWindow window;
     private final @Mandatory JTextField pathField;
     private final @Mandatory JFileChooser directoryChooser;
     private @Optional Path path;
     private @Optional Action action;
     private @Optional String oldText;
 
-    public PathSelector(@Mandatory MainWindow window) {
+    public PathSelector() {
         super(MARGIN, PADDING);
-        this.window = window;
 
         pathField = new JTextField();
         pathField.setEditable(false);
@@ -136,14 +133,14 @@ public @Component class PathSelector extends Panel {
         if (newPath != null) {
             if (!Files.exists(newPath)) {
                 JOptionPane.showMessageDialog(
-                    window,
+                    getTopLevelAncestor(),
                     "Selected directory does not exist.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE
                 );
             } else if (!Files.isDirectory(newPath)) {
                 JOptionPane.showMessageDialog(
-                    window,
+                    getTopLevelAncestor(),
                     "Selected file is not a directory.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE

@@ -45,7 +45,7 @@ public @Component class DirectoryView extends Panel {
         setMargin(MARGIN);
         setPadding(PADDING);
 
-        pathSelector = new PathSelector(window);
+        pathSelector = new PathSelector();
         pathSelector.addPathSelectionListener(new UserPathChangeListener(this::onPathSelected));
         addVertical(pathSelector, 1, 0);
 
@@ -250,6 +250,6 @@ public @Component class DirectoryView extends Panel {
     }
 
     private @Optional Node getNode(@Optional TreePath path) {
-        return path == null ? null : (Node) ((DirectoryTreeEntry) path.getLastPathComponent()).get();
+        return path == null ? null : ((DirectoryTreeEntry) path.getLastPathComponent()).get();
     }
 }
