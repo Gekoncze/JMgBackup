@@ -15,12 +15,19 @@ public @Test class DirectoryTreeFactoryTest {
         System.out.print("Running " + DirectoryTreeFactoryTest.class.getSimpleName() + " ... ");
 
         DirectoryTreeFactoryTest test = new DirectoryTreeFactoryTest();
+        test.testNull();
         test.testCreate();
 
         System.out.println("OK");
     }
 
     private final @Service DirectoryTreeFactory factory = DirectoryTreeFactory.getInstance();
+
+    private void testNull() {
+        TestProgress progress = new TestProgress();
+        Assert.assertNull(factory.create(null, progress));
+        progress.verifySkip();
+    }
 
     private void testCreate() {
         Directory root = new Directory();
@@ -65,7 +72,8 @@ public @Test class DirectoryTreeFactoryTest {
         Assert.assertEquals(0, firstFileEntry.getIndex());
         Assert.assertEquals(true, firstFileEntry.isLeaf());
         Assert.assertEquals("first file", firstFileEntry.toString());
-        Assert.assertNull(firstFileEntry.getChildren());
+        Assert.assertNotNull(firstFileEntry.getChildren());
+        Assert.assertEquals(0, firstFileEntry.getChildren().count());
 
         DirectoryTreeEntry emptyDirectoryEntry = rootEntry.getChildren().get(1);
         Assert.assertEquals(1, emptyDirectoryEntry.getIndex());
@@ -78,7 +86,8 @@ public @Test class DirectoryTreeFactoryTest {
         Assert.assertEquals(2, secondFileEntry.getIndex());
         Assert.assertEquals(true, secondFileEntry.isLeaf());
         Assert.assertEquals("second file", secondFileEntry.toString());
-        Assert.assertNull(secondFileEntry.getChildren());
+        Assert.assertNotNull(secondFileEntry.getChildren());
+        Assert.assertEquals(0, secondFileEntry.getChildren().count());
 
         progress.verify(5L, 5L);
     }

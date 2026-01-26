@@ -7,9 +7,10 @@ import cz.mg.collections.list.List;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
+import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 
-public @Static class TreeUtils {
+@Static class TreeUtils {
     public static @Mandatory List<TreePath> getExpandedPaths(@Mandatory JTree tree) {
         return convert(tree.getExpandedDescendants(getRootPath(tree)));
     }
@@ -24,6 +25,19 @@ public @Static class TreeUtils {
 
     public static @Mandatory List<TreePath> getSelectedPaths(@Mandatory JTree tree) {
         return convert(tree.getSelectionPaths());
+    }
+
+    public static @Optional TreePath getSelectedPathAt(@Mandatory JTree tree, @Mandatory MouseEvent event) {
+        int row = tree.getRowForLocation(event.getX(), event.getY());
+        int[] selectedRows = tree.getSelectionRows();
+        if (row != -1 && selectedRows != null) {
+            for (int selectedRow : selectedRows) {
+                if (selectedRow == row) {
+                    return tree.getPathForRow(row);
+                }
+            }
+        }
+        return null;
     }
 
     public static @Optional TreePath getRootPath(@Mandatory JTree tree) {

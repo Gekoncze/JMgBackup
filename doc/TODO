@@ -6,13 +6,17 @@
             it may display the number of files and a scrollable list of files to be copied
 
 ### SOON ###
+    show warning banner or some icon or label when an action was cancelled
+        explain that ui might be outdated
+        remove the flag once directories are completely reloaded afterwards
+        consider disabling some actions that may fail or behave unexpectedly
+            consider allowing only full reload in such situation
+
     add more unit tests
         add test for ChecksumActions
         add test for FileCopy
-
-    move logic from ui components to ui action classes
-        improve progress dialog - should be "shown" only once for each action and then updated accordingly
-            to prevent blinking
+        add more tests for DirectorySearch (left + right + optional path)
+        add more tests for DirectoryManager
 
 ### LATER ###
     add duplicate detector

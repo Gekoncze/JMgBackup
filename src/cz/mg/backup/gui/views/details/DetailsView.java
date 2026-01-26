@@ -7,6 +7,7 @@ import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
 
 import javax.swing.*;
+import java.nio.file.Path;
 
 public @Component class DetailsView extends JScrollPane {
     private @Optional Node node;
@@ -23,7 +24,11 @@ public @Component class DetailsView extends JScrollPane {
         refresh();
     }
 
-    public void refresh() {
+    public @Optional Path getPath() {
+        return node != null ? node.getPath() : null;
+    }
+
+    private void refresh() {
         getViewport().removeAll();
 
         if (node != null) {

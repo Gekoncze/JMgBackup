@@ -17,18 +17,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public @Component class PathSelector extends Panel {
+public @Component class PathSelectionView extends Panel {
     private static final int MARGIN = 0;
     private static final int PADDING = 4;
 
-    private final @Mandatory List<UserPathChangeListener> listeners = new List<>();
+    private final @Mandatory List<UserPathChangeListener> changeListeners = new List<>();
+    private final @Mandatory List<UserButtonListener> reloadListeners = new List<>();
     private final @Mandatory JTextField pathField;
     private final @Mandatory JFileChooser directoryChooser;
     private @Optional Path path;
     private @Optional Action action;
     private @Optional String oldText;
 
-    public PathSelector() {
+    public PathSelectionView() {
         super(MARGIN, PADDING);
 
         pathField = new JTextField();
@@ -40,7 +41,7 @@ public @Component class PathSelector extends Panel {
         addHorizontal(new JLabel("Directory"));
         addHorizontal(pathField, 1, 0);
         addHorizontal(new IconButton(Icons.STANDARD_OPEN_20, "Open", this::select));
-        addHorizontal(new IconButton(Icons.STANDARD_RELOAD_20, "Refresh", this::triggerListeners));
+        addHorizontal(new IconButton(Icons.STANDARD_RELOAD_20, "Reload", this::onReloadClicked));
 
         directoryChooser = new JFileChooser();
         directoryChooser.setDialogType(JFileChooser.OPEN_DIALOG);
@@ -54,7 +55,7 @@ public @Component class PathSelector extends Panel {
     public void setPath(@Optional Path path) {
         this.path = path;
         refresh();
-        triggerListeners();
+        triggerChangeListeners();
     }
 
     private void select() {
@@ -69,13 +70,23 @@ public @Component class PathSelector extends Panel {
         pathField.setText(path == null ? "" : path.toString());
     }
 
-    public void addPathSelectionListener(@Mandatory UserPathChangeListener listener) {
-        listeners.addLast(listener);
+    public void addChangeListener(@Mandatory UserPathChangeListener listener) {
+        changeListeners.addLast(listener);
     }
 
-    private void triggerListeners() {
-        for (var listener : listeners) {
+    private void triggerChangeListeners() {
+        for (var listener : changeListeners) {
             listener.pathChanged();
+        }
+    }
+
+    public void addReloadListener(@Mandatory UserButtonListener listener) {
+        reloadListeners.addLast(listener);
+    }
+
+    private void triggerReloadListeners() {
+        for (var listener : reloadListeners) {
+            listener.buttonClicked();
         }
     }
 
@@ -148,6 +159,10 @@ public @Component class PathSelector extends Panel {
             }
         }
         setPath(newPath);
+    }
+
+    private void onReloadClicked() {
+        triggerReloadListeners();
     }
 
     private enum Action {

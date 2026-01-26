@@ -14,7 +14,7 @@ import javax.swing.*;
 import javax.swing.tree.TreeCellRenderer;
 import java.awt.*;
 
-public @Component class DirectoryTreeCellRenderer implements TreeCellRenderer {
+@Component class DirectoryTreeCellRenderer implements TreeCellRenderer {
     private static final Color BG_SELECTION_COLOR = UIManager.getDefaults().getColor("List.selectionBackground");
     private static final Color FG_SELECTION_COLOR = UIManager.getDefaults().getColor("List.selectionForeground");
     private static final int MARGIN = 2;

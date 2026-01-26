@@ -1,18 +1,13 @@
 package cz.mg.backup.gui.views.directory;
 
 import cz.mg.annotations.classes.Component;
-import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
-import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
-import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.event.*;
-import cz.mg.backup.gui.services.DirectoryTreeFactory;
-import cz.mg.backup.gui.services.FileManager;
-import cz.mg.backup.services.*;
+import cz.mg.backup.gui.services.DirectoryTreeActions;
 import cz.mg.collections.list.List;
 import cz.mg.panel.Panel;
 
@@ -26,28 +21,24 @@ public @Component class DirectoryView extends Panel {
     private static final int MARGIN = 4;
     private static final int PADDING = 4;
 
-    private final @Service DirectorySearch directorySearch = DirectorySearch.getInstance();
-    private final @Service DirectoryTreeFactory directoryTreeFactory = DirectoryTreeFactory.getInstance();
-    private final @Service ChecksumActions checksumActions = ChecksumActions.getInstance();
-    private final @Service DirectoryManager directoryManager = DirectoryManager.getInstance();
-    private final @Service FileManager fileManager = FileManager.getInstance();
+    private final @Mandatory DirectoryTreeActions actions = DirectoryTreeActions.getInstance();
 
     private final @Mandatory MainWindow window;
-    private final @Mandatory PathSelector pathSelector;
+    private final @Mandatory PathSelectionView selectionView;
     private final @Mandatory DirectoryTree tree;
     private final @Mandatory JPopupMenu popupMenu;
 
-    private @Optional TreePath popupMenuRow;
-    private @Optional Directory directory;
+    private @Optional TreePath popupMenuPath;
 
     public DirectoryView(@Mandatory MainWindow window) {
         this.window = window;
         setMargin(MARGIN);
         setPadding(PADDING);
 
-        pathSelector = new PathSelector();
-        pathSelector.addPathSelectionListener(new UserPathChangeListener(this::reload));
-        addVertical(pathSelector, 1, 0);
+        selectionView = new PathSelectionView();
+        selectionView.addChangeListener(new UserPathChangeListener(this::onPathChanged));
+        selectionView.addReloadListener(new UserButtonListener(this::onReloadClicked));
+        addVertical(selectionView, 1, 0);
 
         tree = new DirectoryTree();
         tree.setTransferHandler(new UserDragAndDropListener(this::onFileDropped));
@@ -58,93 +49,63 @@ public @Component class DirectoryView extends Panel {
         popupMenu = new JPopupMenu();
 
         JMenuItem computeChecksumMenuItem = new JMenuItem("Compute checksum");
-        computeChecksumMenuItem.addActionListener(new UserActionListener(this::computeChecksum));
+        computeChecksumMenuItem.addActionListener(new UserActionListener(this::onComputeChecksumClicked));
         popupMenu.add(computeChecksumMenuItem);
 
         JMenuItem clearChecksumMenuItem = new JMenuItem("Clear checksum");
-        clearChecksumMenuItem.addActionListener(new UserActionListener(this::clearChecksum));
+        clearChecksumMenuItem.addActionListener(new UserActionListener(this::onClearChecksumClicked));
         popupMenu.add(clearChecksumMenuItem);
 
         JMenuItem openInFileManagerMenuItem = new JMenuItem("Open in file manager");
-        openInFileManagerMenuItem.addActionListener(new UserActionListener(this::openInFileManager));
+        openInFileManagerMenuItem.addActionListener(new UserActionListener(this::onOpenInFileManagerClicked));
         popupMenu.add(openInFileManagerMenuItem);
     }
 
-    public @Optional Directory getDirectory() {
-        return directory;
+    public @Mandatory PathSelectionView getSelectionView() {
+        return selectionView;
     }
 
-    public void setDirectory(@Optional Directory directory) {
-        this.directory = directory;
-        refresh();
+    public @Optional Directory getDirectory() {
+        DirectoryTreeEntry entry = tree.getRoot();
+        return entry == null ? null : (Directory) entry.get();
+    }
+
+    public void setRoot(@Optional DirectoryTreeEntry root) {
+        List<TreePath> expandedPaths = TreeUtils.getExpandedPaths(tree);
+        TreePath collapsedRootPath = TreeUtils.getCollapsedRootPath(tree);
+        List<TreePath> selectedPaths = TreeUtils.getSelectedPaths(tree);
+
+        tree.setRoot(root);
+
+        TreeUtils.expandPaths(tree, expandedPaths);
+        TreeUtils.collapseRootPath(tree, collapsedRootPath);
+        TreeUtils.selectPaths(tree, selectedPaths);
+
+        popupMenuPath = null;
+    }
+
+    private void onPathChanged() {
+        actions.load(window, this);
+    }
+
+    private void onReloadClicked() {
+        actions.reload(window, this);
+    }
+
+    private void onComputeChecksumClicked() {
+        actions.computeChecksum(window, this);
+    }
+
+    private void onClearChecksumClicked() {
+        actions.clearChecksum(window, this);
+    }
+
+    private void onOpenInFileManagerClicked() {
+        actions.openInFileManager(this);
     }
 
     private void onFileDropped(@Mandatory Path path) {
-        pathSelector.setPath(path);
-    }
-
-    public void reload() {
-        Path path = pathSelector.getPath();
-        if (path != null) {
-            setDirectory(
-                ProgressDialog.compute(
-                    window,
-                    "Reload directory",
-                    progress -> directoryManager.reload(directory, path, progress)
-                )
-            );
-        } else {
-            setDirectory(null);
-        }
-
-        window.compare();
-    }
-
-    public void refresh() {
-        if (directory != null) {
-            Path displayedPath = getDisplayedPath();
-            List<TreePath> expandedPaths = TreeUtils.getExpandedPaths(tree);
-            TreePath collapsedRootPath = TreeUtils.getCollapsedRootPath(tree);
-            List<TreePath> selectedPaths = TreeUtils.getSelectedPaths(tree);
-
-            tree.setModel(new DirectoryTreeModel(
-                ProgressDialog.compute(
-                    window,
-                    "Build directory tree",
-                    progress -> directoryTreeFactory.create(directory, progress))
-                )
-            );
-
-            TreeUtils.expandPaths(tree, expandedPaths);
-            TreeUtils.collapseRootPath(tree, collapsedRootPath);
-            TreeUtils.selectPaths(tree, selectedPaths);
-            restoreDisplayedPath(displayedPath);
-        } else {
-            tree.setModel(new DirectoryTreeModel(null));
-        }
-        tree.setCellRenderer(new DirectoryTreeCellRenderer());
-        popupMenuRow = null;
-    }
-
-    private @Optional Path getDisplayedPath() {
-        Node node = window.getDetailsView().getNode();
-        if (node != null && directory != null && node.getPath().startsWith(directory.getPath())) {
-            return node.getPath();
-        } else {
-            return null;
-        }
-    }
-
-    private void restoreDisplayedPath(@Optional Path path) {
-        if (path != null && directory != null) {
-            window.getDetailsView().setNode(
-                ProgressDialog.compute(
-                    window,
-                    "Search",
-                    progress -> directorySearch.find(directory, path, progress)
-                )
-            );
-        }
+        selectionView.setPath(path);
     }
 
     private void onMouseClicked(@Mandatory MouseEvent event) {
@@ -174,60 +135,13 @@ public @Component class DirectoryView extends Panel {
     }
 
     private void showPopupMenu(@Mandatory MouseEvent event) {
-        popupMenuRow = getSelectedRowAt(event);
-        if (popupMenuRow != null) {
+        popupMenuPath = TreeUtils.getSelectedPathAt(tree, event);
+        if (popupMenuPath != null) {
             popupMenu.show(tree, event.getX(), event.getY());
         }
     }
 
-    private @Optional TreePath getSelectedRowAt(@Mandatory MouseEvent event) {
-        int row = tree.getRowForLocation(event.getX(), event.getY());
-        int[] selectedRows = tree.getSelectionRows();
-        if (row != -1 && selectedRows != null) {
-            for (int selectedRow : selectedRows) {
-                if (selectedRow == row) {
-                    return tree.getPathForRow(row);
-                }
-            }
-        }
-        return null;
-    }
-
-    private void computeChecksum() {
-        List<Node> nodes = getSelectedNodes();
-        Algorithm algorithm = window.getSettings().getAlgorithm();
-
-        ProgressDialog.run(
-            window,
-            "Compute checksum",
-            progress -> checksumActions.compute(nodes, algorithm, progress)
-        );
-
-        window.compare();
-    }
-
-    private void clearChecksum() {
-        List<Node> nodes = getSelectedNodes();
-
-        ProgressDialog.run(
-            window,
-            "Clear checksum",
-            progress -> checksumActions.clear(nodes, progress)
-        );
-
-        window.compare();
-    }
-
-    private void openInFileManager() {
-        if (popupMenuRow != null) {
-            Node node = getNode(popupMenuRow);
-            if (node != null) {
-                fileManager.open(node.getPath());
-            }
-        }
-    }
-
-    private @Mandatory List<Node> getSelectedNodes() {
+    public @Mandatory List<Node> getSelectedNodes() {
         List<Node> selectedNodes = new List<>();
         TreePath[] paths = tree.getSelectionPaths();
         if (paths != null) {
@@ -239,6 +153,13 @@ public @Component class DirectoryView extends Panel {
             }
         }
         return selectedNodes;
+    }
+
+    public @Optional Node getPopupNode() {
+        if (popupMenuPath != null) {
+            return getNode(popupMenuPath);
+        }
+        return null;
     }
 
     private @Optional Node getNode(@Optional TreePath path) {

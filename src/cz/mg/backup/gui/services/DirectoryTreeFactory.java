@@ -2,6 +2,7 @@ package cz.mg.backup.gui.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
@@ -30,14 +31,18 @@ public @Service class DirectoryTreeFactory {
     private DirectoryTreeFactory() {
     }
 
-    public @Mandatory DirectoryTreeEntry create(@Mandatory Directory directory, @Mandatory Progress progress) {
-        progress.setDescription(DESCRIPTION);
-        progress.setLimit(estimate(directory));
-        progress.setValue(0L);
+    public @Optional DirectoryTreeEntry create(@Optional Directory directory, @Mandatory Progress progress) {
+        if (directory != null) {
+            progress.setDescription(DESCRIPTION);
+            progress.setLimit(estimate(directory));
+            progress.setValue(0L);
 
-        DirectoryTreeEntry entry = create(directory, 0, progress);
-        progress.step();
-        return entry;
+            DirectoryTreeEntry entry = create(directory, 0, progress);
+            progress.step();
+            return entry;
+        } else {
+            return null;
+        }
     }
 
     private @Mandatory DirectoryTreeEntry create(@Mandatory Directory directory, int index, @Mandatory Progress progress) {

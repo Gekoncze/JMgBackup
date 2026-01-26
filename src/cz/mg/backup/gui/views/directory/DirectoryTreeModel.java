@@ -9,7 +9,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-public @Component class DirectoryTreeModel implements TreeModel {
+@Component class DirectoryTreeModel implements TreeModel {
     private final @Optional DirectoryTreeEntry root;
     private final @Mandatory List<TreeModelListener> listeners = new List<>();
 
@@ -18,7 +18,7 @@ public @Component class DirectoryTreeModel implements TreeModel {
     }
 
     @Override
-    public @Optional Object getRoot() {
+    public @Optional DirectoryTreeEntry getRoot() {
         return root;
     }
 

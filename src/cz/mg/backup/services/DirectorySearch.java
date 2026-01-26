@@ -32,7 +32,34 @@ public @Service class DirectorySearch {
     private DirectorySearch() {
     }
 
-    public @Optional Node find(@Optional Directory directory, @Mandatory Path path, @Mandatory Progress progress) {
+    public @Optional Node find(
+        @Optional Directory left,
+        @Optional Directory right,
+        @Optional Path path,
+        @Mandatory Progress progress
+    ) {
+        Node firstFound = find(left, path, progress);
+        if (firstFound != null) {
+            return firstFound;
+        }
+
+        Node secondFound = find(right, path, progress);
+        if (secondFound != null) {
+            return secondFound;
+        }
+
+        return null;
+    }
+
+    public @Optional Node find(
+        @Optional Directory directory,
+        @Optional Path path,
+        @Mandatory Progress progress
+    ) {
+        if (path == null) {
+            return null;
+        }
+
         Node[] wanted = new Node[1];
         treeIterator.forEachNode(directory, node -> {
             if (Objects.equals(node.getPath(), path)) {

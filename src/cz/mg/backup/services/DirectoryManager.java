@@ -37,20 +37,32 @@ public @Service class DirectoryManager {
     }
 
     /**
-     * Reloads given directory.
-     * Checksums are retained where possible.
+     * Loads directory from given path.
      */
-    public @Mandatory Directory reload(
-        @Optional Directory directory,
-        @Mandatory Path path,
-        @Mandatory Progress progress
-    ) {
+    public @Optional Directory load(@Optional Path path, @Mandatory Progress progress) {
+        if (path != null) {
+            Directory directory = directoryReader.read(path, progress);
+            pathConverter.computeRelativePaths(directory, progress);
+            statisticsCounter.count(directory, progress);
+            return directory;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Reloads given directory.
+     * Checksums are retained for unchanged files.
+     */
+    public void reload(@Mandatory Directory directory, @Mandatory Progress progress) {
         var checksums = checksumManager.collect(directory, progress);
-        directory = directoryReader.read(path, progress);
-        pathConverter.computeRelativePaths(directory, progress);
-        statisticsCounter.count(directory, progress);
-        checksumManager.restore(directory, checksums, progress);
-        return directory;
+        Directory freshDirectory = directoryReader.read(directory.getPath(), progress);
+        pathConverter.computeRelativePaths(freshDirectory, progress);
+        statisticsCounter.count(freshDirectory, progress);
+        checksumManager.restore(freshDirectory, checksums, progress);
+        directory.setDirectories(freshDirectory.getDirectories());
+        directory.setFiles(freshDirectory.getFiles());
+        directory.setProperties(freshDirectory.getProperties());
     }
 
     /**
@@ -58,20 +70,16 @@ public @Service class DirectoryManager {
      * If one directory is null, then the other directory will have its compare errors cleared recursively.
      * Statistics are updated afterward for both directories.
      */
-    public void compare(
-        @Optional Directory a,
-        @Optional Directory b,
-        @Mandatory Progress progress
-    ) {
-        if (a != null && b != null) {
-            directoryComparator.compare(a, b, progress);
-        } else if (a != null) {
-            directoryComparator.compare(a, a, progress);
-        } else if (b != null) {
-            directoryComparator.compare(b, b, progress);
+    public void compare(@Optional Directory left, @Optional Directory right, @Mandatory Progress progress) {
+        if (left != null && right != null) {
+            directoryComparator.compare(left, right, progress);
+        } else if (left != null) {
+            directoryComparator.compare(left, left, progress);
+        } else if (right != null) {
+            directoryComparator.compare(right, right, progress);
         }
 
-        statisticsCounter.count(a, progress);
-        statisticsCounter.count(b, progress);
+        statisticsCounter.count(left, progress);
+        statisticsCounter.count(right, progress);
     }
 }

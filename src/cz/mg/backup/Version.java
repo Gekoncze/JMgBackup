@@ -2,9 +2,10 @@ package cz.mg.backup;
 
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.annotations.requirement.Optional;
 
 public @Component class Version {
-    private static final @Mandatory Version INSTANCE = new Version(1, 19, 9);
+    private static final @Mandatory Version INSTANCE = new Version(1, 20, 0, "beta");
 
     public static @Mandatory Version getInstance() {
         return INSTANCE;
@@ -13,15 +14,18 @@ public @Component class Version {
     private final int major;
     private final int minor;
     private final int patch;
+    private final @Optional String note;
 
-    public Version(int major, int minor, int patch) {
+    public Version(int major, int minor, int patch, @Optional String note) {
         this.major = major;
         this.minor = minor;
         this.patch = patch;
+        this.note = note;
     }
 
     @Override
     public String toString() {
-        return major + "." + minor + "." + patch;
+        String suffix = note == null ? "" : " (" + note + ")";
+        return major + "." + minor + "." + patch + suffix;
     }
 }
