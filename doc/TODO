@@ -1,22 +1,25 @@
 ### NOW ###
-    add support for automatic copy of missing files (in selected paths) to context menu
-        might need to use selection simplifier
-        use existing cz.mg.backup.services.FileManager class and relative paths
-        consider if confirm dialog is necessary before copy (in case of mis-click)
-            it may display the number of files and a scrollable list of files to be copied
+    ...
 
 ### SOON ###
-    show warning banner or some icon or label when an action was cancelled
-        explain that ui might be outdated
-        remove the flag once directories are completely reloaded afterwards
-        consider disabling some actions that may fail or behave unexpectedly
-            consider allowing only full reload in such situation
-
     add more unit tests
         add test for ChecksumActions
         add test for FileCopy
         add more tests for DirectorySearch (left + right + optional path)
         add more tests for DirectoryManager
+
+    show warning banner or some icon or label when an action was cancelled
+        explain that ui might be outdated
+        remove the flag once directories are completely reloaded afterwards
+        consider disabling some actions that may fail or behave unexpectedly
+            consider allowing only full reload in such situation
+        go through possible cases for each action and evaluate risks
+
+    add support for automatic copy of missing files (in selected paths) to context menu
+        might need to use selection simplifier
+        use existing cz.mg.backup.services.FileManager class and relative paths
+        consider if confirm dialog is necessary before copy (in case of mis-click)
+            it may display the number of files and a scrollable list of files to be copied
 
 ### LATER ###
     add duplicate detector
