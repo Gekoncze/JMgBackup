@@ -8,6 +8,7 @@ import cz.mg.backup.entities.*;
 import cz.mg.backup.test.TestFactory;
 import cz.mg.backup.test.TestProgress;
 import cz.mg.test.Assert;
+import cz.mg.test.Assertions;
 
 import java.nio.file.Path;
 
@@ -31,26 +32,26 @@ public @Test class DirectorySearchTest {
     }
 
     private void testSingle() {
-        File file = f.file("/d/f");
-        Directory directory = f.directory("/d", file);
+        File file = f.file("f");
+        Directory directory = f.directory("d", file);
 
-        test(directory, Path.of("/d/f"), file, 2L);
-        test(directory, Path.of("/d"), directory, 2L);
-        test(directory, Path.of("/x"), null, 2L);
+        test(directory, Path.of("d/f"), file, 2L);
+        test(directory, Path.of("d"), directory, 2L);
+        test(directory, Path.of("x"), null, 2L);
         test(directory, Path.of(""), null, 2L);
     }
 
     private void testMultiple() {
-        File file = f.file("/d/f");
-        File secondFile = f.file("/d/dd/ff");
-        Directory secondDirectory = f.directory("/d/dd", secondFile);
-        Directory directory = f.directory("/d", file, secondDirectory);
+        File file = f.file("f");
+        File secondFile = f.file("ff");
+        Directory secondDirectory = f.directory("dd", secondFile);
+        Directory directory = f.directory("d", file, secondDirectory);
 
-        test(directory, Path.of("/d/f"), file, 4L);
-        test(directory, Path.of("/d"), directory, 4L);
-        test(directory, Path.of("/d/dd/ff"), secondFile, 4L);
-        test(directory, Path.of("/d/dd"), secondDirectory, 4L);
-        test(directory, Path.of("/x"), null, 4L);
+        test(directory, Path.of("d/f"), file, 4L);
+        test(directory, Path.of("d"), directory, 4L);
+        test(directory, Path.of("d/dd/ff"), secondFile, 4L);
+        test(directory, Path.of("d/dd"), secondDirectory, 4L);
+        test(directory, Path.of("x"), null, 4L);
         test(directory, Path.of(""), null, 4L);
     }
 
@@ -62,7 +63,11 @@ public @Test class DirectorySearchTest {
     ) {
         TestProgress progress = new TestProgress();
         Node reality = search.find(directory, wanted, progress);
-        Assert.assertSame(expectation, reality);
+
+        Assertions.assertThat(reality)
+                .withFormatFunction(n -> n.getPath().toString())
+                .isSameAs(expectation);
+
         progress.verify(expectedCount, expectedCount);
     }
 }

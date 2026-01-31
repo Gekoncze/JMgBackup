@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
+import cz.mg.backup.entities.File;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -21,6 +22,7 @@ public @Service class DirectoryReader {
                     instance = new DirectoryReader();
                     instance.fileReader = FileReader.getInstance();
                     instance.sort = DirectorySort.getInstance();
+                    instance.propertiesCollector = DirectoryPropertiesCollector.getInstance();
                 }
             }
         }
@@ -29,6 +31,7 @@ public @Service class DirectoryReader {
 
     private @Service FileReader fileReader;
     private @Service DirectorySort sort;
+    private @Service DirectoryPropertiesCollector propertiesCollector;
 
     private DirectoryReader() {
     }
@@ -36,48 +39,63 @@ public @Service class DirectoryReader {
     /**
      * Reads directory tree with files from given path.
      * Symbolic links are skipped, except for given path.
+     * Directory properties are collected.
      * Files and directories are sorted alphabetically.
      */
     public @Mandatory Directory read(@Mandatory Path path, @Mandatory Progress progress) {
         progress.setDescription(DESCRIPTION + " " + path);
         progress.setLimit(0L);
         progress.setValue(0L);
-        return readDirectoryRecursively(path, progress);
+        return readDirectoryRecursively(
+            path,
+            path.getFileName() != null ? path.getFileName() : Path.of(""),
+            progress
+        );
     }
 
-    private @Mandatory Directory readDirectoryRecursively(@Mandatory Path path, @Mandatory Progress progress) {
+    private @Mandatory Directory readDirectoryRecursively(
+        @Mandatory Path path,
+        @Mandatory Path relativePath,
+        @Mandatory Progress progress
+    ) {
         Directory directory = new Directory();
         directory.setPath(path);
+        directory.setRelativePath(relativePath);
 
         try (DirectoryStream<Path> nestedPaths = Files.newDirectoryStream(directory.getPath())) {
             for (Path nestedPath : nestedPaths) {
                 try {
                     readChildRecursively(directory, nestedPath, progress);
                 } catch (Exception e) {
-                    directory.getErrors().addLast(e);
+                    directory.setError(e);
                 }
                 progress.step();
             }
         } catch (Exception e) {
-            directory.getErrors().addLast(e);
+            directory.setError(e);
         }
 
+        propertiesCollector.collect(directory);
         sort.sort(directory, progress.nest());
         progress.unnest();
 
         return directory;
     }
 
-    private void readChildRecursively(@Mandatory Directory directory, @Mandatory Path nestedPath, @Mandatory Progress progress) {
-        if (!Files.isSymbolicLink(nestedPath)) {
-            if (Files.isDirectory(nestedPath)) {
-                directory.getDirectories().addLast(
-                    readDirectoryRecursively(nestedPath, progress)
-                );
+    private void readChildRecursively(
+        @Mandatory Directory directory,
+        @Mandatory Path childPath,
+        @Mandatory Progress progress
+    ) {
+        if (!Files.isSymbolicLink(childPath)) {
+            Path relativeChildPath = directory.getRelativePath().resolve(childPath.getFileName());
+            if (Files.isDirectory(childPath)) {
+                Directory child = readDirectoryRecursively(childPath, relativeChildPath, progress);
+                directory.getDirectories().addLast(child);
             } else {
-                directory.getFiles().addLast(
-                    fileReader.read(nestedPath)
-                );
+                File child = fileReader.read(childPath);
+                child.setRelativePath(relativeChildPath);
+                directory.getFiles().addLast(child);
             }
         }
     }

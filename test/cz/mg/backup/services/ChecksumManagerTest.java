@@ -5,7 +5,9 @@ import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.*;
 import cz.mg.backup.resources.common.Common;
+import cz.mg.backup.test.TestFactory;
 import cz.mg.backup.test.TestProgress;
+import cz.mg.collections.list.List;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 import cz.mg.test.Assert;
@@ -32,14 +34,15 @@ public @Test class ChecksumManagerTest {
         System.out.println("OK");
     }
 
-    private final @Service ChecksumManager manager = ChecksumManager.getInstance();
+    private final @Service ChecksumManager checksumManager = ChecksumManager.getInstance();
+    private final @Service FileReader fileReader = FileReader.getInstance();
+    private final @Service TestFactory f = TestFactory.getInstance();
 
     private void testComputeMissingChecksum() {
-        File file = new File();
-        file.setPath(Common.FLYING_AKI_PATH);
+        File file = fileReader.read(Common.FLYING_AKI_PATH);
 
         TestProgress progress = new TestProgress();
-        manager.compute(file, Algorithm.SHA256, progress);
+        checksumManager.compute(new List<>(file), Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Common.FLYING_AKI_HASH, file.getChecksum().getHash());
@@ -47,26 +50,24 @@ public @Test class ChecksumManagerTest {
     }
 
     private void testComputeExistingChecksum() {
-        File file = new File();
-        file.setPath(Common.FLYING_AKI_PATH);
+        File file = fileReader.read(Common.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
 
         TestProgress progress = new TestProgress();
-        manager.compute(file, Algorithm.SHA256, progress);
+        checksumManager.compute(new List<>(file), Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
         Assert.assertEquals("FF", file.getChecksum().getHash());
-        progress.verifySkip();
+        progress.verify(1L, 1L);
     }
 
     private void testComputeExistingChecksumWithDifferentAlgorithm() {
-        File file = new File();
-        file.setPath(Common.FLYING_AKI_PATH);
+        File file = fileReader.read(Common.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.MD5, "FF"));
 
         TestProgress progress = new TestProgress();
-        manager.compute(file, Algorithm.SHA256, progress);
+        checksumManager.compute(new List<>(file), Algorithm.SHA256, progress);
 
         Assert.assertNotNull(file.getChecksum());
         Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
@@ -75,18 +76,19 @@ public @Test class ChecksumManagerTest {
     }
 
     private void testClearFile() {
-        File file = new File();
-        file.setPath(Common.FLYING_AKI_PATH);
+        File file = fileReader.read(Common.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
 
-        manager.clear(file);
+        TestProgress progress = new TestProgress();
+        checksumManager.clear(new List<>(file), progress);
 
         Assert.assertNull(file.getChecksum());
+        progress.verify(1L, 1L);
     }
 
     private void testCollectEmpty() {
         TestProgress progress = new TestProgress();
-        var map = manager.collect(null, progress);
+        var map = checksumManager.collect(null, progress);
 
         Assert.assertEquals(true, map.isEmpty());
         progress.verify(0L, 0L);
@@ -95,31 +97,26 @@ public @Test class ChecksumManagerTest {
     private void testCollect() {
         Checksum checksum = new Checksum();
 
-        File firstFile = new File();
-        firstFile.setPath(Path.of("/foo"));
+        File firstFile = f.file("foo");
         firstFile.setChecksum(checksum);
         firstFile.getProperties().setCreated(createDate(1));
         firstFile.getProperties().setModified(createDate(2));
 
-        File secondFile = new File();
-        secondFile.setPath(Path.of("/bar"));
+        File secondFile = f.file("bar");
         secondFile.setChecksum(null);
         secondFile.getProperties().setCreated(createDate(3));
         secondFile.getProperties().setModified(createDate(4));
 
-        Directory directory = new Directory();
-        directory.getFiles().addLast(firstFile);
-        directory.getFiles().addLast(secondFile);
-        directory.getProperties().setTotalFileCount(2L);
+        Directory directory = f.directory("root", firstFile, secondFile);
 
         TestProgress progress = new TestProgress();
-        Map<Path, Pair<Checksum, Date>> map = manager.collect(directory, progress);
+        Map<Path, Pair<Checksum, Date>> map = checksumManager.collect(directory, progress);
 
         Assert.assertEquals(2, map.count());
-        Assert.assertEquals(checksum, map.get(Path.of("/foo")).getKey());
-        Assert.assertEquals(createDate(2), map.get(Path.of("/foo")).getValue());
-        Assert.assertEquals(null, map.get(Path.of("/bar")).getKey());
-        Assert.assertEquals(createDate(4), map.get(Path.of("/bar")).getValue());
+        Assert.assertEquals(checksum, map.get(Path.of("root", "foo")).getKey());
+        Assert.assertEquals(createDate(2), map.get(Path.of("root", "foo")).getValue());
+        Assert.assertEquals(null, map.get(Path.of("root", "bar")).getKey());
+        Assert.assertEquals(createDate(4), map.get(Path.of("root", "bar")).getValue());
         progress.verify(2L, 2L);
     }
 
@@ -127,7 +124,7 @@ public @Test class ChecksumManagerTest {
         TestProgress progress = new TestProgress();
 
         Assertions.assertThatCode(() -> {
-            manager.restore(null, new Map<>(), progress);
+            checksumManager.restore(null, new Map<>(), progress);
         }).doesNotThrowAnyException();
 
         Assert.assertEquals(0L, progress.getLimit());
@@ -143,43 +140,37 @@ public @Test class ChecksumManagerTest {
         Checksum checksum6 = new Checksum();
 
         // test sum 1 -> null
-        File firstFile = new File();
-        firstFile.setPath(Path.of("/1"));
+        File firstFile = f.file("1");
         firstFile.setChecksum(checksum1);
         firstFile.getProperties().setCreated(createDate(1));
         firstFile.getProperties().setModified(createDate(2));
 
         // test null -> sum 2
-        File secondFile = new File();
-        secondFile.setPath(Path.of("/2"));
+        File secondFile = f.file("2");
         secondFile.setChecksum(null);
         secondFile.getProperties().setCreated(createDate(3));
         secondFile.getProperties().setModified(createDate(4));
 
         // test sum 3a -> sum 3b
-        File thirdFile = new File();
-        thirdFile.setPath(Path.of("/3"));
+        File thirdFile = f.file("3");
         thirdFile.setChecksum(checksum3a);
         thirdFile.getProperties().setCreated(createDate(5));
         thirdFile.getProperties().setModified(createDate(6));
 
         // test null -> null (modified, restore skipped)
-        File fourthFile = new File();
-        fourthFile.setPath(Path.of("/4"));
+        File fourthFile = f.file("4");
         fourthFile.setChecksum(null);
         fourthFile.getProperties().setCreated(createDate(7));
         fourthFile.getProperties().setModified(createDate(8));
 
         // test null -> null (not in map)
-        File fifthFile = new File();
-        fifthFile.setPath(Path.of("/5"));
+        File fifthFile = f.file("5");
         fifthFile.setChecksum(null);
         fifthFile.getProperties().setCreated(createDate(9));
         fifthFile.getProperties().setModified(createDate(10));
 
         // test sum 6 -> sum 6 (not in map)
-        File sixthFile = new File();
-        sixthFile.setPath(Path.of("/6"));
+        File sixthFile = f.file("6");
         sixthFile.setChecksum(checksum6);
         sixthFile.getProperties().setCreated(createDate(11));
         sixthFile.getProperties().setModified(createDate(12));
@@ -194,19 +185,19 @@ public @Test class ChecksumManagerTest {
         directory.getProperties().setTotalFileCount(6L);
 
         Map<Path, Pair<Checksum, Date>> map = new Map<>();
-        map.set(Path.of("/1"), new Pair<>(null, createDate(2)));
-        map.set(Path.of("/2"), new Pair<>(checksum2, createDate(4)));
-        map.set(Path.of("/3"), new Pair<>(checksum3b, createDate(6)));
-        map.set(Path.of("/4"), new Pair<>(checksum4, createDate(100)));
+        map.set(Path.of("1"), new Pair<>(null, createDate(2)));
+        map.set(Path.of("2"), new Pair<>(checksum2, createDate(4)));
+        map.set(Path.of("3"), new Pair<>(checksum3b, createDate(6)));
+        map.set(Path.of("4"), new Pair<>(checksum4, createDate(100)));
 
         TestProgress progress = new TestProgress();
-        manager.restore(directory, map, progress);
+        checksumManager.restore(directory, map, progress);
 
-        Assert.assertSame(null, firstFile.getChecksum());
+        Assert.assertNull(firstFile.getChecksum());
         Assert.assertSame(checksum2, secondFile.getChecksum());
         Assert.assertSame(checksum3b, thirdFile.getChecksum());
-        Assert.assertSame(null, fourthFile.getChecksum());
-        Assert.assertSame(null, fifthFile.getChecksum());
+        Assert.assertNull(fourthFile.getChecksum());
+        Assert.assertNull(fifthFile.getChecksum());
         Assert.assertSame(checksum6, sixthFile.getChecksum());
         progress.verify(6L, 6L);
     }

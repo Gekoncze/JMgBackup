@@ -9,7 +9,9 @@ import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
 import cz.mg.collections.Collection;
 import cz.mg.collections.array.Array;
+import cz.mg.collections.set.Set;
 
+import java.nio.file.Path;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -100,11 +102,13 @@ public @Service class TreeIterator {
         progress.setLimit(estimate(nodes, files, directories));
         progress.setValue(0L);
 
+        Set<Path> visited = new Set<>();
+
         for (Node node : nodes) {
             if (node instanceof Directory directory) {
-                forEachRecursive(directory, consumer, progress, files, directories);
+                forEachRecursive(directory, consumer, progress, files, directories, visited);
             } else if (node instanceof File file) {
-                if (files) {
+                if (files && visit(file, visited)) {
                     consumer.accept(file);
                     progress.step();
                 }
@@ -117,22 +121,40 @@ public @Service class TreeIterator {
         @Mandatory Consumer<Node> consumer,
         @Mandatory Progress progress,
         boolean files,
-        boolean directories
+        boolean directories,
+        @Mandatory Set<Path> visited
     ) {
-        if (directories) {
-            consumer.accept(directory);
-            progress.step();
-        }
-
-        if (files) {
-            for (File file : directory.getFiles()) {
-                consumer.accept(file);
+        if (visit(directory, visited)) {
+            if (directories) {
+                consumer.accept(directory);
                 progress.step();
             }
-        }
 
-        for (Directory subdirectory : directory.getDirectories()) {
-            forEachRecursive(subdirectory, consumer, progress, files, directories);
+            if (files) {
+                for (File file : directory.getFiles()) {
+                    if (visit(file, visited)) {
+                        consumer.accept(file);
+                        progress.step();
+                    }
+                }
+            }
+
+            for (Directory subdirectory : directory.getDirectories()) {
+                forEachRecursive(subdirectory, consumer, progress, files, directories, visited);
+            }
+        }
+    }
+
+    private boolean visit(@Mandatory Node node, @Mandatory Set<Path> visited) {
+        Path path = node.getPath();
+        if (visited.contains(path))
+        {
+            return false;
+        }
+        else
+        {
+            visited.set(path);
+            return true;
         }
     }
 

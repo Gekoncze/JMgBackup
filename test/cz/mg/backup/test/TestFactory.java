@@ -10,8 +10,8 @@ import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.FileProperties;
 import cz.mg.backup.entities.Node;
-import cz.mg.backup.services.StatisticsCounter;
-import cz.mg.collections.list.List;
+import cz.mg.backup.services.DirectoryPropertiesCollector;
+import cz.mg.backup.services.TreeIterator;
 
 import java.nio.file.Path;
 
@@ -23,25 +23,31 @@ public @Service class TestFactory {
             synchronized (Service.class) {
                 if (instance == null) {
                     instance = new TestFactory();
-                    instance.statisticsCounter = StatisticsCounter.getInstance();
+                    instance.directoryPropertiesCollector = DirectoryPropertiesCollector.getInstance();
+                    instance.treeIterator = TreeIterator.getInstance();
                 }
             }
         }
         return instance;
     }
 
-    private @Service StatisticsCounter statisticsCounter;
+    private @Service DirectoryPropertiesCollector directoryPropertiesCollector;
+    private @Service TreeIterator treeIterator;
 
     private TestFactory() {
     }
 
     public @Mandatory File file(@Mandatory String name) {
-        return file(Path.of(name));
-    }
-
-    public @Mandatory File file(@Mandatory Path path) {
+        Path path = Path.of(name);
         File file = new File();
         file.setPath(path);
+        file.setRelativePath(path);
+        return file;
+    }
+
+    public @Mandatory File file(@Mandatory String name, @Optional Exception error) {
+        File file = file(name);
+        file.setError(error);
         return file;
     }
 
@@ -50,48 +56,28 @@ public @Service class TestFactory {
         @Optional FileProperties properties,
         @Optional Checksum checksum
     ) {
-        return file(Path.of(name), properties, checksum);
-    }
-
-    public @Mandatory File file(
-        @Mandatory Path path,
-        @Optional FileProperties properties,
-        @Optional Checksum checksum
-    ) {
-        File file = new File();
-        file.setPath(path);
+        File file = file(name);
         file.setProperties(properties != null ? properties : new FileProperties());
         file.setChecksum(checksum);
         return file;
     }
 
-    public @Mandatory Directory directory(@Mandatory String name) {
-        return directory(Path.of(name));
-    }
-
-    public @Mandatory Directory directory(@Mandatory Path path) {
-        Directory directory = new Directory();
-        directory.setPath(path);
-        return directory;
-    }
-
     public @Mandatory Directory directory(@Mandatory String name, Node... nodes) {
-        return directory(Path.of(name), nodes);
-    }
-
-    public @Mandatory Directory directory(@Mandatory Path path, Node... nodes) {
+        Path path = Path.of(name);
         Directory directory = new Directory();
         directory.setPath(path);
+        directory.setRelativePath(path);
         for (Node node : nodes) {
             if (node instanceof File file) {
                 directory.getFiles().addLast(file);
-            }
-
-            if (node instanceof Directory nested) {
+            } else if (node instanceof Directory nested) {
                 directory.getDirectories().addLast(nested);
+            } else {
+                throw new IllegalArgumentException("Unexpected node of type " + node.getClass().getSimpleName() + ".");
             }
+            treeIterator.forEachNode(node, n -> resolvePaths(directory, n), new Progress(), "test");
         }
-        statisticsCounter.count(directory, new Progress());
+        directoryPropertiesCollector.collect(directory);
         return directory;
     }
 
@@ -110,5 +96,17 @@ public @Service class TestFactory {
         checksum.setAlgorithm(algorithm);
         checksum.setHash(hash);
         return checksum;
+    }
+
+    private void resolvePaths(@Mandatory Directory directory, @Mandatory Node child) {
+        child.setPath(Path.of(
+            directory.getPath().getFileName().toString(),
+            child.getPath().toString()
+        ));
+
+        child.setRelativePath(Path.of(
+            directory.getPath().getFileName().toString(),
+            child.getRelativePath().toString()
+        ));
     }
 }

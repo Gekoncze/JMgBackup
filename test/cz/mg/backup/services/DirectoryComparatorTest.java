@@ -4,7 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.*;
-import cz.mg.backup.exceptions.CompareException;
+import cz.mg.backup.services.comparator.DirectoryComparator;
 import cz.mg.backup.test.TestFactory;
 import cz.mg.backup.test.TestProgress;
 import cz.mg.test.Assert;
@@ -20,8 +20,6 @@ public @Test class DirectoryComparatorTest {
         test.testMissingFile();
         test.testDifferentFile();
         test.testRecursive();
-        test.testCompareClearsCompareErrors();
-        test.testClearCompareErrors();
 
         System.out.println("OK");
     }
@@ -71,8 +69,8 @@ public @Test class DirectoryComparatorTest {
     }
 
     private void assertNoErrors(@Mandatory Directory directory) {
-        if (!directory.getErrors().isEmpty()) {
-            throw new AssertException("Unexpected error.", directory.getErrors().getFirst());
+        if (directory.getError() != null) {
+            throw new AssertException("Unexpected error.", directory.getError());
         }
 
         for (Directory child : directory.getDirectories()) {
@@ -80,13 +78,13 @@ public @Test class DirectoryComparatorTest {
         }
 
         for (File child : directory.getFiles()) {
-            assertNoErrors(child);
+            assertNoError(child);
         }
     }
 
-    private void assertNoErrors(@Mandatory File file) {
-        if (!file.getErrors().isEmpty()) {
-            throw new AssertException("Unexpected error.", file.getErrors().getFirst());
+    private void assertNoError(@Mandatory File file) {
+        if (file.getError() != null) {
+            throw new AssertException("Unexpected error.", file.getError());
         }
     }
 
@@ -104,9 +102,9 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         service.compare(firstL1, secondL1, progress);
 
-        Assert.assertEquals(0, firstL1.getErrors().count());
-        Assert.assertEquals(1, secondL2.getErrors().count());
-        Assert.assertEquals(0, secondL1.getErrors().count());
+        Assert.assertNull(firstL1.getError());
+        Assert.assertNotNull(secondL2.getError());
+        Assert.assertNull(secondL1.getError());
         progress.verify(4L, 4L);
     }
 
@@ -118,9 +116,9 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         service.compare(firstL1, secondL1, progress);
 
-        Assert.assertEquals(1, firstL2.getErrors().count());
-        Assert.assertEquals(0, firstL1.getErrors().count());
-        Assert.assertEquals(0, secondL1.getErrors().count());
+        Assert.assertNotNull(firstL2.getError());
+        Assert.assertNull(firstL1.getError());
+        Assert.assertNull(secondL1.getError());
         progress.verify(4L, 4L);
     }
 
@@ -133,10 +131,10 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         service.compare(firstL1, secondL1, progress);
 
-        Assert.assertEquals(1, firstL2.getErrors().count());
-        Assert.assertEquals(0, firstL1.getErrors().count());
-        Assert.assertEquals(1, secondL2.getErrors().count());
-        Assert.assertEquals(0, secondL1.getErrors().count());
+        Assert.assertNotNull(firstL2.getError());
+        Assert.assertNull(firstL1.getError());
+        Assert.assertNotNull(secondL2.getError());
+        Assert.assertNull(secondL1.getError());
         progress.verify(6L, 6L);
     }
 
@@ -154,9 +152,9 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         service.compare(firstL1, secondL1, progress);
 
-        Assert.assertEquals(0, firstL1.getErrors().count());
-        Assert.assertEquals(1, secondL2.getErrors().count());
-        Assert.assertEquals(0, secondL1.getErrors().count());
+        Assert.assertNull(firstL1.getError());
+        Assert.assertNotNull(secondL2.getError());
+        Assert.assertNull(secondL1.getError());
         progress.verify(4L, 4L);
     }
 
@@ -168,9 +166,9 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         service.compare(firstL1, secondL1, progress);
 
-        Assert.assertEquals(1, firstL2.getErrors().count());
-        Assert.assertEquals(0, firstL1.getErrors().count());
-        Assert.assertEquals(0, secondL1.getErrors().count());
+        Assert.assertNotNull(firstL2.getError());
+        Assert.assertNull(firstL1.getError());
+        Assert.assertNull(secondL1.getError());
         progress.verify(4L, 4L);
     }
 
@@ -183,10 +181,10 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         service.compare(firstL1, secondL1, progress);
 
-        Assert.assertEquals(1, firstL2.getErrors().count());
-        Assert.assertEquals(0, firstL1.getErrors().count());
-        Assert.assertEquals(1, secondL2.getErrors().count());
-        Assert.assertEquals(0, secondL1.getErrors().count());
+        Assert.assertNotNull(firstL2.getError());
+        Assert.assertNull(firstL1.getError());
+        Assert.assertNotNull(secondL2.getError());
+        Assert.assertNull(secondL1.getError());
         progress.verify(6L, 6L);
     }
 
@@ -199,10 +197,10 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         service.compare(firstDirectory, secondDirectory, progress);
 
-        Assert.assertEquals(0, firstDirectory.getErrors().count());
-        Assert.assertEquals(1, firstFile.getErrors().count());
-        Assert.assertEquals(0, secondDirectory.getErrors().count());
-        Assert.assertEquals(1, secondFile.getErrors().count());
+        Assert.assertNull(firstDirectory.getError());
+        Assert.assertNotNull(firstFile.getError());
+        Assert.assertNull(secondDirectory.getError());
+        Assert.assertNotNull(secondFile.getError());
         progress.verify(6L, 6L);
     }
 
@@ -221,86 +219,18 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         service.compare(firstL1, secondL1, progress);
 
-        Assert.assertEquals(0, firstL1.getErrors().count());
-        Assert.assertEquals(0, firstL2a.getErrors().count());
-        Assert.assertEquals(0, firstL2.getErrors().count());
-        Assert.assertEquals(0, firstL2b.getErrors().count());
-        Assert.assertEquals(1, firstL3.getErrors().count());
+        Assert.assertNull(firstL1.getError());
+        Assert.assertNull(firstL2a.getError());
+        Assert.assertNull(firstL2.getError());
+        Assert.assertNull(firstL2b.getError());
+        Assert.assertNotNull(firstL3.getError());
 
-        Assert.assertEquals(0, secondL1.getErrors().count());
-        Assert.assertEquals(0, secondL2a.getErrors().count());
-        Assert.assertEquals(0, secondL2.getErrors().count());
-        Assert.assertEquals(0, secondL2b.getErrors().count());
-        Assert.assertEquals(1, secondL3.getErrors().count());
+        Assert.assertNull(secondL1.getError());
+        Assert.assertNull(secondL2a.getError());
+        Assert.assertNull(secondL2.getError());
+        Assert.assertNull(secondL2b.getError());
+        Assert.assertNotNull(secondL3.getError());
 
         progress.verify(18L, 18L);
-    }
-
-    private void testCompareClearsCompareErrors() {
-        Directory first = f.directory("root");
-        Directory second = f.directory("root");
-
-        Assert.assertEquals(0, first.getErrors().count());
-        Assert.assertEquals(0, second.getErrors().count());
-
-        first.getErrors().addLast(new RuntimeException());
-        second.getErrors().addLast(new IllegalArgumentException());
-        first.getErrors().addLast(new CompareException("test"));
-        second.getErrors().addLast(new CompareException("test"));
-        first.getProperties().setTotalErrorCount(2);
-        second.getProperties().setTotalErrorCount(2);
-
-        Assert.assertEquals(2, first.getErrors().count());
-        Assert.assertEquals(2, second.getErrors().count());
-        Assert.assertEquals(2, first.getProperties().getTotalErrorCount());
-        Assert.assertEquals(2, second.getProperties().getTotalErrorCount());
-
-        TestProgress progress = new TestProgress();
-        service.compare(first, second, progress);
-
-        Assert.assertEquals(1, first.getErrors().count());
-        Assert.assertEquals(1, second.getErrors().count());
-        Assert.assertEquals(RuntimeException.class, first.getErrors().getFirst().getClass());
-        Assert.assertEquals(IllegalArgumentException.class, second.getErrors().getFirst().getClass());
-        progress.verify(2L, 2L);
-    }
-
-    private void testClearCompareErrors() {
-        Directory subdirectory = f.directory("subdirectory");
-        subdirectory.getErrors().addLast(new CompareException("0"));
-
-        Directory directory = f.directory("directory", subdirectory);
-        directory.getErrors().addLast(new RuntimeException());
-        directory.getErrors().addLast(new CompareException("1"));
-        directory.getErrors().addLast(new CompareException("2"));
-        directory.getErrors().addLast(new IllegalArgumentException());
-
-        Assert.assertEquals(1, subdirectory.getErrors().count());
-        Assert.assertEquals(4, directory.getErrors().count());
-
-        TestProgress firstProgress = new TestProgress();
-        service.compare(directory, null, firstProgress);
-
-        Assert.assertEquals(1, subdirectory.getErrors().count());
-        Assert.assertEquals(3, directory.getErrors().count());
-        Assert.assertEquals(RuntimeException.class, directory.getErrors().get(0).getClass());
-        Assert.assertEquals(IllegalArgumentException.class, directory.getErrors().get(1).getClass());
-        firstProgress.verify(4L, 3L);
-
-        subdirectory.getErrors().addLast(new CompareException("0"));
-        directory.getErrors().addLast(new CompareException("1"));
-        directory.getErrors().addLast(new CompareException("2"));
-
-        Assert.assertEquals(2, subdirectory.getErrors().count());
-        Assert.assertEquals(5, directory.getErrors().count());
-
-        TestProgress secondProgress = new TestProgress();
-        service.compare(null, directory, secondProgress);
-
-        Assert.assertEquals(1, subdirectory.getErrors().count());
-        Assert.assertEquals(3, directory.getErrors().count());
-        Assert.assertEquals(RuntimeException.class, directory.getErrors().get(0).getClass());
-        Assert.assertEquals(IllegalArgumentException.class, directory.getErrors().get(1).getClass());
-        secondProgress.verify(4L, 3L);
     }
 }

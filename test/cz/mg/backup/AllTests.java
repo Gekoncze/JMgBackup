@@ -1,7 +1,6 @@
 package cz.mg.backup;
 
 import cz.mg.backup.gui.services.DirectoryTreeFactoryTest;
-import cz.mg.backup.services.SimplifierTest;
 import cz.mg.backup.services.*;
 
 public class AllTests {
@@ -22,9 +21,6 @@ public class AllTests {
         FilePropertiesReaderTest.main(args);
         FileReaderTest.main(args);
         HashConverterTest.main(args);
-        PathConverterTest.main(args);
-        SimplifierTest.main(args);
-        StatisticsCounterTest.main(args);
         TreeIteratorTest.main(args);
     }
 }

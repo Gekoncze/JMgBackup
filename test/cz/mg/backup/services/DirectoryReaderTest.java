@@ -30,7 +30,7 @@ public @Test class DirectoryReaderTest {
         TestProgress progress = new TestProgress();
         Directory directory = reader.read(PATH, progress);
 
-        Assert.assertEquals(true, directory.getErrors().isEmpty());
+        Assert.assertNull(directory.getError());
         Assert.assertEquals(PATH, directory.getPath());
         Assert.assertEquals(1, directory.getFiles().count());
         Assert.assertEquals(2, directory.getDirectories().count());
@@ -39,16 +39,16 @@ public @Test class DirectoryReaderTest {
         Assert.assertEquals("root.txt", file.getPath().getFileName().toString());
 
         Directory one = directory.getDirectories().get(0);
-        Assert.assertEquals(true, one.getErrors().isEmpty());
+        Assert.assertNull(one.getError());
         Assert.assertEquals("one", one.getPath().getFileName().toString());
         Assert.assertEquals(1, one.getFiles().count());
 
         File innerFile = one.getFiles().get(0);
-        Assert.assertEquals(true, innerFile.getErrors().isEmpty());
+        Assert.assertNull(innerFile.getError());
         Assert.assertEquals("file", innerFile.getPath().getFileName().toString());
 
         Directory two = directory.getDirectories().get(1);
-        Assert.assertEquals(true, two.getErrors().isEmpty());
+        Assert.assertNull(two.getError());
         Assert.assertEquals("two", two.getPath().getFileName().toString());
         Assert.assertEquals(0, two.getFiles().count());
 

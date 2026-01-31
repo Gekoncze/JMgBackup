@@ -5,6 +5,7 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
+import cz.mg.backup.services.comparator.DirectoryComparator;
 
 import java.nio.file.Path;
 
@@ -17,10 +18,8 @@ public @Service class DirectoryManager {
                 if (instance == null) {
                     instance = new DirectoryManager();
                     instance.directoryReader = DirectoryReader.getInstance();
-                    instance.statisticsCounter = StatisticsCounter.getInstance();
                     instance.checksumManager = ChecksumManager.getInstance();
                     instance.directoryComparator = DirectoryComparator.getInstance();
-                    instance.pathConverter = PathConverter.getInstance();
                 }
             }
         }
@@ -28,37 +27,30 @@ public @Service class DirectoryManager {
     }
 
     private @Service DirectoryReader directoryReader;
-    private @Service StatisticsCounter statisticsCounter;
     private @Service ChecksumManager checksumManager;
     private @Service DirectoryComparator directoryComparator;
-    private @Service PathConverter pathConverter;
 
     private DirectoryManager() {
     }
 
     /**
-     * Loads directory from given path.
+     * Loads directory tree from given path.
      */
     public @Optional Directory load(@Optional Path path, @Mandatory Progress progress) {
         if (path != null) {
-            Directory directory = directoryReader.read(path, progress);
-            pathConverter.computeRelativePaths(directory, progress);
-            statisticsCounter.count(directory, progress);
-            return directory;
+            return directoryReader.read(path, progress);
         } else {
             return null;
         }
     }
 
     /**
-     * Reloads given directory.
+     * Reloads given directory tree.
      * Checksums are retained for unchanged files.
      */
     public void reload(@Mandatory Directory directory, @Mandatory Progress progress) {
         var checksums = checksumManager.collect(directory, progress);
         Directory freshDirectory = directoryReader.read(directory.getPath(), progress);
-        pathConverter.computeRelativePaths(freshDirectory, progress);
-        statisticsCounter.count(freshDirectory, progress);
         checksumManager.restore(freshDirectory, checksums, progress);
         directory.setDirectories(freshDirectory.getDirectories());
         directory.setFiles(freshDirectory.getFiles());
@@ -66,9 +58,8 @@ public @Service class DirectoryManager {
     }
 
     /**
-     * Compares given directories recursively.
-     * If one directory is null, then the other directory will have its compare errors cleared recursively.
-     * Statistics are updated afterward for both directories.
+     * Compares given directory trees.
+     * If one directory tree is null, then the other directory tree will have its compare errors cleared.
      */
     public void compare(@Optional Directory left, @Optional Directory right, @Mandatory Progress progress) {
         if (left != null && right != null) {
@@ -78,8 +69,5 @@ public @Service class DirectoryManager {
         } else if (right != null) {
             directoryComparator.compare(right, right, progress);
         }
-
-        statisticsCounter.count(left, progress);
-        statisticsCounter.count(right, progress);
     }
 }

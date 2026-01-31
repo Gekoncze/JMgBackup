@@ -9,7 +9,6 @@ public @Entity class DirectoryProperties {
     private long totalCount;
     private long totalFileCount;
     private long totalDirectoryCount;
-    private long totalErrorCount;
 
     public DirectoryProperties() {
     }
@@ -48,14 +47,5 @@ public @Entity class DirectoryProperties {
 
     public void setTotalDirectoryCount(long totalDirectoryCount) {
         this.totalDirectoryCount = totalDirectoryCount;
-    }
-
-    @Required @Value
-    public long getTotalErrorCount() {
-        return totalErrorCount;
-    }
-
-    public void setTotalErrorCount(long totalErrorCount) {
-        this.totalErrorCount = totalErrorCount;
     }
 }

@@ -26,9 +26,13 @@ public @Service class FileReader {
     private FileReader() {
     }
 
+    /**
+     * Reads file and its properties from given path.
+     */
     public @Mandatory File read(@Mandatory Path path) {
         File file = new File();
         file.setPath(path);
+        file.setRelativePath(path.getFileName());
         loadProperties(file);
         return file;
     }
@@ -37,7 +41,7 @@ public @Service class FileReader {
         try {
             file.setProperties(propertiesReader.read(file.getPath()));
         } catch (RuntimeException e) {
-            file.getErrors().addLast(e);
+            file.setError(e);
         }
     }
 }

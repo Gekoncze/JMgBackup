@@ -1,4 +1,4 @@
-package cz.mg.backup.services;
+package cz.mg.backup.services.comparator;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
@@ -6,9 +6,9 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
-import cz.mg.backup.exceptions.CompareException;
 import cz.mg.backup.exceptions.MismatchException;
 import cz.mg.backup.exceptions.MissingException;
+import cz.mg.backup.exceptions.NestedException;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 import cz.mg.collections.pair.ReadablePair;
@@ -16,7 +16,7 @@ import cz.mg.collections.pair.ReadablePair;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public @Service class DirectoryComparator {
+public @Service class DirectoryComparator extends NodeComparator {
     private static final String DESCRIPTION = "Compare";
 
     private static volatile @Service DirectoryComparator instance;
@@ -59,7 +59,7 @@ public @Service class DirectoryComparator {
     ) {
         Map<Path, Pair<Directory, Directory>> map = new Map<>();
 
-        // collect first directories to pairs
+        // collect first directory children to pair
         if (first != null) {
             for (Directory child : first.getDirectories()) {
                 Pair<Directory, Directory> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
@@ -68,7 +68,7 @@ public @Service class DirectoryComparator {
             }
         }
 
-        // collect second directories to pairs
+        // collect second directory children to pair
         if (second != null) {
             for (Directory child : second.getDirectories()) {
                 Pair<Directory, Directory> pair = map.getOrCreate(child.getPath().getFileName(), Pair::new);
@@ -89,33 +89,51 @@ public @Service class DirectoryComparator {
         @Optional Directory second,
         @Mandatory Progress progress
     ) {
-        clearCompareErrors(first);
-        clearCompareErrors(second);
+        clearCompareError(first);
+        clearCompareError(second);
 
         if (first != null && second == null) {
-            first.getErrors().addLast(new MissingException("Missing corresponding directory."));
-            first.getProperties().setTotalErrorCount(first.getProperties().getTotalErrorCount() + 1);
+            setCompareError(first, new MissingException("Missing corresponding directory."));
             progress.step();
         }
 
         if (first == null && second != null) {
-            second.getErrors().addLast(new MissingException("Missing corresponding directory."));
-            second.getProperties().setTotalErrorCount(second.getProperties().getTotalErrorCount() + 1);
+            setCompareError(second, new MissingException("Missing corresponding directory."));
             progress.step();
         }
 
         if (first != null && second != null) {
             if (!Objects.equals(first.getPath().getFileName(), second.getPath().getFileName())) {
-                first.getErrors().addLast(new MismatchException("Directory name differs."));
-                first.getProperties().setTotalErrorCount(first.getProperties().getTotalErrorCount() + 1);
-                second.getErrors().addLast(new MismatchException("Directory name differs."));
-                second.getProperties().setTotalErrorCount(second.getProperties().getTotalErrorCount() + 1);
+                setCompareError(first, new MismatchException("Directory name differs."));
+                setCompareError(second, new MismatchException("Directory name differs."));
             }
             progress.step(2);
         }
 
         compareDirectories(first, second, progress);
         compareFiles(first, second, progress);
+        identifyNestedError(first);
+        identifyNestedError(second);
+    }
+
+    private void identifyNestedError(@Optional Directory directory) {
+        if (directory != null && directory.getError() == null && hasNestedError(directory)) {
+            directory.setError(new NestedException("Nested file or directory has an error."));
+        }
+    }
+
+    private boolean hasNestedError(@Mandatory Directory directory) {
+        for (Directory child : directory.getDirectories()) {
+            if (child.getError() != null) {
+                return true;
+            }
+        }
+        for (File child : directory.getFiles()) {
+            if (child.getError() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void compareFiles(
@@ -151,30 +169,18 @@ public @Service class DirectoryComparator {
     }
 
     private void comparePairedFiles(@Optional File first, @Optional File second, @Mandatory Progress progress) {
-        clearCompareErrors(first);
-        clearCompareErrors(second);
+        clearCompareError(first);
+        clearCompareError(second);
 
         if (first != null && second != null) {
             fileComparator.compare(first, second);
             progress.step(2);
         } else if (first != null) {
-            first.getErrors().addLast(new MissingException("Missing corresponding file."));
+            setCompareError(first, new MissingException("Missing corresponding file."));
             progress.step();
         } else if (second != null) {
-            second.getErrors().addLast(new MissingException("Missing corresponding file."));
+            setCompareError(second, new MissingException("Missing corresponding file."));
             progress.step();
-        }
-    }
-
-    private void clearCompareErrors(@Optional Directory directory) {
-        if (directory != null) {
-            directory.getErrors().removeIf(e -> e instanceof CompareException);
-        }
-    }
-
-    private void clearCompareErrors(@Optional File file) {
-        if (file != null) {
-            file.getErrors().removeIf(e -> e instanceof CompareException);
         }
     }
 

@@ -7,6 +7,7 @@ import cz.mg.backup.Configuration;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.*;
 import cz.mg.backup.exceptions.CompareException;
+import cz.mg.backup.exceptions.MismatchException;
 import cz.mg.backup.test.TestFactory;
 import cz.mg.backup.test.TestProgress;
 import cz.mg.test.Assert;
@@ -95,46 +96,38 @@ public @Test class DirectoryManagerTest {
     }
 
     private void testCompare() {
-        Directory a = f.directory(Path.of("foo", "bar"));
-        Directory b = f.directory(Path.of("foo", "foo"));
+        Directory a = f.directory("foo");
+        Directory b = f.directory("bar");
 
         TestProgress progress = new TestProgress();
         directoryManager.compare(a, b, progress);
 
-        Assert.assertNotNull(a.getProperties());
-        Assert.assertNotNull(b.getProperties());
-        Assert.assertEquals(1, a.getProperties().getTotalErrorCount());
-        Assert.assertEquals(1, b.getProperties().getTotalErrorCount());
-        Assert.assertEquals("Directory name differs.", a.getErrors().get(0).getMessage());
-        Assert.assertEquals("Directory name differs.", b.getErrors().get(0).getMessage());
+        Assert.assertNotNull(a.getError());
+        Assert.assertNotNull(b.getError());
+        Assert.assertEquals(MismatchException.class, a.getError().getClass());
+        Assert.assertEquals(MismatchException.class, b.getError().getClass());
         progress.verify();
     }
 
     private void testCompareNullFirst() {
-        Directory a = f.directory(Path.of("foo", "bar"));
-        a.getProperties().setTotalErrorCount(11);
-        a.getErrors().addLast(new CompareException("test"));
+        Directory a = f.directory("foo");
+        a.setError(new CompareException("test"));
 
         TestProgress progress = new TestProgress();
         directoryManager.compare(a, null, progress);
 
-        Assert.assertNotNull(a.getProperties());
-        Assert.assertEquals(0, a.getProperties().getTotalErrorCount());
-        Assert.assertEquals(0, a.getErrors().count());
+        Assert.assertNull(a.getError());
         progress.verify();
     }
 
     private void testCompareNullSecond() {
-        Directory b = f.directory(Path.of("foo", "bar"));
-        b.getProperties().setTotalErrorCount(11);
-        b.getErrors().addLast(new CompareException("test"));
+        Directory b = f.directory("foo");
+        b.setError(new CompareException("test"));
 
         TestProgress progress = new TestProgress();
         directoryManager.compare(null, b, progress);
 
-        Assert.assertNotNull(b.getProperties());
-        Assert.assertEquals(0, b.getProperties().getTotalErrorCount());
-        Assert.assertEquals(0, b.getErrors().count());
+        Assert.assertNull(b.getError());
         progress.verify();
     }
 
@@ -145,20 +138,17 @@ public @Test class DirectoryManagerTest {
             directoryManager.compare(null, null, progress);
         }).doesNotThrowAnyException();
 
-        progress.verify();
+        progress.verifySkip();
     }
 
     private void testCompareSame() {
-        Directory d = f.directory(Path.of("foo", "bar"));
-        d.getProperties().setTotalErrorCount(11);
-        d.getErrors().addLast(new CompareException("test"));
+        Directory d = f.directory("foo");
+        d.setError(new CompareException("test"));
 
         TestProgress progress = new TestProgress();
         directoryManager.compare(d, d, progress);
 
-        Assert.assertNotNull(d.getProperties());
-        Assert.assertEquals(0, d.getProperties().getTotalErrorCount());
-        Assert.assertEquals(0, d.getErrors().count());
+        Assert.assertNull(d.getError());
         progress.verify();
     }
 }

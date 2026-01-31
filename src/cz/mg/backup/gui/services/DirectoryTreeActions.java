@@ -9,7 +9,7 @@ import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.views.directory.DirectoryTreeEntry;
 import cz.mg.backup.gui.views.directory.DirectoryView;
-import cz.mg.backup.services.ChecksumActions;
+import cz.mg.backup.services.ChecksumManager;
 import cz.mg.backup.services.DirectoryManager;
 import cz.mg.backup.services.DirectorySearch;
 import cz.mg.collections.list.List;
@@ -29,8 +29,8 @@ public @Service class DirectoryTreeActions {
                     instance.directoryManager = DirectoryManager.getInstance();
                     instance.directorySearch = DirectorySearch.getInstance();
                     instance.directoryTreeFactory = DirectoryTreeFactory.getInstance();
-                    instance.checksumActions = ChecksumActions.getInstance();
                     instance.fileManager = FileManager.getInstance();
+                    instance.checksumManager = ChecksumManager.getInstance();
                 }
             }
         }
@@ -40,8 +40,8 @@ public @Service class DirectoryTreeActions {
     private @Service DirectoryManager directoryManager;
     private @Service DirectorySearch directorySearch;
     private @Service DirectoryTreeFactory directoryTreeFactory;
-    private @Service ChecksumActions checksumActions;
     private @Service FileManager fileManager;
+    private @Service ChecksumManager checksumManager;
 
     private DirectoryTreeActions() {
     }
@@ -150,7 +150,7 @@ public @Service class DirectoryTreeActions {
             window,
             "Compute checksum",
             progress -> {
-                checksumActions.compute(nodes, algorithm, progress);
+                checksumManager.compute(nodes, algorithm, progress);
                 directoryManager.compare(left, right, progress);
                 roots[0] = directoryTreeFactory.create(left, progress);
                 roots[1] = directoryTreeFactory.create(right, progress);
@@ -179,7 +179,7 @@ public @Service class DirectoryTreeActions {
             window,
             "Clear checksum",
             progress -> {
-                checksumActions.clear(nodes, progress);
+                checksumManager.clear(nodes, progress);
                 directoryManager.compare(left, right, progress);
                 roots[0] = directoryTreeFactory.create(left, progress);
                 roots[1] = directoryTreeFactory.create(right, progress);

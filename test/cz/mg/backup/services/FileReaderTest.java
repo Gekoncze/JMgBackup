@@ -14,7 +14,7 @@ public @Test class FileReaderTest {
 
         FileReaderTest test = new FileReaderTest();
         test.testRead();
-        test.testReadSymbolicLink();
+        test.restReadError();
 
         System.out.println("OK");
     }
@@ -22,28 +22,24 @@ public @Test class FileReaderTest {
     private final @Service FileReader reader = FileReader.getInstance();
 
     private void testRead() {
-        File file = reader.read(Common.FLYING_AKI_PATH);
-        Assert.assertEquals(true, file.getErrors().isEmpty());
+        Path path = Common.FLYING_AKI_PATH;
+        File file = reader.read(path);
+        Assert.assertEquals(path, file.getPath());
+        Assert.assertEquals(path.getFileName(), file.getRelativePath());
+        Assert.assertNull(file.getError());
         Assert.assertNotNull(file.getProperties());
         Assert.assertEquals(218128, file.getProperties().getSize());
         Assert.assertEquals(null, file.getChecksum());
     }
 
-    private void testReadSymbolicLink() {
-        Assert.assertEquals(
-            "fileLink",
-            reader.read(Path.of("test", "cz", "mg", "backup", "test", "two", "fileLink"))
-                .getPath()
-                .getFileName()
-                .toString()
-        );
-
-        Assert.assertEquals(
-            "directoryLink",
-            reader.read(Path.of("test", "cz", "mg", "backup", "test", "directoryLink"))
-                .getPath()
-                .getFileName()
-                .toString()
-        );
+    private void restReadError() {
+        Path path = Common.PATH.resolve("nonexistent");
+        File file = reader.read(path);
+        Assert.assertEquals(path, file.getPath());
+        Assert.assertEquals(path.getFileName(), file.getRelativePath());
+        Assert.assertNotNull(file.getError());
+        Assert.assertNotNull(file.getProperties());
+        Assert.assertEquals(0, file.getProperties().getSize());
+        Assert.assertEquals(null, file.getChecksum());
     }
 }

@@ -3,10 +3,17 @@
 
 ### SOON ###
     add more unit tests
+        add more tests for DirectoryReader (relative path)
+        add more tests for ChecksumManager (list of nodes for compute and clear)
+        add test for DirectoryPropertiesCollector
         add test for ChecksumActions
         add test for FileCopy
+        add test for Format
         add more tests for DirectorySearch (left + right + optional path)
         add more tests for DirectoryManager
+        add more tests for DirectoryComparatorTest (clear compare errors)
+        add more tests for DirectoryComparator (nested error + its overwriting + compare error overwriting)
+        add more tests for DirectoryTreeFactory (root path that has null file name)
 
     show warning banner or some icon or label when an action was cancelled
         explain that ui might be outdated

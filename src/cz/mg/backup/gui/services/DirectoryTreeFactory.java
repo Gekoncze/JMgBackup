@@ -88,7 +88,9 @@ public @Service class DirectoryTreeFactory {
     }
 
     private @Mandatory String getName(@Mandatory Node node) {
-        return node.getPath().getFileName().toString();
+        return node.getPath().getFileName() != null
+            ? node.getPath().getFileName().toString()
+            : "";
     }
 
     private boolean compare(@Mandatory Node a, @Mandatory Node b) {

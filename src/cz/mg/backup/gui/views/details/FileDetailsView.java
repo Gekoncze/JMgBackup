@@ -7,35 +7,37 @@ import cz.mg.backup.gui.components.TextLabel;
 import cz.mg.backup.gui.components.TitleLabel;
 import cz.mg.panel.Panel;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import static cz.mg.backup.gui.common.Format.format;
 
 public @Component class FileDetailsView extends Panel {
-    private static final SimpleDateFormat FORMAT = new SimpleDateFormat("dd. MM. yyyy HH:mm");
-
     public FileDetailsView(@Mandatory File file) {
+        addFields(file);
+        addProperties(file);
+        addChecksum(file);
+        addError(file);
+    }
+
+    private void addFields(@Mandatory File file) {
         addVertical(new TitleLabel(file.getPath().getFileName().toString()));
         addVertical(new TextLabel("Path: " + file.getPath()));
         addVertical(new TextLabel("Relative path: " + file.getRelativePath()));
-        addVertical(new TextLabel("Size: " + String.format("%,d", file.getProperties().getSize()) + " bytes"));
-        addVertical(new TextLabel("Created: " + formatDate(file.getProperties().getCreated())));
-        addVertical(new TextLabel("Modified: " + formatDate(file.getProperties().getModified())));
+    }
 
+    private void addProperties(@Mandatory File file) {
+        addVertical(new TextLabel("Size: " + format(file.getProperties().getSize()) + " bytes"));
+        addVertical(new TextLabel("Created: " + format(file.getProperties().getCreated())));
+        addVertical(new TextLabel("Modified: " + format(file.getProperties().getModified())));
+    }
+
+    private void addChecksum(@Mandatory File file) {
         if (file.getChecksum() != null) {
-            addVertical(new TextLabel(
-                "Hash: " + file.getChecksum().getHash() + " (" + file.getChecksum().getAlgorithm() + ")"
-            ));
-        }
-
-        if (!file.getErrors().isEmpty()) {
-            addVertical(new TextLabel("Errors:"));
-            for (Exception error : file.getErrors()) {
-                addVertical(new TextLabel("    " + error.getClass().getSimpleName() + ": " + error.getMessage()));
-            }
+            addVertical(new TextLabel("Hash: " + file.getChecksum().getHash() + " (" + file.getChecksum().getAlgorithm() + ")"));
         }
     }
 
-    private @Mandatory String formatDate(@Mandatory Date date) {
-        return FORMAT.format(date);
+    private void addError(@Mandatory File file) {
+        if (file.getError() != null) {
+            addVertical(new TextLabel(file.getError().getClass().getSimpleName() + ": " + file.getError().getMessage()));
+        }
     }
 }
