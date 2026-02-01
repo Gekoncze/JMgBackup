@@ -4,12 +4,12 @@ import cz.mg.annotations.classes.Entity;
 import cz.mg.annotations.requirement.Required;
 import cz.mg.annotations.storage.Value;
 
-import java.util.Date;
+import java.time.Instant;
 
 public @Entity class FileProperties {
     private long size;
-    private Date created;
-    private Date modified;
+    private Instant created;
+    private Instant modified;
 
     public FileProperties() {
     }
@@ -24,20 +24,20 @@ public @Entity class FileProperties {
     }
 
     @Required @Value
-    public Date getCreated() {
+    public Instant getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(Instant created) {
         this.created = created;
     }
 
     @Required @Value
-    public Date getModified() {
+    public Instant getModified() {
         return modified;
     }
 
-    public void setModified(Date modified) {
+    public void setModified(Instant modified) {
         this.modified = modified;
     }
 }

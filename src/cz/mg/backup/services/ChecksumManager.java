@@ -10,7 +10,7 @@ import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 
 import java.nio.file.Path;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Objects;
 
 public @Service class ChecksumManager {
@@ -74,11 +74,11 @@ public @Service class ChecksumManager {
      * Collects checksums from given tree.
      * Checksum is stored for each file path together with last modification date.
      */
-    public @Mandatory Map<Path, Pair<Checksum, Date>> collect(
+    public @Mandatory Map<Path, Pair<Checksum, Instant>> collect(
         @Optional Directory directory,
         @Mandatory Progress progress
     ) {
-        Map<Path, Pair<Checksum, Date>> checksums = new Map<>();
+        Map<Path, Pair<Checksum, Instant>> checksums = new Map<>();
         treeIterator.forEachFile(
             directory,
             file -> checksums.set(
@@ -97,13 +97,13 @@ public @Service class ChecksumManager {
      */
     public void restore(
         @Optional Directory directory,
-        @Mandatory Map<Path, Pair<Checksum, Date>> map,
+        @Mandatory Map<Path, Pair<Checksum, Instant>> map,
         @Mandatory Progress progress
     ) {
         treeIterator.forEachFile(
             directory,
             file -> {
-                Pair<Checksum, Date> pair = map.getOptional(file.getPath());
+                var pair = map.getOptional(file.getPath());
                 if (pair != null) {
                     if (Objects.equals(file.getProperties().getModified(), pair.getValue())) {
                         file.setChecksum(pair.getKey());

@@ -104,7 +104,7 @@ public @Test class DirectoryComparatorTest {
 
         Assert.assertNull(firstL1.getError());
         Assert.assertNotNull(secondL2.getError());
-        Assert.assertNull(secondL1.getError());
+        Assert.assertNotNull(secondL1.getError());
         progress.verify(4L, 4L);
     }
 
@@ -117,7 +117,7 @@ public @Test class DirectoryComparatorTest {
         service.compare(firstL1, secondL1, progress);
 
         Assert.assertNotNull(firstL2.getError());
-        Assert.assertNull(firstL1.getError());
+        Assert.assertNotNull(firstL1.getError());
         Assert.assertNull(secondL1.getError());
         progress.verify(4L, 4L);
     }
@@ -132,9 +132,9 @@ public @Test class DirectoryComparatorTest {
         service.compare(firstL1, secondL1, progress);
 
         Assert.assertNotNull(firstL2.getError());
-        Assert.assertNull(firstL1.getError());
+        Assert.assertNotNull(firstL1.getError());
         Assert.assertNotNull(secondL2.getError());
-        Assert.assertNull(secondL1.getError());
+        Assert.assertNotNull(secondL1.getError());
         progress.verify(6L, 6L);
     }
 
@@ -154,7 +154,7 @@ public @Test class DirectoryComparatorTest {
 
         Assert.assertNull(firstL1.getError());
         Assert.assertNotNull(secondL2.getError());
-        Assert.assertNull(secondL1.getError());
+        Assert.assertNotNull(secondL1.getError());
         progress.verify(4L, 4L);
     }
 
@@ -167,7 +167,7 @@ public @Test class DirectoryComparatorTest {
         service.compare(firstL1, secondL1, progress);
 
         Assert.assertNotNull(firstL2.getError());
-        Assert.assertNull(firstL1.getError());
+        Assert.assertNotNull(firstL1.getError());
         Assert.assertNull(secondL1.getError());
         progress.verify(4L, 4L);
     }
@@ -182,9 +182,9 @@ public @Test class DirectoryComparatorTest {
         service.compare(firstL1, secondL1, progress);
 
         Assert.assertNotNull(firstL2.getError());
-        Assert.assertNull(firstL1.getError());
+        Assert.assertNotNull(firstL1.getError());
         Assert.assertNotNull(secondL2.getError());
-        Assert.assertNull(secondL1.getError());
+        Assert.assertNotNull(secondL1.getError());
         progress.verify(6L, 6L);
     }
 
@@ -197,9 +197,9 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         service.compare(firstDirectory, secondDirectory, progress);
 
-        Assert.assertNull(firstDirectory.getError());
+        Assert.assertNotNull(firstDirectory.getError());
         Assert.assertNotNull(firstFile.getError());
-        Assert.assertNull(secondDirectory.getError());
+        Assert.assertNotNull(secondDirectory.getError());
         Assert.assertNotNull(secondFile.getError());
         progress.verify(6L, 6L);
     }
@@ -219,15 +219,15 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         service.compare(firstL1, secondL1, progress);
 
-        Assert.assertNull(firstL1.getError());
+        Assert.assertNotNull(firstL1.getError());
         Assert.assertNull(firstL2a.getError());
-        Assert.assertNull(firstL2.getError());
+        Assert.assertNotNull(firstL2.getError());
         Assert.assertNull(firstL2b.getError());
         Assert.assertNotNull(firstL3.getError());
 
-        Assert.assertNull(secondL1.getError());
+        Assert.assertNotNull(secondL1.getError());
         Assert.assertNull(secondL2a.getError());
-        Assert.assertNull(secondL2.getError());
+        Assert.assertNotNull(secondL2.getError());
         Assert.assertNull(secondL2b.getError());
         Assert.assertNotNull(secondL3.getError());
 

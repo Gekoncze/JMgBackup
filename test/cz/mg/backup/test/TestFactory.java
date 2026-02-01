@@ -14,6 +14,9 @@ import cz.mg.backup.services.DirectoryPropertiesCollector;
 import cz.mg.backup.services.TreeIterator;
 
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public @Service class TestFactory {
     private static volatile @Service TestFactory instance;
@@ -108,5 +111,15 @@ public @Service class TestFactory {
             directory.getPath().getFileName().toString(),
             child.getRelativePath().toString()
         ));
+    }
+
+    public @Mandatory Instant date(int year, int month, int day) {
+        return date(year, month, day, 0, 0);
+    }
+
+    public @Mandatory Instant date(int year, int month, int day, int hour, int minute) {
+        return LocalDateTime.of(year, month, day, hour, minute)
+            .atZone(ZoneId.systemDefault())
+            .toInstant();
     }
 }

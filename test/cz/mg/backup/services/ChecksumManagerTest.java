@@ -14,8 +14,7 @@ import cz.mg.test.Assert;
 import cz.mg.test.Assertions;
 
 import java.nio.file.Path;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
 
 public @Test class ChecksumManagerTest {
     public static void main(String[] args) {
@@ -110,7 +109,7 @@ public @Test class ChecksumManagerTest {
         Directory directory = f.directory("root", firstFile, secondFile);
 
         TestProgress progress = new TestProgress();
-        Map<Path, Pair<Checksum, Date>> map = checksumManager.collect(directory, progress);
+        var map = checksumManager.collect(directory, progress);
 
         Assert.assertEquals(2, map.count());
         Assert.assertEquals(checksum, map.get(Path.of("root", "foo")).getKey());
@@ -184,11 +183,11 @@ public @Test class ChecksumManagerTest {
         directory.getFiles().addLast(sixthFile);
         directory.getProperties().setTotalFileCount(6L);
 
-        Map<Path, Pair<Checksum, Date>> map = new Map<>();
+        Map<Path, Pair<Checksum, Instant>> map = new Map<>();
         map.set(Path.of("1"), new Pair<>(null, createDate(2)));
         map.set(Path.of("2"), new Pair<>(checksum2, createDate(4)));
         map.set(Path.of("3"), new Pair<>(checksum3b, createDate(6)));
-        map.set(Path.of("4"), new Pair<>(checksum4, createDate(100)));
+        map.set(Path.of("4"), new Pair<>(checksum4, createDate(30)));
 
         TestProgress progress = new TestProgress();
         checksumManager.restore(directory, map, progress);
@@ -202,10 +201,7 @@ public @Test class ChecksumManagerTest {
         progress.verify(6L, 6L);
     }
 
-    private @Mandatory Date createDate(int day) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(0);
-        calendar.set(2000, Calendar.JANUARY, day);
-        return calendar.getTime();
+    private @Mandatory Instant createDate(int day) {
+        return f.date(2000, 1, day);
     }
 }

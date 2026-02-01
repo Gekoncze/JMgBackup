@@ -14,8 +14,6 @@ import cz.mg.test.Assert;
 import cz.mg.test.Assertions;
 
 import java.nio.file.Path;
-import java.util.Calendar;
-import java.util.Date;
 
 public @Test class DirectoryManagerTest {
     private static final @Mandatory Path PATH = Configuration.getRoot(DirectoryReaderTest.class).resolve("one");
@@ -82,7 +80,7 @@ public @Test class DirectoryManagerTest {
         Directory directory = directoryManager.load(PATH, new Progress());
         Assert.assertNotNull(directory);
         directory.getFiles().get(0).setChecksum(new Checksum(Algorithm.SHA256, "112233"));
-        directory.getFiles().get(0).getProperties().setModified(new Date(2000, Calendar.DECEMBER, 31));
+        directory.getFiles().get(0).getProperties().setModified(f.date(2000, 12, 31));
 
         TestProgress progress = new TestProgress();
         directoryManager.reload(directory, progress);

@@ -54,8 +54,8 @@ public @Test class DirectoryReaderTest {
 
         Directory two = directory.getDirectories().get(1);
         Assert.assertNull(two.getError());
-        Assert.assertEquals(PATH.resolve("one").resolve("two"), two.getPath());
-        Assert.assertEquals(NAME.resolve("one").resolve("two"), two.getRelativePath());
+        Assert.assertEquals(PATH.resolve("two"), two.getPath());
+        Assert.assertEquals(NAME.resolve("two"), two.getRelativePath());
         Assert.assertEquals(0, two.getFiles().count());
 
         progress.verify(0L, 6L);

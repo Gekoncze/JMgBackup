@@ -8,7 +8,6 @@ import cz.mg.backup.exceptions.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Date;
 
 public @Service class FilePropertiesReader {
     private static volatile @Service FilePropertiesReader instance;
@@ -32,8 +31,8 @@ public @Service class FilePropertiesReader {
             BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
             FileProperties fileProperties = new FileProperties();
             fileProperties.setSize(attributes.size());
-            fileProperties.setCreated(new Date(attributes.creationTime().toMillis()));
-            fileProperties.setModified(new Date(attributes.lastModifiedTime().toMillis()));
+            fileProperties.setCreated(attributes.creationTime().toInstant());
+            fileProperties.setModified(attributes.lastModifiedTime().toInstant());
             return fileProperties;
         } catch (Exception e) {
             throw new FileSystemException(e);

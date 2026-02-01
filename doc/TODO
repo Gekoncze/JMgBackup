@@ -7,7 +7,6 @@
         add test for DirectoryPropertiesCollector
         add test for ChecksumActions
         add test for FileCopy
-        add test for Format
         add more tests for DirectorySearch (left + right + optional path)
         add more tests for DirectoryManager
         add more tests for DirectoryComparatorTest (clear compare errors)
