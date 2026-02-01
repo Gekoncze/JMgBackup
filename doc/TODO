@@ -3,7 +3,6 @@
 
 ### SOON ###
     add more unit tests
-        add more tests for DirectoryReader (relative path)
         add more tests for ChecksumManager (list of nodes for compute and clear)
         add test for DirectoryPropertiesCollector
         add test for ChecksumActions

@@ -13,6 +13,7 @@ import java.nio.file.Path;
 
 public @Test class DirectoryReaderTest {
     private static final @Mandatory Path PATH = Configuration.getRoot(DirectoryReaderTest.class);
+    private static final @Mandatory Path NAME = PATH.getFileName();
 
     public static void main(String[] args) {
         System.out.print("Running " + DirectoryReaderTest.class.getSimpleName() + " ... ");
@@ -32,24 +33,29 @@ public @Test class DirectoryReaderTest {
 
         Assert.assertNull(directory.getError());
         Assert.assertEquals(PATH, directory.getPath());
+        Assert.assertEquals(NAME, directory.getRelativePath());
         Assert.assertEquals(1, directory.getFiles().count());
         Assert.assertEquals(2, directory.getDirectories().count());
 
         File file = directory.getFiles().get(0);
-        Assert.assertEquals("root.txt", file.getPath().getFileName().toString());
+        Assert.assertEquals(PATH.resolve("root.txt"), file.getPath());
+        Assert.assertEquals(NAME.resolve("root.txt"), file.getRelativePath());
 
         Directory one = directory.getDirectories().get(0);
         Assert.assertNull(one.getError());
-        Assert.assertEquals("one", one.getPath().getFileName().toString());
+        Assert.assertEquals(PATH.resolve("one"), one.getPath());
+        Assert.assertEquals(NAME.resolve("one"), one.getRelativePath());
         Assert.assertEquals(1, one.getFiles().count());
 
         File innerFile = one.getFiles().get(0);
         Assert.assertNull(innerFile.getError());
-        Assert.assertEquals("file", innerFile.getPath().getFileName().toString());
+        Assert.assertEquals(PATH.resolve("one").resolve("file"), innerFile.getPath());
+        Assert.assertEquals(NAME.resolve("one").resolve("file"), innerFile.getRelativePath());
 
         Directory two = directory.getDirectories().get(1);
         Assert.assertNull(two.getError());
-        Assert.assertEquals("two", two.getPath().getFileName().toString());
+        Assert.assertEquals(PATH.resolve("one").resolve("two"), two.getPath());
+        Assert.assertEquals(NAME.resolve("one").resolve("two"), two.getRelativePath());
         Assert.assertEquals(0, two.getFiles().count());
 
         progress.verify(0L, 6L);
