@@ -24,7 +24,10 @@ public @Test class ChecksumManagerTest {
         test.testComputeMissingChecksum();
         test.testComputeExistingChecksum();
         test.testComputeExistingChecksumWithDifferentAlgorithm();
+        test.testComputeDirectory();
         test.testClearFile();
+        test.testClearDirectory();
+        test.testClearMultiple();
         test.testCollectEmpty();
         test.testCollect();
         test.testRestoreEmpty();
@@ -34,6 +37,7 @@ public @Test class ChecksumManagerTest {
     }
 
     private final @Service ChecksumManager checksumManager = ChecksumManager.getInstance();
+    private final @Service DirectoryReader directoryReader = DirectoryReader.getInstance();
     private final @Service FileReader fileReader = FileReader.getInstance();
     private final @Service TestFactory f = TestFactory.getInstance();
 
@@ -74,6 +78,24 @@ public @Test class ChecksumManagerTest {
         progress.verify(1L, 1L);
     }
 
+    private void testComputeDirectory() {
+        File file = fileReader.read(Common.FLYING_AKI_PATH);
+        file.setChecksum(new Checksum(Algorithm.MD5, "FF"));
+
+        Directory directory = new Directory();
+        directory.getFiles().addLast(file);
+        directory.getProperties().setTotalFileCount(1L);
+        directory.getProperties().setTotalFileCount(1L);
+
+        TestProgress progress = new TestProgress();
+        checksumManager.compute(new List<>(directory), Algorithm.SHA256, progress);
+
+        Assert.assertNotNull(file.getChecksum());
+        Assert.assertEquals(Algorithm.SHA256, file.getChecksum().getAlgorithm());
+        Assert.assertEquals(Common.FLYING_AKI_HASH, file.getChecksum().getHash());
+        progress.verify(1L, 1L);
+    }
+
     private void testClearFile() {
         File file = fileReader.read(Common.FLYING_AKI_PATH);
         file.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
@@ -83,6 +105,38 @@ public @Test class ChecksumManagerTest {
 
         Assert.assertNull(file.getChecksum());
         progress.verify(1L, 1L);
+    }
+
+    private void testClearDirectory() {
+        File fileOne = f.file("one");
+        fileOne.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
+
+        File fileTwo = f.file("two");
+        fileTwo.setChecksum(new Checksum(Algorithm.MD5, "AA"));
+
+        Directory directory = f.directory("dir", fileOne, fileTwo);
+
+        TestProgress progress = new TestProgress();
+        checksumManager.clear(new List<>(directory), progress);
+
+        Assert.assertNull(fileOne.getChecksum());
+        Assert.assertNull(fileTwo.getChecksum());
+        progress.verify(2L, 2L);
+    }
+
+    private void testClearMultiple() {
+        File fileOne = f.file("one");
+        fileOne.setChecksum(new Checksum(Algorithm.SHA256, "FF"));
+
+        File fileTwo = f.file("two");
+        fileTwo.setChecksum(new Checksum(Algorithm.MD5, "AA"));
+
+        TestProgress progress = new TestProgress();
+        checksumManager.clear(new List<>(fileOne, fileTwo), progress);
+
+        Assert.assertNull(fileOne.getChecksum());
+        Assert.assertNull(fileTwo.getChecksum());
+        progress.verify(2L, 2L);
     }
 
     private void testCollectEmpty() {
