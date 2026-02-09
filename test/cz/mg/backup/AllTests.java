@@ -9,10 +9,11 @@ public class AllTests {
         DirectoryTreeFactoryTest.main(args);
 
         // cz.mg.backup.services
-        ChecksumReaderTest.main(args);
         ChecksumManagerTest.main(args);
+        ChecksumReaderTest.main(args);
         DirectoryComparatorTest.main(args);
         DirectoryManagerTest.main(args);
+        DirectoryPropertiesCollectorTest.main(args);
         DirectoryReaderTest.main(args);
         DirectorySearchTest.main(args);
         DirectorySortTest.main(args);

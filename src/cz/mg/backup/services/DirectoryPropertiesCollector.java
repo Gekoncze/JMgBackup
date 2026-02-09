@@ -54,7 +54,7 @@ public @Service class DirectoryPropertiesCollector {
         properties.setTotalDirectoryCount(properties.getTotalDirectoryCount() + child.getProperties().getTotalDirectoryCount());
     }
 
-    public void collectChild(@Mandatory Directory directory, @Mandatory File child) {
+    private void collectChild(@Mandatory Directory directory, @Mandatory File child) {
         DirectoryProperties properties = directory.getProperties();
         properties.setTotalSize(properties.getTotalSize() + child.getProperties().getSize());
     }

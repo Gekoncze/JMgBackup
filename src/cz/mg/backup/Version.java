@@ -5,7 +5,7 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 
 public @Component class Version {
-    private static final @Mandatory Version INSTANCE = new Version(1, 21, 1, "beta");
+    private static final @Mandatory Version INSTANCE = new Version(1, 21, 2, "beta");
 
     public static @Mandatory Version getInstance() {
         return INSTANCE;
