@@ -4,10 +4,14 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.*;
+import cz.mg.backup.exceptions.CompareException;
+import cz.mg.backup.exceptions.MismatchException;
+import cz.mg.backup.exceptions.MissingException;
 import cz.mg.backup.services.comparator.DirectoryComparator;
 import cz.mg.backup.test.TestFactory;
 import cz.mg.backup.test.TestProgress;
 import cz.mg.test.Assert;
+import cz.mg.test.Assertions;
 import cz.mg.test.exceptions.AssertException;
 
 public @Test class DirectoryComparatorTest {
@@ -20,11 +24,14 @@ public @Test class DirectoryComparatorTest {
         test.testMissingFile();
         test.testDifferentFile();
         test.testRecursive();
+        test.testCompareNullFirst();
+        test.testCompareNullSecond();
+        test.testCompareNullBoth();
 
         System.out.println("OK");
     }
 
-    private final @Service DirectoryComparator service = DirectoryComparator.getInstance();
+    private final @Service DirectoryComparator comparator = DirectoryComparator.getInstance();
     private final @Service TestFactory f = TestFactory.getInstance();
 
     private void testEqual() {
@@ -62,7 +69,7 @@ public @Test class DirectoryComparatorTest {
         long expectedValue
     ) {
         TestProgress progress = new TestProgress();
-        service.compare(first, second, progress);
+        comparator.compare(first, second, progress);
         assertNoErrors(first);
         assertNoErrors(second);
         progress.verify(expectedLimit, expectedValue);
@@ -100,7 +107,7 @@ public @Test class DirectoryComparatorTest {
         Directory secondL1 = f.directory("L1", secondL2);
 
         TestProgress progress = new TestProgress();
-        service.compare(firstL1, secondL1, progress);
+        comparator.compare(firstL1, secondL1, progress);
 
         Assert.assertNull(firstL1.getError());
         Assert.assertNotNull(secondL2.getError());
@@ -114,7 +121,7 @@ public @Test class DirectoryComparatorTest {
         Directory secondL1 = f.directory("L1");
 
         TestProgress progress = new TestProgress();
-        service.compare(firstL1, secondL1, progress);
+        comparator.compare(firstL1, secondL1, progress);
 
         Assert.assertNotNull(firstL2.getError());
         Assert.assertNotNull(firstL1.getError());
@@ -129,7 +136,7 @@ public @Test class DirectoryComparatorTest {
         Directory secondL1 = f.directory("L1", secondL2);
 
         TestProgress progress = new TestProgress();
-        service.compare(firstL1, secondL1, progress);
+        comparator.compare(firstL1, secondL1, progress);
 
         Assert.assertNotNull(firstL2.getError());
         Assert.assertNotNull(firstL1.getError());
@@ -150,7 +157,7 @@ public @Test class DirectoryComparatorTest {
         Directory secondL1 = f.directory("L1", secondL2);
 
         TestProgress progress = new TestProgress();
-        service.compare(firstL1, secondL1, progress);
+        comparator.compare(firstL1, secondL1, progress);
 
         Assert.assertNull(firstL1.getError());
         Assert.assertNotNull(secondL2.getError());
@@ -164,7 +171,7 @@ public @Test class DirectoryComparatorTest {
         Directory secondL1 = f.directory("L1");
 
         TestProgress progress = new TestProgress();
-        service.compare(firstL1, secondL1, progress);
+        comparator.compare(firstL1, secondL1, progress);
 
         Assert.assertNotNull(firstL2.getError());
         Assert.assertNotNull(firstL1.getError());
@@ -179,7 +186,7 @@ public @Test class DirectoryComparatorTest {
         Directory secondL1 = f.directory("L1", secondL2);
 
         TestProgress progress = new TestProgress();
-        service.compare(firstL1, secondL1, progress);
+        comparator.compare(firstL1, secondL1, progress);
 
         Assert.assertNotNull(firstL2.getError());
         Assert.assertNotNull(firstL1.getError());
@@ -195,7 +202,7 @@ public @Test class DirectoryComparatorTest {
         Directory secondDirectory = f.directory("root", secondFile);
 
         TestProgress progress = new TestProgress();
-        service.compare(firstDirectory, secondDirectory, progress);
+        comparator.compare(firstDirectory, secondDirectory, progress);
 
         Assert.assertNotNull(firstDirectory.getError());
         Assert.assertNotNull(firstFile.getError());
@@ -217,7 +224,7 @@ public @Test class DirectoryComparatorTest {
         Directory secondL1 = f.directory("L1", secondL2a, secondL2, secondL2b);
 
         TestProgress progress = new TestProgress();
-        service.compare(firstL1, secondL1, progress);
+        comparator.compare(firstL1, secondL1, progress);
 
         Assert.assertNotNull(firstL1.getError());
         Assert.assertNull(firstL2a.getError());
@@ -232,5 +239,53 @@ public @Test class DirectoryComparatorTest {
         Assert.assertNotNull(secondL3.getError());
 
         progress.verify(18L, 18L);
+    }
+
+    private void testCompareNullFirst() {
+        File file = f.file("file");
+        file.setError(new MismatchException("test"));
+
+        Directory subdirectory = f.directory("subdirectory");
+        subdirectory.setError(new MissingException("test"));
+
+        Directory directory = f.directory("foo", file, subdirectory);
+        directory.setError(new CompareException("test"));
+
+        TestProgress progress = new TestProgress();
+        comparator.compare(directory, null, progress);
+
+        Assert.assertNull(directory.getError());
+        Assert.assertNull(subdirectory.getError());
+        Assert.assertNull(file.getError());
+        progress.verify(3L, 3L);
+    }
+
+    private void testCompareNullSecond() {
+        File file = f.file("file");
+        file.setError(new MismatchException("test"));
+
+        Directory subdirectory = f.directory("subdirectory");
+        subdirectory.setError(new MissingException("test"));
+
+        Directory directory = f.directory("foo", file, subdirectory);
+        directory.setError(new CompareException("test"));
+
+        TestProgress progress = new TestProgress();
+        comparator.compare(null, directory, progress);
+
+        Assert.assertNull(directory.getError());
+        Assert.assertNull(subdirectory.getError());
+        Assert.assertNull(file.getError());
+        progress.verify(3L, 3L);
+    }
+
+    private void testCompareNullBoth() {
+        TestProgress progress = new TestProgress();
+
+        Assertions.assertThatCode(() -> {
+            comparator.compare(null, null, progress);
+        }).doesNotThrowAnyException();
+
+        progress.verifySkip();
     }
 }

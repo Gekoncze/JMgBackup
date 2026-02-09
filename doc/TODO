@@ -5,7 +5,6 @@
     add more unit tests
         add test for FileCopy
         add more tests for DirectorySearch (left + right + optional path)
-        add more tests for DirectoryManager
         add more tests for DirectoryComparator (clear compare errors, nested error + its overwriting + compare error overwriting)
         add more tests for DirectoryTreeFactory (root path that has null file name)
 
@@ -45,8 +44,6 @@
     consider showing disk usage somewhere near top (if possible)
         could then show warning when copy operation may fail because of not enough space in target device
         would need to detect device for path and read its properties somehow
-
-    consider moving compare itself on directory to directory manager
 
     consider moving remaining logic from main window and directory view to directory manager
         such as reload and checksum actions in directory view

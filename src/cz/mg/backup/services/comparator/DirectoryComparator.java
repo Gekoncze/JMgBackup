@@ -9,6 +9,7 @@ import cz.mg.backup.entities.File;
 import cz.mg.backup.exceptions.MismatchException;
 import cz.mg.backup.exceptions.MissingException;
 import cz.mg.backup.exceptions.NestedException;
+import cz.mg.backup.services.TreeIterator;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 import cz.mg.collections.pair.ReadablePair;
@@ -27,6 +28,7 @@ public @Service class DirectoryComparator extends NodeComparator {
                 if (instance == null) {
                     instance = new DirectoryComparator();
                     instance.fileComparator = FileComparator.getInstance();
+                    instance.treeIterator = TreeIterator.getInstance();
                 }
             }
         }
@@ -34,22 +36,37 @@ public @Service class DirectoryComparator extends NodeComparator {
     }
 
     private @Service FileComparator fileComparator;
+    private @Service TreeIterator treeIterator;
 
     private DirectoryComparator() {
     }
 
     /**
-     * Compares given directories and stores compare exceptions in respective files and directories.
+     * Compares given directory trees and stores compare exceptions in respective files and directories.
+     * If one directory tree is null, then the other directory tree will have its compare errors cleared.
      */
     public void compare(
         @Optional Directory first,
         @Optional Directory second,
         @Mandatory Progress progress
     ) {
-        progress.setDescription(DESCRIPTION);
-        progress.setLimit(estimate(first, second));
-        progress.setValue(0L);
-        comparePairedDirectories(first, second, progress);
+        if (first != null && second != null) {
+            progress.setDescription(DESCRIPTION);
+            progress.setLimit(estimateCompare(first, second));
+            progress.setValue(0L);
+            comparePairedDirectories(first, second, progress);
+        } else if (first != null) {
+            clear(first, progress);
+        } else if (second != null) {
+            clear(second, progress);
+        }
+    }
+
+    /**
+     * Clears compare errors in given directory tree.
+     */
+    private void clear(@Mandatory Directory directory, @Mandatory Progress progress) {
+        treeIterator.forEachNode(directory, node -> clearCompareError(node), progress, DESCRIPTION);
     }
 
     private void compareDirectories(
@@ -184,7 +201,7 @@ public @Service class DirectoryComparator extends NodeComparator {
         }
     }
 
-    private long estimate(@Optional Directory first, @Optional Directory second) {
+    private long estimateCompare(@Mandatory Directory first, @Mandatory Directory second) {
         long firstTotal = first != null ? first.getProperties().getTotalCount() : 0L;
         long secondTotal = second != null ? second.getProperties().getTotalCount() : 0L;
         return 2L * (firstTotal + secondTotal) + 2L;

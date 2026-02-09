@@ -6,12 +6,9 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.Configuration;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.*;
-import cz.mg.backup.exceptions.CompareException;
-import cz.mg.backup.exceptions.MismatchException;
 import cz.mg.backup.test.TestFactory;
 import cz.mg.backup.test.TestProgress;
 import cz.mg.test.Assert;
-import cz.mg.test.Assertions;
 
 import java.nio.file.Path;
 
@@ -26,11 +23,6 @@ public @Test class DirectoryManagerTest {
         test.testLoad();
         test.testReloadNotModified();
         test.testReloadModified();
-        test.testCompare();
-        test.testCompareNullFirst();
-        test.testCompareNullSecond();
-        test.testCompareNullBoth();
-        test.testCompareSame();
 
         System.out.println("OK");
     }
@@ -70,9 +62,11 @@ public @Test class DirectoryManagerTest {
         Assert.assertEquals(0, directory.getDirectories().count());
         Assert.assertEquals(1, directory.getFiles().count());
         Assert.assertEquals("file", directory.getFiles().get(0).getPath().getFileName().toString());
-        Assert.assertNotNull(directory.getFiles().get(0).getChecksum());
-        Assert.assertEquals("112233", directory.getFiles().get(0).getChecksum().getHash());
-        Assert.assertEquals(Algorithm.SHA256, directory.getFiles().get(0).getChecksum().getAlgorithm());
+
+        Checksum checksum = directory.getFiles().get(0).getChecksum();
+        Assert.assertNotNull(checksum);
+        Assert.assertEquals("112233", checksum.getHash());
+        Assert.assertEquals(Algorithm.SHA256, checksum.getAlgorithm());
         progress.verify();
     }
 
@@ -90,63 +84,6 @@ public @Test class DirectoryManagerTest {
         Assert.assertEquals(1, directory.getFiles().count());
         Assert.assertEquals("file", directory.getFiles().get(0).getPath().getFileName().toString());
         Assert.assertNull(directory.getFiles().get(0).getChecksum());
-        progress.verify();
-    }
-
-    private void testCompare() {
-        Directory a = f.directory("foo");
-        Directory b = f.directory("bar");
-
-        TestProgress progress = new TestProgress();
-        directoryManager.compare(a, b, progress);
-
-        Assert.assertNotNull(a.getError());
-        Assert.assertNotNull(b.getError());
-        Assert.assertEquals(MismatchException.class, a.getError().getClass());
-        Assert.assertEquals(MismatchException.class, b.getError().getClass());
-        progress.verify();
-    }
-
-    private void testCompareNullFirst() {
-        Directory a = f.directory("foo");
-        a.setError(new CompareException("test"));
-
-        TestProgress progress = new TestProgress();
-        directoryManager.compare(a, null, progress);
-
-        Assert.assertNull(a.getError());
-        progress.verify();
-    }
-
-    private void testCompareNullSecond() {
-        Directory b = f.directory("foo");
-        b.setError(new CompareException("test"));
-
-        TestProgress progress = new TestProgress();
-        directoryManager.compare(null, b, progress);
-
-        Assert.assertNull(b.getError());
-        progress.verify();
-    }
-
-    private void testCompareNullBoth() {
-        TestProgress progress = new TestProgress();
-
-        Assertions.assertThatCode(() -> {
-            directoryManager.compare(null, null, progress);
-        }).doesNotThrowAnyException();
-
-        progress.verifySkip();
-    }
-
-    private void testCompareSame() {
-        Directory d = f.directory("foo");
-        d.setError(new CompareException("test"));
-
-        TestProgress progress = new TestProgress();
-        directoryManager.compare(d, d, progress);
-
-        Assert.assertNull(d.getError());
         progress.verify();
     }
 }

@@ -12,6 +12,7 @@ import cz.mg.backup.gui.views.directory.DirectoryView;
 import cz.mg.backup.services.ChecksumManager;
 import cz.mg.backup.services.DirectoryManager;
 import cz.mg.backup.services.DirectorySearch;
+import cz.mg.backup.services.comparator.DirectoryComparator;
 import cz.mg.collections.list.List;
 
 import java.nio.file.Path;
@@ -27,6 +28,7 @@ public @Service class DirectoryTreeActions {
                 if (instance == null) {
                     instance = new DirectoryTreeActions();
                     instance.directoryManager = DirectoryManager.getInstance();
+                    instance.directoryComparator = DirectoryComparator.getInstance();
                     instance.directorySearch = DirectorySearch.getInstance();
                     instance.directoryTreeFactory = DirectoryTreeFactory.getInstance();
                     instance.fileManager = FileManager.getInstance();
@@ -38,6 +40,7 @@ public @Service class DirectoryTreeActions {
     }
 
     private @Service DirectoryManager directoryManager;
+    private @Service DirectoryComparator directoryComparator;
     private @Service DirectorySearch directorySearch;
     private @Service DirectoryTreeFactory directoryTreeFactory;
     private @Service FileManager fileManager;
@@ -60,7 +63,7 @@ public @Service class DirectoryTreeActions {
             progress -> {
                 if (left != null) directoryManager.reload(left, progress);
                 if (right != null) directoryManager.reload(right, progress);
-                directoryManager.compare(left, right, progress);
+                directoryComparator.compare(left, right, progress);
                 roots[0] = directoryTreeFactory.create(left, progress);
                 roots[1] = directoryTreeFactory.create(right, progress);
                 detailsNode[0] = directorySearch.find(left, right, detailsPath, progress);
@@ -89,7 +92,7 @@ public @Service class DirectoryTreeActions {
             RELOAD_TITLE,
             progress -> {
                 if (directory != null) directoryManager.reload(directory, progress);
-                directoryManager.compare(left, right, progress);
+                directoryComparator.compare(left, right, progress);
                 roots[0] = directoryTreeFactory.create(left, progress);
                 roots[1] = directoryTreeFactory.create(right, progress);
                 detailsNode[0] = directorySearch.find(left, right, detailsPath, progress);
@@ -121,7 +124,7 @@ public @Service class DirectoryTreeActions {
             RELOAD_TITLE,
             progress -> {
                 directories[directoryIndex] = directoryManager.load(directoryPath, progress);
-                directoryManager.compare(directories[0], directories[1], progress);
+                directoryComparator.compare(directories[0], directories[1], progress);
                 roots[0] = directoryTreeFactory.create(directories[0], progress);
                 roots[1] = directoryTreeFactory.create(directories[1], progress);
                 detailsNode[0] = directorySearch.find(directories[0], directories[1], detailsPath, progress);
@@ -151,7 +154,7 @@ public @Service class DirectoryTreeActions {
             "Compute checksum",
             progress -> {
                 checksumManager.compute(nodes, algorithm, progress);
-                directoryManager.compare(left, right, progress);
+                directoryComparator.compare(left, right, progress);
                 roots[0] = directoryTreeFactory.create(left, progress);
                 roots[1] = directoryTreeFactory.create(right, progress);
                 detailsNode[0] = directorySearch.find(left, right, detailsPath, progress);
@@ -180,7 +183,7 @@ public @Service class DirectoryTreeActions {
             "Clear checksum",
             progress -> {
                 checksumManager.clear(nodes, progress);
-                directoryManager.compare(left, right, progress);
+                directoryComparator.compare(left, right, progress);
                 roots[0] = directoryTreeFactory.create(left, progress);
                 roots[1] = directoryTreeFactory.create(right, progress);
                 detailsNode[0] = directorySearch.find(left, right, detailsPath, progress);

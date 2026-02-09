@@ -5,7 +5,6 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
-import cz.mg.backup.services.comparator.DirectoryComparator;
 
 import java.nio.file.Path;
 
@@ -19,7 +18,6 @@ public @Service class DirectoryManager {
                     instance = new DirectoryManager();
                     instance.directoryReader = DirectoryReader.getInstance();
                     instance.checksumManager = ChecksumManager.getInstance();
-                    instance.directoryComparator = DirectoryComparator.getInstance();
                 }
             }
         }
@@ -28,7 +26,6 @@ public @Service class DirectoryManager {
 
     private @Service DirectoryReader directoryReader;
     private @Service ChecksumManager checksumManager;
-    private @Service DirectoryComparator directoryComparator;
 
     private DirectoryManager() {
     }
@@ -55,19 +52,5 @@ public @Service class DirectoryManager {
         directory.setDirectories(freshDirectory.getDirectories());
         directory.setFiles(freshDirectory.getFiles());
         directory.setProperties(freshDirectory.getProperties());
-    }
-
-    /**
-     * Compares given directory trees.
-     * If one directory tree is null, then the other directory tree will have its compare errors cleared.
-     */
-    public void compare(@Optional Directory left, @Optional Directory right, @Mandatory Progress progress) {
-        if (left != null && right != null) {
-            directoryComparator.compare(left, right, progress);
-        } else if (left != null) {
-            directoryComparator.compare(left, left, progress);
-        } else if (right != null) {
-            directoryComparator.compare(right, right, progress);
-        }
     }
 }
