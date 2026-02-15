@@ -6,7 +6,7 @@ import cz.mg.backup.Info;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Settings;
 import cz.mg.backup.gui.views.details.DetailsView;
-import cz.mg.backup.gui.views.directory.DirectoryView;
+import cz.mg.backup.gui.views.directory.DirectoryTreeView;
 import cz.mg.backup.gui.menu.MainMenuBar;
 import cz.mg.panel.Panel;
 
@@ -23,8 +23,8 @@ public @Component class MainWindow extends JFrame {
 
 
     private final @Mandatory Settings settings = new Settings(Algorithm.SHA256);
-    private final @Mandatory DirectoryView leftView;
-    private final @Mandatory DirectoryView rightView;
+    private final @Mandatory DirectoryTreeView leftView;
+    private final @Mandatory DirectoryTreeView rightView;
     private final @Mandatory DetailsView detailsView;
 
     public MainWindow() {
@@ -35,8 +35,8 @@ public @Component class MainWindow extends JFrame {
         setJMenuBar(new MainMenuBar(this));
 
         JSplitPane compareSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        compareSplitPane.setLeftComponent(leftView = new DirectoryView(this));
-        compareSplitPane.setRightComponent(rightView = new DirectoryView(this));
+        compareSplitPane.setLeftComponent(leftView = new DirectoryTreeView(this));
+        compareSplitPane.setRightComponent(rightView = new DirectoryTreeView(this));
         compareSplitPane.setResizeWeight(0.5);
         compareSplitPane.setMinimumSize(new Dimension(0, 0));
 
@@ -55,11 +55,11 @@ public @Component class MainWindow extends JFrame {
         return settings;
     }
 
-    public @Mandatory DirectoryView getLeftView() {
+    public @Mandatory DirectoryTreeView getLeftView() {
         return leftView;
     }
 
-    public @Mandatory DirectoryView getRightView() {
+    public @Mandatory DirectoryTreeView getRightView() {
         return rightView;
     }
 

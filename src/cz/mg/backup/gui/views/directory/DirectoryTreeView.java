@@ -8,6 +8,7 @@ import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.event.*;
 import cz.mg.backup.gui.services.DirectoryTreeActions;
+import cz.mg.backup.gui.views.directory.wrapper.AbstractTreeNode;
 import cz.mg.collections.list.List;
 import cz.mg.panel.Panel;
 
@@ -17,7 +18,7 @@ import javax.swing.tree.TreePath;
 import java.awt.event.MouseEvent;
 import java.nio.file.Path;
 
-public @Component class DirectoryView extends Panel {
+public @Component class DirectoryTreeView extends Panel {
     private static final int MARGIN = 4;
     private static final int PADDING = 4;
 
@@ -30,7 +31,7 @@ public @Component class DirectoryView extends Panel {
 
     private @Optional TreePath popupMenuPath;
 
-    public DirectoryView(@Mandatory MainWindow window) {
+    public DirectoryTreeView(@Mandatory MainWindow window) {
         this.window = window;
         setMargin(MARGIN);
         setPadding(PADDING);
@@ -65,22 +66,12 @@ public @Component class DirectoryView extends Panel {
         return selectionView;
     }
 
-    public @Optional Directory getDirectory() {
-        DirectoryTreeEntry entry = tree.getRoot();
-        return entry == null ? null : (Directory) entry.get();
+    public @Optional Directory getRoot() {
+        return tree.getRoot();
     }
 
-    public void setRoot(@Optional DirectoryTreeEntry root) {
-        List<TreePath> expandedPaths = TreeUtils.getExpandedPaths(tree);
-        TreePath collapsedRootPath = TreeUtils.getCollapsedRootPath(tree);
-        List<TreePath> selectedPaths = TreeUtils.getSelectedPaths(tree);
-
+    public void setRoot(@Optional Directory root) {
         tree.setRoot(root);
-
-        TreeUtils.expandPaths(tree, expandedPaths);
-        TreeUtils.collapseRootPath(tree, collapsedRootPath);
-        TreeUtils.selectPaths(tree, selectedPaths);
-
         popupMenuPath = null;
     }
 
@@ -163,6 +154,6 @@ public @Component class DirectoryView extends Panel {
     }
 
     private @Optional Node getNode(@Optional TreePath path) {
-        return path == null ? null : ((DirectoryTreeEntry) path.getLastPathComponent()).get();
+        return path == null ? null : ((AbstractTreeNode) path.getLastPathComponent()).getNode();
     }
 }

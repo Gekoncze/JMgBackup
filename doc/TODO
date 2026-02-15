@@ -5,7 +5,10 @@
     add more unit tests
         add test for FileCopy
         add more tests for DirectoryComparator (clear compare errors, nested error + its overwriting + compare error overwriting)
-        add more tests for DirectoryTreeFactory (root path that has null file name)
+
+    add more ui unit tests
+        add tests for wrapper tree nodes (don't forget root path that has null file name)
+        add test for directory tree (restore expanded, collapsed and selected nodes)
 
     show warning banner or some icon or label when an action was cancelled
         explain that ui might be outdated

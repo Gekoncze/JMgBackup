@@ -7,6 +7,7 @@ import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.exceptions.NestedException;
 import cz.mg.backup.gui.icons.Icons;
+import cz.mg.backup.gui.views.directory.wrapper.AbstractTreeNode;
 import cz.mg.panel.Panel;
 import cz.mg.panel.settings.Alignment;
 import cz.mg.panel.settings.Fill;
@@ -31,7 +32,7 @@ import java.awt.*;
         int row,
         boolean focused
     ) {
-        Node node = ((DirectoryTreeEntry) object).get();
+        Node node = ((AbstractTreeNode) object).getNode();
 
         JLabel icon = new JLabel(getIcon(node));
         JLabel label = new JLabel(getText(node));
