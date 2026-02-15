@@ -11,7 +11,7 @@ import cz.mg.panel.settings.Alignment;
 
 import javax.swing.*;
 
-public @Component class HashFunctionDialog extends Dialog {
+public @Component class SettingsDialog extends Dialog {
     private static final int MARGIN = 8;
     private static final int PADDING = 8;
     private static final int MIN_WIDTH = 256;
@@ -19,21 +19,24 @@ public @Component class HashFunctionDialog extends Dialog {
     private final @Mandatory MainWindow window;
     private final @Mandatory JComboBox<Algorithm> algorithmComboBox;
 
-    private HashFunctionDialog(@Mandatory MainWindow window) {
+    private SettingsDialog(@Mandatory MainWindow window) {
         super(window);
         this.window = window;
-        setTitle("Hash algorithm");
+        setTitle("Settings");
 
         algorithmComboBox = new JComboBox<>(Algorithm.values());
         algorithmComboBox.setSelectedItem(window.getSettings().getAlgorithm());
 
+        Panel panel = new Panel(MARGIN, PADDING);
+
+        Panel hashAlgorithmPanel = new Panel(0, PADDING, Alignment.LEFT);
+        hashAlgorithmPanel.addHorizontal(new JLabel("Hash algorithm"));
+        hashAlgorithmPanel.addHorizontal(algorithmComboBox, 1, 1);
+        panel.addVertical(hashAlgorithmPanel, 1, 0);
+
         Panel buttonsPanel = new Panel(0, PADDING, Alignment.RIGHT);
         buttonsPanel.addHorizontal(new TextButton("Cancel", this::cancel));
         buttonsPanel.addHorizontal(new TextButton("Ok", this::ok));
-
-        Panel panel = new Panel(MARGIN, PADDING);
-        panel.addVertical(new JLabel("Hash algorithm"));
-        panel.addVertical(algorithmComboBox, 1, 1);
         panel.addVertical(buttonsPanel, 1, 0);
 
         getContentPane().add(panel);
@@ -57,6 +60,6 @@ public @Component class HashFunctionDialog extends Dialog {
     }
 
     public static void show(@Mandatory MainWindow window) {
-        new HashFunctionDialog(window).setVisible(true);
+        new SettingsDialog(window).setVisible(true);
     }
 }

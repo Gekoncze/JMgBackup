@@ -3,18 +3,20 @@ package cz.mg.backup.gui.components;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.gui.event.UserMouseClickListener;
+import cz.mg.backup.gui.services.Platform;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
-import java.net.URI;
 import java.util.HashMap;
 
 public @Component class UrlLabel extends JLabel {
+    private final @Mandatory Platform platform = Platform.getInstance();
+
     public UrlLabel(@Mandatory String text) {
         super(text);
-        addMouseListener(new UserMouseClickListener(this::onClicked));
+        addMouseListener(new UserMouseClickListener(MouseEvent.BUTTON1, this::onClicked));
         setForeground(Color.BLUE);
         setFont(createFont(getFont()));
         setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -28,10 +30,6 @@ public @Component class UrlLabel extends JLabel {
     }
 
     private void onClicked(@Mandatory MouseEvent event) {
-        try {
-            Desktop.getDesktop().browse(new URI(getText()));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        platform.openBrowser(getText());
     }
 }

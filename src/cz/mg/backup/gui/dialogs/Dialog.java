@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
 
-public @Component class Dialog extends JDialog {
+public abstract @Component class Dialog extends JDialog {
     public Dialog(@Mandatory JFrame window) {
         super(window, true);
     }

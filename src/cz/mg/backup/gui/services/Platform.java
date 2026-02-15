@@ -7,30 +7,29 @@ import cz.mg.backup.exceptions.PlatformException;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public @Service class FileManager {
-    private static volatile @Service FileManager instance;
+public @Service class Platform {
+    private static volatile @Service Platform instance;
 
-    public static @Service FileManager getInstance() {
+    public static @Service Platform getInstance() {
         if (instance == null) {
             synchronized (Service.class) {
                 if (instance == null) {
-                    instance = new FileManager();
+                    instance = new Platform();
                 }
             }
         }
         return instance;
     }
 
-    private FileManager() {
+    private Platform() {
     }
 
-    public void open(@Mandatory Path path) {
-        if (!Desktop.isDesktopSupported()) {
-            throw new PlatformException("File manager is not supported on this platform.");
-        }
+    public void openFileManager(@Mandatory Path path) {
+        validate();
 
         try {
             if (!Files.exists(path)) {
@@ -50,6 +49,22 @@ public @Service class FileManager {
             throw new FileSystemException("Could not open path '" + path + "'.");
         } catch (IOException e) {
             throw new FileSystemException("Could not open path '" + path + "'.", e);
+        }
+    }
+
+    public void openBrowser(@Mandatory String url) {
+        validate();
+
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void validate() {
+        if (!Desktop.isDesktopSupported()) {
+            throw new PlatformException("Desktop operations are not supported on your system.");
         }
     }
 }

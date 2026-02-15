@@ -2,11 +2,10 @@
     ...
 
 ### SOON ###
-    refactor directory tree actions to separate files
-
     add more unit tests
         add test for FileCopy
         add more tests for DirectoryComparator (clear compare errors, nested error + its overwriting + compare error overwriting)
+        add tests for actions
 
     add more ui unit tests
         add test for state service

@@ -7,9 +7,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public @Component class UserKeyPressListener implements UserListener, KeyListener {
+    private final int key;
     private final @Mandatory Handler handler;
 
-    public UserKeyPressListener(@Mandatory Handler handler) {
+    public UserKeyPressListener(int key, @Mandatory Handler handler) {
+        this.key = key;
         this.handler = handler;
     }
 
@@ -19,7 +21,9 @@ public @Component class UserKeyPressListener implements UserListener, KeyListene
 
     @Override
     public void keyPressed(@Mandatory KeyEvent event) {
-        handleExceptions(() -> handler.run(event));
+        if (event.getKeyCode() == key) {
+            handleExceptions(() -> handler.run());
+        }
     }
 
     @Override
@@ -27,6 +31,6 @@ public @Component class UserKeyPressListener implements UserListener, KeyListene
     }
 
     public interface Handler {
-        void run(@Mandatory KeyEvent event);
+        void run();
     }
 }

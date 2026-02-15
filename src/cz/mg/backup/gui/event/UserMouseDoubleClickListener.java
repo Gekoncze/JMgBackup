@@ -7,17 +7,19 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public @Component class UserMouseDoubleClickListener implements UserListener, MouseListener {
+    private final int button;
     private final @Mandatory Handler handler;
 
-    public UserMouseDoubleClickListener(@Mandatory Handler handler) {
+    public UserMouseDoubleClickListener(int button, @Mandatory Handler handler) {
+        this.button = button;
         this.handler = handler;
     }
 
     @Override
     public void mouseClicked(@Mandatory MouseEvent event) {
-        if (event.getClickCount() == 2)
+        if (event.getButton() == button && event.getClickCount() == 2)
         {
-            handleExceptions(() -> handler.run(event));
+            handleExceptions(() -> handler.run());
         }
     }
 
@@ -38,6 +40,6 @@ public @Component class UserMouseDoubleClickListener implements UserListener, Mo
     }
 
     public interface Handler {
-        void run(@Mandatory MouseEvent event);
+        void run();
     }
 }

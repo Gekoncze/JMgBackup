@@ -6,9 +6,12 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
+import cz.mg.backup.gui.actions.directory.menu.ClearChecksumAction;
+import cz.mg.backup.gui.actions.directory.menu.ComputeChecksumAction;
+import cz.mg.backup.gui.actions.directory.menu.OpenFileManagerAction;
+import cz.mg.backup.gui.components.ActionItem;
 import cz.mg.backup.gui.entities.Side;
 import cz.mg.backup.gui.event.*;
-import cz.mg.backup.gui.services.DirectoryTreeActions;
 import cz.mg.backup.gui.views.directory.wrapper.AbstractTreeNode;
 import cz.mg.collections.list.List;
 import cz.mg.panel.Panel;
@@ -22,8 +25,6 @@ import java.nio.file.Path;
 public @Component class DirectoryTreeView extends Panel {
     private static final int MARGIN = 4;
     private static final int PADDING = 4;
-
-    private final @Mandatory DirectoryTreeActions actions = DirectoryTreeActions.getInstance();
 
     private final @Mandatory MainWindow window;
     private final @Mandatory Side side;
@@ -39,30 +40,20 @@ public @Component class DirectoryTreeView extends Panel {
         setMargin(MARGIN);
         setPadding(PADDING);
 
-        selectionView = new PathSelectionView();
-        selectionView.addChangeListener(new UserPathChangeListener(this::onPathChanged));
-        selectionView.addReloadListener(new UserButtonListener(this::onReloadClicked));
+        selectionView = new PathSelectionView(window, this);
         addVertical(selectionView, 1, 0);
 
         tree = new DirectoryTree();
         tree.setTransferHandler(new UserDragAndDropListener(this::onFileDropped));
-        tree.addMouseListener(new UserMouseClickListener(this::onMouseClicked));
+        tree.addMouseListener(new UserMouseClickListener(MouseEvent.BUTTON1, this::updateDetails));
+        tree.addMouseListener(new UserMouseClickListener(MouseEvent.BUTTON3, this::showPopupMenu));
         tree.addTreeSelectionListener(new UserTreeSelectionListener(this::onSelectionChanged));
         addVertical(new JScrollPane(tree), 1, 1);
 
         popupMenu = new JPopupMenu();
-
-        JMenuItem computeChecksumMenuItem = new JMenuItem("Compute checksum");
-        computeChecksumMenuItem.addActionListener(new UserActionListener(this::onComputeChecksumClicked));
-        popupMenu.add(computeChecksumMenuItem);
-
-        JMenuItem clearChecksumMenuItem = new JMenuItem("Clear checksum");
-        clearChecksumMenuItem.addActionListener(new UserActionListener(this::onClearChecksumClicked));
-        popupMenu.add(clearChecksumMenuItem);
-
-        JMenuItem openInFileManagerMenuItem = new JMenuItem("Open in file manager");
-        openInFileManagerMenuItem.addActionListener(new UserActionListener(this::onOpenInFileManagerClicked));
-        popupMenu.add(openInFileManagerMenuItem);
+        popupMenu.add(new ActionItem(new ComputeChecksumAction(window, this)));
+        popupMenu.add(new ActionItem(new ClearChecksumAction(window, this)));
+        popupMenu.add(new ActionItem(new OpenFileManagerAction(this)));
     }
 
     public @Mandatory Side getSide() {
@@ -82,42 +73,8 @@ public @Component class DirectoryTreeView extends Panel {
         popupMenuPath = null;
     }
 
-    private void onPathChanged() {
-        actions.load(window, this);
-    }
-
-    private void onReloadClicked() {
-        actions.reload(window, this);
-    }
-
-    private void onComputeChecksumClicked() {
-        actions.computeChecksum(window, this);
-    }
-
-    private void onClearChecksumClicked() {
-        actions.clearChecksum(window, this);
-    }
-
-    private void onOpenInFileManagerClicked() {
-        actions.openInFileManager(this);
-    }
-
     private void onFileDropped(@Mandatory Path path) {
         selectionView.setPath(path);
-    }
-
-    private void onMouseClicked(@Mandatory MouseEvent event) {
-        if (event.getButton() == MouseEvent.BUTTON1) {
-            TreePath path = tree.getPathForLocation(event.getX(), event.getY());
-            Node node = getNode(path);
-            if (node != null) {
-                window.getDetailsView().setNode(node);
-            }
-        }
-
-        if (event.getButton() == MouseEvent.BUTTON3) {
-            showPopupMenu(event);
-        }
     }
 
     private void onSelectionChanged(@Mandatory TreeSelectionEvent event) {
@@ -129,6 +86,13 @@ public @Component class DirectoryTreeView extends Panel {
                 }
                 break;
             }
+        }
+    }
+
+    private void updateDetails(@Mandatory MouseEvent event) {
+        Node node = getNode(tree.getPathForLocation(event.getX(), event.getY()));
+        if (node != null) {
+            window.getDetailsView().setNode(node);
         }
     }
 

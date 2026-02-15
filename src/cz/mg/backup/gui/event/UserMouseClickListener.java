@@ -7,15 +7,19 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public @Component class UserMouseClickListener implements UserListener, MouseListener {
+    private final int button;
     private final @Mandatory Handler handler;
 
-    public UserMouseClickListener(@Mandatory Handler handler) {
+    public UserMouseClickListener(int button, @Mandatory Handler handler) {
+        this.button = button;
         this.handler = handler;
     }
 
     @Override
     public void mouseClicked(@Mandatory MouseEvent event) {
-        handleExceptions(() -> handler.run(event));
+        if (event.getButton() == button) {
+            handleExceptions(() -> handler.run(event));
+        }
     }
 
     @Override
@@ -35,6 +39,6 @@ public @Component class UserMouseClickListener implements UserListener, MouseLis
     }
 
     public interface Handler {
-        void run(@Mandatory MouseEvent event);
+        void run(MouseEvent event);
     }
 }

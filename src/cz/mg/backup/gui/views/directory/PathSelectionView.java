@@ -3,170 +3,36 @@ package cz.mg.backup.gui.views.directory;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
-import cz.mg.backup.gui.components.IconButton;
-import cz.mg.backup.gui.event.*;
-import cz.mg.backup.gui.icons.Icons;
-import cz.mg.collections.list.List;
+import cz.mg.backup.gui.MainWindow;
+import cz.mg.backup.gui.actions.directory.LoadAction;
+import cz.mg.backup.gui.actions.directory.OpenAction;
+import cz.mg.backup.gui.actions.directory.ReloadAction;
+import cz.mg.backup.gui.components.ActionButton;
+import cz.mg.backup.gui.components.ActionPathField;
 import cz.mg.panel.Panel;
 
 import javax.swing.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 public @Component class PathSelectionView extends Panel {
     private static final int MARGIN = 0;
     private static final int PADDING = 4;
 
-    private final @Mandatory List<UserPathChangeListener> changeListeners = new List<>();
-    private final @Mandatory List<UserButtonListener> reloadListeners = new List<>();
-    private final @Mandatory JTextField pathField;
-    private final @Mandatory JFileChooser directoryChooser;
-    private @Optional Path path;
-    private @Optional Action action;
-    private @Optional String oldText;
+    private final ActionPathField field;
 
-    public PathSelectionView() {
+    public PathSelectionView(@Mandatory MainWindow window, @Mandatory DirectoryTreeView parent) {
         super(MARGIN, PADDING);
-
-        pathField = new JTextField();
-        pathField.setEditable(false);
-        pathField.addMouseListener(new UserMouseDoubleClickListener(this::onMouseDoubleClicked));
-        pathField.addFocusListener(new UserFocusLostListener(this::onFocusLost));
-        pathField.addKeyListener(new UserKeyPressListener(this::onKeyPressed));
-
         addHorizontal(new JLabel("Directory"));
-        addHorizontal(pathField, 1, 0);
-        addHorizontal(new IconButton(Icons.STANDARD_OPEN_20, "Open", this::select));
-        addHorizontal(new IconButton(Icons.STANDARD_RELOAD_20, "Reload", this::onReloadClicked));
-
-        directoryChooser = new JFileChooser();
-        directoryChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-        directoryChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        addHorizontal(field = new ActionPathField(new LoadAction(window, parent)), 1, 0);
+        addHorizontal(new ActionButton(new OpenAction(window, parent)));
+        addHorizontal(new ActionButton(new ReloadAction(window, parent)));
     }
 
     public @Optional Path getPath() {
-        return path;
+        return field.getValue();
     }
 
     public void setPath(@Optional Path path) {
-        this.path = path;
-        refresh();
-        triggerChangeListeners();
-    }
-
-    private void select() {
-        int result = directoryChooser.showOpenDialog(this);
-        File file = directoryChooser.getSelectedFile();
-        if (file != null && result == JFileChooser.APPROVE_OPTION) {
-            setPath(file.toPath());
-        }
-    }
-
-    private void refresh() {
-        pathField.setText(path == null ? "" : path.toString());
-    }
-
-    public void addChangeListener(@Mandatory UserPathChangeListener listener) {
-        changeListeners.addLast(listener);
-    }
-
-    private void triggerChangeListeners() {
-        for (var listener : changeListeners) {
-            listener.pathChanged();
-        }
-    }
-
-    public void addReloadListener(@Mandatory UserButtonListener listener) {
-        reloadListeners.addLast(listener);
-    }
-
-    private void triggerReloadListeners() {
-        for (var listener : reloadListeners) {
-            listener.buttonClicked();
-        }
-    }
-
-    private void onMouseDoubleClicked(@Mandatory MouseEvent event) {
-        enableChanges();
-    }
-
-    private void onFocusLost() {
-        processPathChanges();
-    }
-
-    private void onKeyPressed(KeyEvent event) {
-        if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-            action = Action.APPLY;
-            processPathChanges();
-        } else if (event.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            action = Action.CANCEL;
-            processPathChanges();
-        }
-    }
-
-    private void enableChanges() {
-        pathField.setEditable(true);
-        pathField.requestFocus();
-        action = Action.CANCEL;
-        oldText = pathField.getText().trim();
-    }
-
-    private void processPathChanges() {
-        String newText = pathField.getText().trim();
-        if (action == Action.APPLY && !Objects.equals(oldText, newText)) {
-            applyChanges();
-        } else {
-            cancelChanges();
-        }
-    }
-
-    private void applyChanges() {
-        action = null;
-        pathField.setEditable(false);
-        setPathFromField();
-        oldText = null;
-    }
-
-    private void cancelChanges() {
-        action = null;
-        pathField.setEditable(false);
-        refresh();
-        oldText = null;
-    }
-
-    private void setPathFromField() {
-        String text = pathField.getText().trim();
-        Path newPath = text.isEmpty() ? null : Path.of(pathField.getText());
-        if (newPath != null) {
-            if (!Files.exists(newPath)) {
-                JOptionPane.showMessageDialog(
-                    getTopLevelAncestor(),
-                    "Selected directory does not exist.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-                );
-            } else if (!Files.isDirectory(newPath)) {
-                JOptionPane.showMessageDialog(
-                    getTopLevelAncestor(),
-                    "Selected file is not a directory.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-                );
-            }
-        }
-        setPath(newPath);
-    }
-
-    private void onReloadClicked() {
-        triggerReloadListeners();
-    }
-
-    private enum Action {
-        APPLY,
-        CANCEL
+        field.setValue(path);
     }
 }
