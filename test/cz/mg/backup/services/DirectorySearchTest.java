@@ -7,19 +7,20 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.*;
 import cz.mg.backup.test.TestFactory;
 import cz.mg.backup.test.TestProgress;
-import cz.mg.test.Assert;
 import cz.mg.test.Assertions;
 
 import java.nio.file.Path;
+import java.util.function.Consumer;
 
 public @Test class DirectorySearchTest {
     public static void main(String[] args) {
         System.out.print("Running " + DirectorySearchTest.class.getSimpleName() + " ... ");
 
         DirectorySearchTest test = new DirectorySearchTest();
-        test.testEmpty();
-        test.testSingle();
-        test.testMultiple();
+        test.testNoDirectory();
+        test.testSimpleSearch();
+        test.testNestedSearch();
+        test.testTwoDirectorySearch();
 
         System.out.println("OK");
     }
@@ -27,39 +28,62 @@ public @Test class DirectorySearchTest {
     private final @Service DirectorySearch search = DirectorySearch.getInstance();
     private final @Service TestFactory f = TestFactory.getInstance();
 
-    private void testEmpty() {
-        test(null, Path.of("/f"), null, 0L);
+    private void testNoDirectory() {
+        testSingleDirectory(null, null, null, p -> p.verifySkip());
+        testSingleDirectory(null, Path.of("/f"), null, p -> p.verifySkip());
+        testTwoDirectories(null, null, Path.of("first"), null, p -> p.verifySkip());
+        testTwoDirectories(null, null, null, null, p -> p.verifySkip());
     }
 
-    private void testSingle() {
+    private void testSimpleSearch() {
         File file = f.file("f");
         Directory directory = f.directory("d", file);
 
-        test(directory, Path.of("d/f"), file, 2L);
-        test(directory, Path.of("d"), directory, 2L);
-        test(directory, Path.of("x"), null, 2L);
-        test(directory, Path.of(""), null, 2L);
+        testSingleDirectory(directory, Path.of("d/f"), file, p -> p.verify(2L, 2L));
+        testSingleDirectory(directory, Path.of("d"), directory, p -> p.verify(2L, 2L));
+        testSingleDirectory(directory, Path.of("x"), null, p -> p.verify(2L, 2L));
+        testSingleDirectory(directory, Path.of(""), null, p -> p.verify(2L, 2L));
+        testSingleDirectory(directory, null, null, p -> p.verifySkip());
     }
 
-    private void testMultiple() {
+    private void testNestedSearch() {
         File file = f.file("f");
-        File secondFile = f.file("ff");
-        Directory secondDirectory = f.directory("dd", secondFile);
-        Directory directory = f.directory("d", file, secondDirectory);
+        File nestedFile = f.file("ff");
+        Directory nestedDirectory = f.directory("dd", nestedFile);
+        Directory directory = f.directory("d", file, nestedDirectory);
 
-        test(directory, Path.of("d/f"), file, 4L);
-        test(directory, Path.of("d"), directory, 4L);
-        test(directory, Path.of("d/dd/ff"), secondFile, 4L);
-        test(directory, Path.of("d/dd"), secondDirectory, 4L);
-        test(directory, Path.of("x"), null, 4L);
-        test(directory, Path.of(""), null, 4L);
+        testSingleDirectory(directory, Path.of("d/f"), file, p -> p.verify(4L, 4L));
+        testSingleDirectory(directory, Path.of("d"), directory, p -> p.verify(4L, 4L));
+        testSingleDirectory(directory, Path.of("d/dd/ff"), nestedFile, p -> p.verify(4L, 4L));
+        testSingleDirectory(directory, Path.of("d/dd"), nestedDirectory, p -> p.verify(4L, 4L));
+        testSingleDirectory(directory, Path.of("x"), null, p -> p.verify(4L, 4L));
+        testSingleDirectory(directory, Path.of(""), null, p -> p.verify(4L, 4L));
+        testSingleDirectory(directory, null, null, p -> p.verifySkip());
     }
 
-    private void test(
+    private void testTwoDirectorySearch() {
+        File firstFile = f.file("foo");
+        Directory firstDirectory = f.directory("first", firstFile);
+
+        File secondFile = f.file("foo");
+        Directory secondDirectory = f.directory("second", secondFile);
+
+        testTwoDirectories(firstDirectory, secondDirectory, Path.of("first/foo"), firstFile, p-> p.verify());
+        testTwoDirectories(firstDirectory, secondDirectory, Path.of("first"), firstDirectory, p-> p.verify());
+        testTwoDirectories(firstDirectory, secondDirectory, Path.of("second/foo"), secondFile, p-> p.verify());
+        testTwoDirectories(firstDirectory, secondDirectory, Path.of("second"), secondDirectory, p-> p.verify());
+        testTwoDirectories(firstDirectory, secondDirectory, Path.of("x"), null, p-> p.verify());
+        testTwoDirectories(firstDirectory, secondDirectory, Path.of(""), null, p-> p.verify());
+        testTwoDirectories(firstDirectory, null, Path.of("first/foo"), firstFile, p-> p.verify());
+        testTwoDirectories(null, secondDirectory, Path.of("second/foo"), secondFile, p-> p.verify());
+        testTwoDirectories(firstDirectory, secondDirectory, null, null, p -> p.verifySkip());
+    }
+
+    private void testSingleDirectory(
         @Optional Directory directory,
-        @Mandatory Path wanted,
+        @Optional Path wanted,
         @Optional Node expectation,
-        long expectedCount
+        @Mandatory Consumer<TestProgress> progressVerification
     ) {
         TestProgress progress = new TestProgress();
         Node reality = search.find(directory, wanted, progress);
@@ -68,6 +92,23 @@ public @Test class DirectorySearchTest {
                 .withFormatFunction(n -> n.getPath().toString())
                 .isSameAs(expectation);
 
-        progress.verify(expectedCount, expectedCount);
+        progressVerification.accept(progress);
+    }
+
+    private void testTwoDirectories(
+        @Optional Directory firstDirectory,
+        @Optional Directory secondDirectory,
+        @Optional Path wanted,
+        @Optional Node expectation,
+        @Mandatory Consumer<TestProgress> progressVerification
+    ) {
+        TestProgress progress = new TestProgress();
+        Node reality = search.find(firstDirectory, secondDirectory, wanted, progress);
+
+        Assertions.assertThat(reality)
+            .withFormatFunction(n -> n.getPath().toString())
+            .isSameAs(expectation);
+
+        progressVerification.accept(progress);
     }
 }

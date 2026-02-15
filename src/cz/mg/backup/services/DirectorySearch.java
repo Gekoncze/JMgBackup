@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public @Service class DirectorySearch {
-    public static final String DESCRIPTION = "Find";
+    public static final String DESCRIPTION = "Search";
 
     private static volatile @Service DirectorySearch instance;
 
@@ -56,16 +56,14 @@ public @Service class DirectorySearch {
         @Optional Path path,
         @Mandatory Progress progress
     ) {
-        if (path == null) {
-            return null;
-        }
-
         Node[] wanted = new Node[1];
-        treeIterator.forEachNode(directory, node -> {
-            if (Objects.equals(node.getPath(), path)) {
-                wanted[0] = node;
-            }
-        }, progress, DESCRIPTION + " " + path.getFileName());
+        if (path != null && directory != null) {
+            treeIterator.forEachNode(directory, node -> {
+                if (Objects.equals(node.getPath(), path)) {
+                    wanted[0] = node;
+                }
+            }, progress, DESCRIPTION + " " + path.getFileName());
+        }
         return wanted[0];
     }
 }

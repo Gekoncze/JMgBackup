@@ -4,7 +4,6 @@
 ### SOON ###
     add more unit tests
         add test for FileCopy
-        add more tests for DirectorySearch (left + right + optional path)
         add more tests for DirectoryComparator (clear compare errors, nested error + its overwriting + compare error overwriting)
         add more tests for DirectoryTreeFactory (root path that has null file name)
 
