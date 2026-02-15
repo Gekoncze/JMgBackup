@@ -45,12 +45,14 @@ public @Service class DirectoryManager {
      * Reloads given directory tree.
      * Checksums are retained for unchanged files.
      */
-    public void reload(@Mandatory Directory directory, @Mandatory Progress progress) {
-        var checksums = checksumManager.collect(directory, progress);
-        Directory freshDirectory = directoryReader.read(directory.getPath(), progress);
-        checksumManager.restore(freshDirectory, checksums, progress);
-        directory.setDirectories(freshDirectory.getDirectories());
-        directory.setFiles(freshDirectory.getFiles());
-        directory.setProperties(freshDirectory.getProperties());
+    public void reload(@Optional Directory directory, @Mandatory Progress progress) {
+        if (directory != null) {
+            var checksums = checksumManager.collect(directory, progress);
+            Directory freshDirectory = directoryReader.read(directory.getPath(), progress);
+            checksumManager.restore(freshDirectory, checksums, progress);
+            directory.setDirectories(freshDirectory.getDirectories());
+            directory.setFiles(freshDirectory.getFiles());
+            directory.setProperties(freshDirectory.getProperties());
+        }
     }
 }

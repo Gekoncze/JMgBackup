@@ -23,6 +23,7 @@ public @Test class DirectoryManagerTest {
         test.testLoad();
         test.testReloadNotModified();
         test.testReloadModified();
+        test.testReloadNull();
 
         System.out.println("OK");
     }
@@ -85,5 +86,12 @@ public @Test class DirectoryManagerTest {
         Assert.assertEquals("file", directory.getFiles().get(0).getPath().getFileName().toString());
         Assert.assertNull(directory.getFiles().get(0).getChecksum());
         progress.verify();
+    }
+
+    private void testReloadNull() {
+        TestProgress progress = new TestProgress();
+        directoryManager.reload(null, progress);
+
+        progress.verifySkip();
     }
 }

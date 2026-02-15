@@ -5,7 +5,9 @@ import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.Info;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Settings;
+import cz.mg.backup.gui.entities.State;
 import cz.mg.backup.gui.views.details.DetailsView;
+import cz.mg.backup.gui.entities.Side;
 import cz.mg.backup.gui.views.directory.DirectoryTreeView;
 import cz.mg.backup.gui.menu.MainMenuBar;
 import cz.mg.panel.Panel;
@@ -35,8 +37,8 @@ public @Component class MainWindow extends JFrame {
         setJMenuBar(new MainMenuBar(this));
 
         JSplitPane compareSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        compareSplitPane.setLeftComponent(leftView = new DirectoryTreeView(this));
-        compareSplitPane.setRightComponent(rightView = new DirectoryTreeView(this));
+        compareSplitPane.setLeftComponent(leftView = new DirectoryTreeView(this, Side.LEFT));
+        compareSplitPane.setRightComponent(rightView = new DirectoryTreeView(this, Side.RIGHT));
         compareSplitPane.setResizeWeight(0.5);
         compareSplitPane.setMinimumSize(new Dimension(0, 0));
 
@@ -65,5 +67,19 @@ public @Component class MainWindow extends JFrame {
 
     public @Mandatory DetailsView getDetailsView() {
         return detailsView;
+    }
+
+    public @Mandatory State getApplicationState() {
+        return new State(
+            leftView.getRoot(),
+            rightView.getRoot(),
+            detailsView.getNode()
+        );
+    }
+
+    public void setApplicationState(@Mandatory State state) {
+        leftView.setRoot(state.getLeft());
+        rightView.setRoot(state.getRight());
+        detailsView.setNode(state.getDetails());
     }
 }

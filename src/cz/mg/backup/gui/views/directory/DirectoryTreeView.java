@@ -6,6 +6,7 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
+import cz.mg.backup.gui.entities.Side;
 import cz.mg.backup.gui.event.*;
 import cz.mg.backup.gui.services.DirectoryTreeActions;
 import cz.mg.backup.gui.views.directory.wrapper.AbstractTreeNode;
@@ -25,14 +26,16 @@ public @Component class DirectoryTreeView extends Panel {
     private final @Mandatory DirectoryTreeActions actions = DirectoryTreeActions.getInstance();
 
     private final @Mandatory MainWindow window;
+    private final @Mandatory Side side;
     private final @Mandatory PathSelectionView selectionView;
     private final @Mandatory DirectoryTree tree;
     private final @Mandatory JPopupMenu popupMenu;
 
     private @Optional TreePath popupMenuPath;
 
-    public DirectoryTreeView(@Mandatory MainWindow window) {
+    public DirectoryTreeView(@Mandatory MainWindow window, @Mandatory Side side) {
         this.window = window;
+        this.side = side;
         setMargin(MARGIN);
         setPadding(PADDING);
 
@@ -60,6 +63,10 @@ public @Component class DirectoryTreeView extends Panel {
         JMenuItem openInFileManagerMenuItem = new JMenuItem("Open in file manager");
         openInFileManagerMenuItem.addActionListener(new UserActionListener(this::onOpenInFileManagerClicked));
         popupMenu.add(openInFileManagerMenuItem);
+    }
+
+    public @Mandatory Side getSide() {
+        return side;
     }
 
     public @Mandatory PathSelectionView getSelectionView() {
