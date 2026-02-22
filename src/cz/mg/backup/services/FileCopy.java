@@ -35,16 +35,15 @@ public @Service class FileCopy {
     }
 
     public void copy(@Mandatory Path source, @Mandatory Path target, @Mandatory Progress progress) {
-        long size = getFileSize(source);
-
-        progress.setDescription(DESCRIPTION);
-        progress.setLimit(Math.max(1L, size / BUFFER_SIZE) + 1L);
-        progress.setValue(0L);
-
         try (
             FileChannel sourceChannel = FileChannel.open(source, StandardOpenOption.READ);
-            FileChannel targetChannel = FileChannel.open(target, StandardOpenOption.WRITE, StandardOpenOption.CREATE)
+            FileChannel targetChannel = FileChannel.open(target, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW)
         ) {
+            long size = getFileSize(source);
+            progress.setDescription(DESCRIPTION);
+            progress.setLimit(Math.max(1L, size / BUFFER_SIZE) + 1L);
+            progress.setValue(0L);
+
             long position = 0;
             while (position < size) {
                 long transferred = sourceChannel.transferTo(position, BUFFER_SIZE, targetChannel);
