@@ -5,6 +5,7 @@ import cz.mg.annotations.classes.Test;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.*;
 import cz.mg.backup.exceptions.CompareException;
+import cz.mg.backup.exceptions.FileSystemException;
 import cz.mg.backup.exceptions.MismatchException;
 import cz.mg.backup.exceptions.MissingException;
 import cz.mg.backup.services.comparator.DirectoryComparator;
@@ -24,6 +25,8 @@ public @Test class DirectoryComparatorTest {
         test.testMissingFile();
         test.testDifferentFile();
         test.testRecursive();
+        test.testOverwriteError();
+        test.testDoNotOverwriteError();
         test.testCompareNullFirst();
         test.testCompareNullSecond();
         test.testCompareNullBoth();
@@ -239,6 +242,40 @@ public @Test class DirectoryComparatorTest {
         Assert.assertNotNull(secondL3.getError());
 
         progress.verify(18L, 18L);
+    }
+
+    private void testOverwriteError() {
+        Directory first = f.directory("first");
+        first.setError(new CompareException("test"));
+
+        Directory second = f.directory("second");
+        second.setError(new CompareException("test"));
+
+        TestProgress progress = new TestProgress();
+        comparator.compare(first, second, progress);
+
+        Assert.assertNotNull(first.getError());
+        Assert.assertNotNull(second.getError());
+        Assert.assertEquals(MismatchException.class, first.getError().getClass());
+        Assert.assertEquals(MismatchException.class, second.getError().getClass());
+        progress.verify();
+    }
+
+    private void testDoNotOverwriteError() {
+        Directory first = f.directory("first");
+        first.setError(new FileSystemException("test"));
+
+        Directory second = f.directory("second");
+        second.setError(new FileSystemException("test"));
+
+        TestProgress progress = new TestProgress();
+        comparator.compare(first, second, progress);
+
+        Assert.assertNotNull(first.getError());
+        Assert.assertNotNull(second.getError());
+        Assert.assertEquals(FileSystemException.class, first.getError().getClass());
+        Assert.assertEquals(FileSystemException.class, second.getError().getClass());
+        progress.verify();
     }
 
     private void testCompareNullFirst() {

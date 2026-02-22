@@ -2,10 +2,6 @@
     ...
 
 ### SOON ###
-    add more unit tests
-        add more tests for DirectoryComparator (clear compare errors, nested error + its overwriting + compare error overwriting)
-        add tests for actions
-
     add more ui unit tests
         add test for state service
         add tests for wrapper tree nodes (don't forget root path that has null file name)
