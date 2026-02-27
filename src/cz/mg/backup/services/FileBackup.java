@@ -26,6 +26,7 @@ public @Service class FileBackup {
                     instance.treeIterator = TreeIterator.getInstance();
                     instance.fileManager = FileManager.getInstance();
                     instance.directoryManager = DirectoryManager.getInstance();
+                    instance.pathService = PathService.getInstance();
                 }
             }
         }
@@ -35,6 +36,7 @@ public @Service class FileBackup {
     private @Service TreeIterator treeIterator;
     private @Service FileManager fileManager;
     private @Service DirectoryManager directoryManager;
+    private @Service PathService pathService;
 
     public void copyMissingFiles(
         @Mandatory List<Node> nodes,
@@ -66,7 +68,7 @@ public @Service class FileBackup {
     ) {
         if (isMissing(file)) {
             Path sourceFilePath = file.getPath();
-            Path targetFilePath = target.getPath().resolve(file.getRelativePath());
+            Path targetFilePath = target.getPath().resolve(pathService.removeLeadingPart(file.getRelativePath()));
             fileManager.copy(sourceFilePath, targetFilePath, algorithm, progress.nest());
             progress.unnest();
         }

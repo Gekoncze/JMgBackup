@@ -20,6 +20,7 @@ public class AllTests {
         FilePropertiesReaderTest.main(args);
         FileReaderTest.main(args);
         HashConverterTest.main(args);
+        PathServiceTest.main(args);
         TreeIteratorTest.main(args);
     }
 }
