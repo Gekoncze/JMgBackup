@@ -13,6 +13,7 @@ public class AllTests {
         DirectoryReaderTest.main(args);
         DirectorySearchTest.main(args);
         DirectorySortTest.main(args);
+        FileBackupTest.main(args);
         FileComparatorTest.main(args);
         FileCopyTest.main(args);
         FileManagerTest.main(args);

@@ -1,5 +1,8 @@
 ### NOW ###
-    ...
+    add support for automatic copy of missing files (in selected paths) to context menu
+        use existing cz.mg.backup.services.FileManager class and relative paths
+        consider if confirm dialog is necessary before copy (in case of mis-click)
+            it may display the number of files and a scrollable list of files to be copied
 
 ### SOON ###
     add more ui unit tests
@@ -14,11 +17,7 @@
             consider allowing only full reload in such situation
         go through possible cases for each action and evaluate risks
 
-    add support for automatic copy of missing files (in selected paths) to context menu
-        might need to use selection simplifier
-        use existing cz.mg.backup.services.FileManager class and relative paths
-        consider if confirm dialog is necessary before copy (in case of mis-click)
-            it may display the number of files and a scrollable list of files to be copied
+    in FileBackupTest.testValidateOutdatedMissingError how to verify progress
 
 ### LATER ###
     add duplicate detector
