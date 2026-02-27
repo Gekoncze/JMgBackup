@@ -8,6 +8,7 @@ import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.actions.directory.menu.ClearChecksumAction;
 import cz.mg.backup.gui.actions.directory.menu.ComputeChecksumAction;
+import cz.mg.backup.gui.actions.directory.menu.CopyMissingFilesAction;
 import cz.mg.backup.gui.actions.directory.menu.OpenFileManagerAction;
 import cz.mg.backup.gui.components.ActionItem;
 import cz.mg.backup.gui.entities.Side;
@@ -54,6 +55,7 @@ public @Component class DirectoryTreeView extends Panel {
         popupMenu.add(new ActionItem(new ComputeChecksumAction(window, this)));
         popupMenu.add(new ActionItem(new ClearChecksumAction(window, this)));
         popupMenu.add(new ActionItem(new OpenFileManagerAction(this)));
+        popupMenu.add(new ActionItem(new CopyMissingFilesAction(window, this)));
     }
 
     public @Mandatory Side getSide() {
