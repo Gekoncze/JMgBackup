@@ -2,8 +2,6 @@
     ...
 
 ### SOON ###
-    display list of files to be copied in confirmation dialog
-
     show warning banner or some icon or label when an action was cancelled
         explain that ui might be outdated
         remove the flag once directories are completely reloaded afterwards
