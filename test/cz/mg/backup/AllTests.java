@@ -1,5 +1,6 @@
 package cz.mg.backup;
 
+import cz.mg.backup.gui.services.RefreshServiceTest;
 import cz.mg.backup.services.*;
 
 public class AllTests {
@@ -22,5 +23,8 @@ public class AllTests {
         HashConverterTest.main(args);
         PathServiceTest.main(args);
         TreeIteratorTest.main(args);
+
+        // cz.mg.backup.gui.services
+        RefreshServiceTest.main(args);
     }
 }

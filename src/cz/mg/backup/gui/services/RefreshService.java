@@ -2,14 +2,10 @@ package cz.mg.backup.gui.services;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
-import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.entities.State;
 import cz.mg.backup.services.DirectorySearch;
 import cz.mg.backup.services.comparator.DirectoryComparator;
-
-import java.nio.file.Path;
 
 /**
  * Refresh service to be called after anything changed in left or right directory.
@@ -38,10 +34,10 @@ public @Service class RefreshService {
 
     public void refresh(@Mandatory State state, @Mandatory Progress progress) {
         comparator.compare(state.getLeft(), state.getRight(), progress);
-        state.setDetails(search.find(state.getLeft(), state.getRight(), getPath(state.getDetails()), progress));
-    }
-
-    private @Optional Path getPath(@Optional Node node) {
-        return node != null ? node.getPath() : null;
+        state.setDetails(
+            state.getDetails() != null
+                ? search.find(state.getLeft(), state.getRight(), state.getDetails().getPath(), progress)
+                : null
+        );
     }
 }

@@ -5,7 +5,6 @@
 
 ### SOON ###
     add more ui unit tests
-        add test for state service
         add tests for wrapper tree nodes (don't forget root path that has null file name)
         add test for directory tree (restore expanded, collapsed and selected nodes)
 
