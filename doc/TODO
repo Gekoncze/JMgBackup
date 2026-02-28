@@ -4,10 +4,6 @@
             it may display the number of files, their total size and a scrollable list of files to be copied
 
 ### SOON ###
-    add more ui unit tests
-        add tests for wrapper tree nodes (don't forget root path that has null file name)
-        add test for directory tree (restore expanded, collapsed and selected nodes)
-
     show warning banner or some icon or label when an action was cancelled
         explain that ui might be outdated
         remove the flag once directories are completely reloaded afterwards
@@ -31,6 +27,10 @@
         might want to add preference to view menu
         consider showing colors (for example red high percent, green small percent)
         could be added to details view too
+
+    add more ui unit tests
+        add tests for wrapper tree nodes (don't forget root path that has null file name)
+        add test for directory tree (restore expanded, collapsed and selected nodes)
 
 ### CONSIDERATIONS ###
     consider merging simplifier and collector somehow
