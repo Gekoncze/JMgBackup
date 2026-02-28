@@ -53,7 +53,7 @@ public @Component class ProgressDialog extends Dialog {
         panel.addVertical(new TextButton("Cancel", this::cancel), 0, 0, Alignment.MIDDLE, Fill.NONE);
 
         getContentPane().add(panel);
-        setLocationRelativeTo(null);
+        center();
 
         addWindowListener(new UserWindowClosingListener(this::cancel));
         addWindowListener(new UserWindowClosedListener(this::closed));

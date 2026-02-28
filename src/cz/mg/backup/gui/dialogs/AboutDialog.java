@@ -28,7 +28,7 @@ public @Component class AboutDialog extends Dialog {
         getContentPane().add(panel);
         addKeyListenerRecursive(this, new UserEscapeKeyPressListener(this::dispose));
         pack();
-        setLocationRelativeTo(null);
+        center();
     }
 
     public static void show(@Mandatory MainWindow window) {

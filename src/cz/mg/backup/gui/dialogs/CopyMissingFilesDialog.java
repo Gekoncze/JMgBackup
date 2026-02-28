@@ -52,7 +52,7 @@ public @Component class CopyMissingFilesDialog extends Dialog {
         getContentPane().add(panel);
 
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-        setLocationRelativeTo(window);
+        center();
     }
 
     private void cancel() {

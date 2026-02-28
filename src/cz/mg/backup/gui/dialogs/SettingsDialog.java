@@ -43,7 +43,7 @@ public @Component class SettingsDialog extends Dialog {
         addKeyListenerRecursive(this, new UserEscapeKeyPressListener(this::cancel));
         pack();
         setSize(Math.max(getWidth(), MIN_WIDTH), getHeight());
-        setLocationRelativeTo(null);
+        center();
     }
 
     private Algorithm getSelectedAlgorithm() {
