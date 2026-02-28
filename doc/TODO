@@ -15,8 +15,6 @@
             consider allowing only full reload in such situation
         go through possible cases for each action and evaluate risks
 
-    in FileBackupTest.testValidateOutdatedMissingError how to verify progress
-
 ### LATER ###
     add duplicate detector
         show different icon for duplicates ?

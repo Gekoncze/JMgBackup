@@ -107,6 +107,8 @@ public @Test class FileBackupTest {
         Assertions.assertThatCode(() -> fileBackup.copyMissingFiles(nodes, source, target, Algorithm.MD5, progress))
             .withMessage("File not in source directory should not be allowed.")
             .throwsException(IllegalArgumentException.class);
+
+        progress.verify();
     }
 
     private long getSize(@Mandatory Path path) {
