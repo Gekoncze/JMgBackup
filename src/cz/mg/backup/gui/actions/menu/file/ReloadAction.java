@@ -3,6 +3,8 @@ package cz.mg.backup.gui.actions.menu.file;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.components.Status;
+import cz.mg.backup.components.Task;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.actions.Action;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
@@ -53,8 +55,7 @@ public @Component class ReloadAction implements Action {
     public void run() {
         State state = window.getApplicationState();
 
-        // process can be cancelled at any time, so keep that in mind to ensure some level of consistency
-        ProgressDialog.run(
+        Task<?> task = ProgressDialog.run(
             window,
             getName(),
             progress -> {
@@ -64,6 +65,11 @@ public @Component class ReloadAction implements Action {
             }
         );
 
-        window.setApplicationState(state);
+        window.setApplicationState(state, task.getStatus());
+
+        if (task.getStatus() == Status.COMPLETED) {
+            window.getLeftView().getBanner().close();
+            window.getRightView().getBanner().close();
+        }
     }
 }

@@ -32,6 +32,7 @@ public @Component class DirectoryTreeView extends Panel {
     private final @Mandatory PathSelectionView selectionView;
     private final @Mandatory DirectoryTree tree;
     private final @Mandatory JPopupMenu popupMenu;
+    private final @Mandatory Banner banner;
 
     private @Optional TreePath popupMenuPath;
 
@@ -51,11 +52,18 @@ public @Component class DirectoryTreeView extends Panel {
         tree.addTreeSelectionListener(new UserTreeSelectionListener(this::onSelectionChanged));
         addVertical(new JScrollPane(tree), 1, 1);
 
+        banner = new Banner();
+        addVertical(banner);
+
         popupMenu = new JPopupMenu();
         popupMenu.add(new ActionItem(new ComputeChecksumAction(window, this)));
         popupMenu.add(new ActionItem(new ClearChecksumAction(window, this)));
         popupMenu.add(new ActionItem(new OpenFileManagerAction(this)));
         popupMenu.add(new ActionItem(new CopyMissingFilesAction(window, this)));
+    }
+
+    public @Mandatory Banner getBanner() {
+        return banner;
     }
 
     public @Mandatory Side getSide() {

@@ -3,6 +3,7 @@ package cz.mg.backup.gui.actions.directory;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.components.Task;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.actions.Action;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
@@ -61,7 +62,7 @@ public @Component class LoadAction implements Action {
 
         validate(path);
 
-        ProgressDialog.run(
+        Task<?> task = ProgressDialog.run(
             window,
             getName(),
             progress -> {
@@ -70,7 +71,7 @@ public @Component class LoadAction implements Action {
             }
         );
 
-        window.setApplicationState(state);
+        window.setApplicationState(state, task.getStatus());
     }
 
     private void validate(@Optional Path path) {

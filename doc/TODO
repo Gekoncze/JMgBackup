@@ -2,12 +2,7 @@
     ...
 
 ### SOON ###
-    show warning banner or some icon or label when an action was cancelled
-        explain that ui might be outdated
-        remove the flag once directories are completely reloaded afterwards
-        consider disabling some actions that may fail or behave unexpectedly
-            consider allowing only full reload in such situation
-        go through possible cases for each action and evaluate risks
+    align dialogs to main window instead of center of screen
 
 ### LATER ###
     add duplicate detector

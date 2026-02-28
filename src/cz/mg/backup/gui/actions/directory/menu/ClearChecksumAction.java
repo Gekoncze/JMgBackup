@@ -3,6 +3,7 @@ package cz.mg.backup.gui.actions.directory.menu;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.components.Task;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.gui.MainWindow;
 import cz.mg.backup.gui.actions.Action;
@@ -57,7 +58,7 @@ public @Component class ClearChecksumAction implements Action {
         State state = window.getApplicationState();
         List<Node> nodes = view.getSelectedNodes();
 
-        ProgressDialog.run(
+        Task<?> task = ProgressDialog.run(
             window,
             getName(),
             progress -> {
@@ -66,6 +67,6 @@ public @Component class ClearChecksumAction implements Action {
             }
         );
 
-        window.setApplicationState(state);
+        window.setApplicationState(state, task.getStatus());
     }
 }

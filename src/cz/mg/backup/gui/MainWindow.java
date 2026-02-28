@@ -3,11 +3,13 @@ package cz.mg.backup.gui;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.Info;
+import cz.mg.backup.components.Status;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Settings;
 import cz.mg.backup.gui.entities.State;
 import cz.mg.backup.gui.views.details.DetailsView;
 import cz.mg.backup.gui.entities.Side;
+import cz.mg.backup.gui.views.directory.Banner;
 import cz.mg.backup.gui.views.directory.DirectoryTreeView;
 import cz.mg.backup.gui.menu.MainMenuBar;
 import cz.mg.panel.Panel;
@@ -22,7 +24,7 @@ public @Component class MainWindow extends JFrame {
     private static final int DEFAULT_DETAILS_HEIGHT = 220;
     private static final int MARGIN = 0;
     private static final int PADDING = 8;
-
+    private static final String INCOMPLETE_ACTION_MESSAGE = "Last action did not complete. Please reload this directory.";
 
     private final @Mandatory Settings settings = new Settings(Algorithm.SHA256);
     private final @Mandatory DirectoryTreeView leftView;
@@ -77,9 +79,14 @@ public @Component class MainWindow extends JFrame {
         );
     }
 
-    public void setApplicationState(@Mandatory State state) {
+    public void setApplicationState(@Mandatory State state, @Mandatory Status status) {
         leftView.setRoot(state.getLeft());
         rightView.setRoot(state.getRight());
         detailsView.setNode(state.getDetails());
+
+        if (status != Status.COMPLETED) {
+            leftView.getBanner().show(INCOMPLETE_ACTION_MESSAGE, Banner.WARNING);
+            rightView.getBanner().show(INCOMPLETE_ACTION_MESSAGE, Banner.WARNING);
+        }
     }
 }

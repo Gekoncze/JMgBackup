@@ -3,6 +3,7 @@ package cz.mg.backup.gui.actions.directory.menu;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.components.Task;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
@@ -69,7 +70,6 @@ public @Component class CopyMissingFilesAction implements Action {
                 if (!files.isEmpty()) {
                     if (CopyMissingFilesDialog.show(window, files)) {
                         copyMissingFiles(files, source.getRoot(), target.getRoot(), algorithm, state);
-                        window.setApplicationState(state);
                     }
                 } else {
                     JOptionPane.showMessageDialog(
@@ -101,7 +101,7 @@ public @Component class CopyMissingFilesAction implements Action {
         @Mandatory Algorithm algorithm,
         @Mandatory State state
     ) {
-        ProgressDialog.run(
+        Task<?> task = ProgressDialog.run(
             window,
             getName(),
             progress -> {
@@ -109,5 +109,7 @@ public @Component class CopyMissingFilesAction implements Action {
                 refreshService.refresh(state, progress);
             }
         );
+
+        window.setApplicationState(state, task.getStatus());
     }
 }
