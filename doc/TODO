@@ -2,9 +2,6 @@
     ...
 
 ### SOON ###
-    ...
-
-### LATER ###
     add duplicate detector
         show different icon for duplicates ?
         allow user to configure duplicate detection to specify key properties ?
@@ -12,6 +9,7 @@
             but there could be also moved files that when copied would cause duplicates
         might need to also implement data comparison for precise detection between found suspects
 
+### LATER ###
     add context menu for tree entries
         add option to reload / refresh specific file or directory
         add option to show error details
@@ -26,8 +24,6 @@
         add test for directory tree (restore expanded, collapsed and selected nodes)
 
 ### CONSIDERATIONS ###
-    consider merging simplifier and collector somehow
-
     consider showing disk usage somewhere near top (if possible)
         could then show warning when copy operation may fail because of not enough space in target device
         would need to detect device for path and read its properties somehow
