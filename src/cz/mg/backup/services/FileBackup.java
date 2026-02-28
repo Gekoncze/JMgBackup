@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public @Service class FileBackup {
-    private static final String DESCRIPTION = "Copy files";
+    private static final String DESCRIPTION = "Copy missing files";
 
     private static volatile @Service FileBackup instance;
 
@@ -45,13 +45,11 @@ public @Service class FileBackup {
         @Mandatory Algorithm algorithm,
         @Mandatory Progress progress
     ) {
-        if (Objects.equals(source.getPath(), target.getPath())) {
-            throw new IllegalArgumentException("Source and target cannot be the same directory.");
-        }
+        validateSourceToTarget(source, target);
 
         treeIterator.forEachFile(
             nodes,
-            file -> copyFileIfMissing(file, target, algorithm, progress),
+            file -> copyFileIfMissing(file, source, target, algorithm, progress),
             progress,
             DESCRIPTION
         );
@@ -62,10 +60,13 @@ public @Service class FileBackup {
 
     private void copyFileIfMissing(
         @Mandatory File file,
+        @Mandatory Directory source,
         @Mandatory Directory target,
         @Mandatory Algorithm algorithm,
         @Mandatory Progress progress
     ) {
+        validateFileInSource(file, source);
+
         if (isMissing(file)) {
             Path sourceFilePath = file.getPath();
             Path targetFilePath = target.getPath().resolve(pathService.removeLeadingPart(file.getRelativePath()));
@@ -76,5 +77,17 @@ public @Service class FileBackup {
 
     private boolean isMissing(@Mandatory File file) {
         return file.getError() instanceof MissingException;
+    }
+
+    private void validateSourceToTarget(@Mandatory Directory source, @Mandatory Directory target) {
+        if (Objects.equals(source.getPath(), target.getPath())) {
+            throw new IllegalArgumentException("Source and target cannot be the same directory.");
+        }
+    }
+
+    private void validateFileInSource(@Mandatory File file, @Mandatory Directory source) {
+        if (!file.getRelativePath().startsWith(source.getRelativePath())) {
+            throw new IllegalArgumentException("Source file is not in source directory.");
+        }
     }
 }

@@ -7,6 +7,7 @@ import cz.mg.backup.Configuration;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Directory;
+import cz.mg.backup.entities.Node;
 import cz.mg.backup.services.comparator.DirectoryComparator;
 import cz.mg.backup.test.TestProgress;
 import cz.mg.collections.list.List;
@@ -31,13 +32,14 @@ public @Test class FileBackupTest {
 
         FileBackupTest test = new FileBackupTest();
         test.testCopy();
-        test.testValidateSameDirectories();
+        test.testSameSourceAndTarget();
+        test.testFileNotInSource();
 
         System.out.println("OK");
     }
 
     private final @Service FileBackup fileBackup = FileBackup.getInstance();
-    private final @Service DirectoryReader reader = DirectoryReader.getInstance();
+    private final @Service DirectoryReader directoryReader = DirectoryReader.getInstance();
     private final @Service DirectoryComparator comparator = DirectoryComparator.getInstance();
 
     private void testCopy() {
@@ -52,25 +54,25 @@ public @Test class FileBackupTest {
 
         long originalTargetExistingFileSize = getSize(TARGET_EXISTING_FILE);
 
-        Directory sourceDirectory = reader.read(SOURCE_DIRECTORY, new Progress());
-        Directory targetDirectory = reader.read(TARGET_DIRECTORY, new Progress());
-        comparator.compare(sourceDirectory, targetDirectory, new Progress());
+        Directory source = directoryReader.read(SOURCE_DIRECTORY, new Progress());
+        Directory target = directoryReader.read(TARGET_DIRECTORY, new Progress());
+        comparator.compare(source, target, new Progress());
 
         try {
             TestProgress progress = new TestProgress();
             fileBackup.copyMissingFiles(
-                new List<>(sourceDirectory),
-                sourceDirectory,
-                targetDirectory,
+                new List<>(source),
+                source,
+                target,
                 Algorithm.MD5,
                 progress
             );
 
             Assert.assertEquals(true, Files.exists(TARGET_MISSING_FILE));
             Assert.assertEquals(originalTargetExistingFileSize, getSize(TARGET_EXISTING_FILE));
-            Assert.assertEquals(2, targetDirectory.getProperties().getTotalFileCount());
-            Assert.assertEquals(TARGET_EXISTING_FILE, targetDirectory.getFiles().get(0).getPath());
-            Assert.assertEquals(TARGET_MISSING_FILE, targetDirectory.getFiles().get(1).getPath());
+            Assert.assertEquals(2, target.getProperties().getTotalFileCount());
+            Assert.assertEquals(TARGET_EXISTING_FILE, target.getFiles().get(0).getPath());
+            Assert.assertEquals(TARGET_MISSING_FILE, target.getFiles().get(1).getPath());
             progress.verify(2, 2);
         } finally {
             if (Files.exists(TARGET_MISSING_FILE)) {
@@ -81,7 +83,7 @@ public @Test class FileBackupTest {
         }
     }
 
-    private void testValidateSameDirectories() {
+    private void testSameSourceAndTarget() {
         Directory source = new Directory();
         source.setPath(SOURCE_DIRECTORY);
 
@@ -94,6 +96,17 @@ public @Test class FileBackupTest {
             .throwsException(IllegalArgumentException.class);
 
         progress.verifySkip();
+    }
+
+    private void testFileNotInSource() {
+        Directory source = directoryReader.read(SOURCE_DIRECTORY, new Progress());
+        Directory target = directoryReader.read(TARGET_DIRECTORY, new Progress());
+        List<Node> nodes = new List<>(target.getFiles().get(0));
+
+        TestProgress progress = new TestProgress();
+        Assertions.assertThatCode(() -> fileBackup.copyMissingFiles(nodes, source, target, Algorithm.MD5, progress))
+            .withMessage("File not in source directory should not be allowed.")
+            .throwsException(IllegalArgumentException.class);
     }
 
     private long getSize(@Mandatory Path path) {
