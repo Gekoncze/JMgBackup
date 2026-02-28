@@ -14,7 +14,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public @Service class FileBackup {
-    private static final String DESCRIPTION = "Copy missing files";
+    private static final String COLLECT_DESCRIPTION = "Collect missing files";
+    private static final String COPY_DESCRIPTION = "Copy missing files";
 
     private static volatile @Service FileBackup instance;
 
@@ -38,8 +39,28 @@ public @Service class FileBackup {
     private @Service DirectoryManager directoryManager;
     private @Service PathService pathService;
 
-    public void copyMissingFiles(
+    public @Mandatory List<File> collectMissingFiles(
         @Mandatory List<Node> nodes,
+        @Mandatory Progress progress
+    ) {
+        List<File> missingFiles = new List<>();
+
+        treeIterator.forEachFile(
+            nodes,
+            file -> {
+                if (isMissing(file)) {
+                    missingFiles.addLast(file);
+                }
+            },
+            progress,
+            COLLECT_DESCRIPTION
+        );
+
+        return missingFiles;
+    }
+
+    public void copyMissingFiles(
+        @Mandatory List<File> files,
         @Mandatory Directory source,
         @Mandatory Directory target,
         @Mandatory Algorithm algorithm,
@@ -47,18 +68,20 @@ public @Service class FileBackup {
     ) {
         validateSourceToTarget(source, target);
 
-        treeIterator.forEachFile(
-            nodes,
-            file -> copyFileIfMissing(file, source, target, algorithm, progress),
-            progress,
-            DESCRIPTION
-        );
+        progress.setDescription(COPY_DESCRIPTION);
+        progress.setLimit(files.count());
+        progress.setValue(0);
+
+        for (File file : files) {
+            copyFile(file, source, target, algorithm, progress);
+            progress.step();
+        }
 
         directoryManager.reload(target, progress.nest());
         progress.unnest();
     }
 
-    private void copyFileIfMissing(
+    private void copyFile(
         @Mandatory File file,
         @Mandatory Directory source,
         @Mandatory Directory target,
@@ -66,13 +89,10 @@ public @Service class FileBackup {
         @Mandatory Progress progress
     ) {
         validateFileInSource(file, source);
-
-        if (isMissing(file)) {
-            Path sourceFilePath = file.getPath();
-            Path targetFilePath = target.getPath().resolve(pathService.removeLeadingPart(file.getRelativePath()));
-            fileManager.copy(sourceFilePath, targetFilePath, algorithm, progress.nest());
-            progress.unnest();
-        }
+        Path sourceFilePath = file.getPath();
+        Path targetFilePath = target.getPath().resolve(pathService.removeLeadingPart(file.getRelativePath()));
+        fileManager.copy(sourceFilePath, targetFilePath, algorithm, progress.nest());
+        progress.unnest();
     }
 
     private boolean isMissing(@Mandatory File file) {

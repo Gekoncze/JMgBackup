@@ -7,6 +7,7 @@ import cz.mg.backup.Configuration;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Directory;
+import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.services.comparator.DirectoryComparator;
 import cz.mg.backup.test.TestProgress;
@@ -60,8 +61,14 @@ public @Test class FileBackupTest {
 
         try {
             TestProgress progress = new TestProgress();
+            List<File> files = fileBackup.collectMissingFiles(new List<>(source), progress);
+
+            Assert.assertEquals(1, files.count());
+            progress.verify(2, 2);
+
+            progress = new TestProgress();
             fileBackup.copyMissingFiles(
-                new List<>(source),
+                files,
                 source,
                 target,
                 Algorithm.MD5,
@@ -73,7 +80,7 @@ public @Test class FileBackupTest {
             Assert.assertEquals(2, target.getProperties().getTotalFileCount());
             Assert.assertEquals(TARGET_EXISTING_FILE, target.getFiles().get(0).getPath());
             Assert.assertEquals(TARGET_MISSING_FILE, target.getFiles().get(1).getPath());
-            progress.verify(2, 2);
+            progress.verify(1, 1);
         } finally {
             if (Files.exists(TARGET_MISSING_FILE)) {
                 Assertions.assertThatCode(() -> Files.delete(TARGET_MISSING_FILE))
@@ -101,10 +108,10 @@ public @Test class FileBackupTest {
     private void testFileNotInSource() {
         Directory source = directoryReader.read(SOURCE_DIRECTORY, new Progress());
         Directory target = directoryReader.read(TARGET_DIRECTORY, new Progress());
-        List<Node> nodes = new List<>(target.getFiles().get(0));
+        List<File> files = new List<>(target.getFiles().get(0));
 
         TestProgress progress = new TestProgress();
-        Assertions.assertThatCode(() -> fileBackup.copyMissingFiles(nodes, source, target, Algorithm.MD5, progress))
+        Assertions.assertThatCode(() -> fileBackup.copyMissingFiles(files, source, target, Algorithm.MD5, progress))
             .withMessage("File not in source directory should not be allowed.")
             .throwsException(IllegalArgumentException.class);
 

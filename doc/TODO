@@ -1,9 +1,9 @@
 ### NOW ###
-    add support for automatic copy of missing files (in selected paths) to context menu
-        consider if confirm dialog is necessary before copy (in case of mis-click)
-            it may display the number of files, their total size and a scrollable list of files to be copied
+    ...
 
 ### SOON ###
+    display list of files to be copied in confirmation dialog
+
     show warning banner or some icon or label when an action was cancelled
         explain that ui might be outdated
         remove the flag once directories are completely reloaded afterwards

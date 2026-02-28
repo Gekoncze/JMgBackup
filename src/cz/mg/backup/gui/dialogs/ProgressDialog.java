@@ -19,6 +19,7 @@ import cz.mg.panel.settings.Fill;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public @Component class ProgressDialog extends Dialog {
     private static final int MARGIN = 8;
@@ -122,9 +123,9 @@ public @Component class ProgressDialog extends Dialog {
 
     /**
      * Runs given runnable in a separate thread with a progress dialog showing progress.
-     * Returns true if the runnable completed successfully, false otherwise.
+     * Returns finished task instance.
      */
-    public static boolean run(
+    public static Task<?> run(
         @Mandatory JFrame window,
         @Mandatory String title,
         @Mandatory Consumer<Progress> runnable
@@ -134,6 +135,23 @@ public @Component class ProgressDialog extends Dialog {
         dialog.start();
         dialog.setVisible(true);
         dialog.rethrow();
-        return task.getStatus() == Status.COMPLETED;
+        return task;
+    }
+
+    /**
+     * Runs given runnable in a separate thread with a progress dialog showing progress.
+     * Returns finished task instance.
+     */
+    public static <T> Task<T> compute(
+        @Mandatory JFrame window,
+        @Mandatory String title,
+        @Mandatory Function<Progress, T> runnable
+    ) {
+        Task<T> task = new Task<>(runnable);
+        ProgressDialog dialog = new ProgressDialog(window, title, task);
+        dialog.start();
+        dialog.setVisible(true);
+        dialog.rethrow();
+        return task;
     }
 }
