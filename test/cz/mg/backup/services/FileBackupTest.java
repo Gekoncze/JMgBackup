@@ -7,10 +7,7 @@ import cz.mg.backup.Configuration;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Directory;
-import cz.mg.backup.entities.File;
-import cz.mg.backup.exceptions.MissingException;
 import cz.mg.backup.services.comparator.DirectoryComparator;
-import cz.mg.backup.test.TestFactory;
 import cz.mg.backup.test.TestProgress;
 import cz.mg.collections.list.List;
 import cz.mg.test.Assert;
@@ -42,7 +39,6 @@ public @Test class FileBackupTest {
     private final @Service FileBackup fileBackup = FileBackup.getInstance();
     private final @Service DirectoryReader reader = DirectoryReader.getInstance();
     private final @Service DirectoryComparator comparator = DirectoryComparator.getInstance();
-    private final @Service TestFactory f = TestFactory.getInstance();
 
     private void testCopy() {
         Assert.assertEquals(true, Files.exists(SOURCE_DIRECTORY));
@@ -73,6 +69,8 @@ public @Test class FileBackupTest {
             Assert.assertEquals(true, Files.exists(TARGET_MISSING_FILE));
             Assert.assertEquals(originalTargetExistingFileSize, getSize(TARGET_EXISTING_FILE));
             Assert.assertEquals(2, targetDirectory.getProperties().getTotalFileCount());
+            Assert.assertEquals(TARGET_EXISTING_FILE, targetDirectory.getFiles().get(0).getPath());
+            Assert.assertEquals(TARGET_MISSING_FILE, targetDirectory.getFiles().get(1).getPath());
             progress.verify(2, 2);
         } finally {
             if (Files.exists(TARGET_MISSING_FILE)) {

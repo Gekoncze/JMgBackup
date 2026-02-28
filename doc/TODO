@@ -1,7 +1,5 @@
 ### NOW ###
     add support for automatic copy of missing files (in selected paths) to context menu
-        add test that FileBackup target directory is reloaded
-        add test for copy from the other direction (right to left)
         double-check if FileBackup is well covered by tests
         consider if confirm dialog is necessary before copy (in case of mis-click)
             it may display the number of files and a scrollable list of files to be copied
