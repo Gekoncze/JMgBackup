@@ -1,7 +1,6 @@
 package cz.mg.backup.gui.actions.directory;
 
 import cz.mg.annotations.classes.Component;
-import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.gui.MainWindow;
@@ -9,7 +8,7 @@ import cz.mg.backup.gui.actions.Action;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.entities.Side;
 import cz.mg.backup.gui.entities.State;
-import cz.mg.backup.gui.services.StateService;
+import cz.mg.backup.gui.services.RefreshService;
 import cz.mg.backup.gui.views.directory.DirectoryTreeView;
 import cz.mg.backup.services.DirectoryManager;
 
@@ -19,7 +18,7 @@ import java.nio.file.Path;
 
 public @Component class LoadAction implements Action {
     private final @Mandatory DirectoryManager directoryManager = DirectoryManager.getInstance();
-    private final @Mandatory StateService stateService = StateService.getInstance();
+    private final @Mandatory RefreshService refreshService = RefreshService.getInstance();
 
     private final @Mandatory MainWindow window;
     private final @Mandatory DirectoryTreeView view;
@@ -67,7 +66,7 @@ public @Component class LoadAction implements Action {
             getName(),
             progress -> {
                 state.setDirectory(directoryManager.load(path, progress), side);
-                stateService.refresh(state, progress);
+                refreshService.refresh(state, progress);
             }
         );
 

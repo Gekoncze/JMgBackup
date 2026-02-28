@@ -12,16 +12,16 @@ import cz.mg.backup.services.comparator.DirectoryComparator;
 import java.nio.file.Path;
 
 /**
- * State service to be called after anything changed in left or right directory.
+ * Refresh service to be called after anything changed in left or right directory.
  */
-public @Service class StateService {
-    private static volatile @Service StateService instance;
+public @Service class RefreshService {
+    private static volatile @Service RefreshService instance;
 
-    public static @Service StateService getInstance() {
+    public static @Service RefreshService getInstance() {
         if (instance == null) {
             synchronized (Service.class) {
                 if (instance == null) {
-                    instance = new StateService();
+                    instance = new RefreshService();
                     instance.comparator = DirectoryComparator.getInstance();
                     instance.search = DirectorySearch.getInstance();
                 }
@@ -33,7 +33,7 @@ public @Service class StateService {
     private @Service DirectoryComparator comparator;
     private @Service DirectorySearch search;
 
-    private StateService() {
+    private RefreshService() {
     }
 
     public void refresh(@Mandatory State state, @Mandatory Progress progress) {

@@ -9,7 +9,7 @@ import cz.mg.backup.gui.actions.Action;
 import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.entities.State;
 import cz.mg.backup.gui.icons.Icons;
-import cz.mg.backup.gui.services.StateService;
+import cz.mg.backup.gui.services.RefreshService;
 import cz.mg.backup.gui.views.directory.DirectoryTreeView;
 import cz.mg.backup.services.DirectoryManager;
 
@@ -18,7 +18,7 @@ import java.awt.event.KeyEvent;
 
 public @Component class ReloadAction implements Action {
     private final @Mandatory DirectoryManager directoryManager = DirectoryManager.getInstance();
-    private final @Mandatory StateService stateService = StateService.getInstance();
+    private final @Mandatory RefreshService refreshService = RefreshService.getInstance();
 
     private final @Mandatory MainWindow window;
     private final @Mandatory DirectoryTreeView view;
@@ -63,7 +63,7 @@ public @Component class ReloadAction implements Action {
             getName(),
             progress -> {
                 directoryManager.reload(root, progress);
-                stateService.refresh(state, progress);
+                refreshService.refresh(state, progress);
             }
         );
 
