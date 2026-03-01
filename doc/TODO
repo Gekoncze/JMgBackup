@@ -8,8 +8,14 @@
         duplicates are within same work tree
             but there could be also moved files that when copied would cause duplicates
         might need to also implement data comparison for precise detection between found suspects
+            maybe this could be a separate compare selected files action
+            could be within same directory tree or between compared directory trees
+        we could easily implement this using custom hash function and comparator + hash map
 
 ### LATER ###
+    consider create missing empty directories action
+        could be part of existing action too
+
     add context menu for tree entries
         add option to reload / refresh specific file or directory
         add option to show error details
