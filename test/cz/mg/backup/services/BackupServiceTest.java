@@ -38,9 +38,9 @@ public @Test class BackupServiceTest {
         test.testCopyMissingFile();
         test.testCopyMissingFileSameSourceAndTarget();
         test.testCopyMissingFileNotInSource();
-        test.testCopyMissingDirectory();
-        test.testCopyMissingDirectorySameSourceAndTarget();
-        test.testCopyMissingDirectoryNotInSource();
+        test.testCreateMissingDirectory();
+        test.testCreateMissingDirectorySameSourceAndTarget();
+        test.testCreateMissingDirectoryNotInSource();
 
         System.out.println("OK");
     }
@@ -124,7 +124,7 @@ public @Test class BackupServiceTest {
         progress.verify();
     }
 
-    private void testCopyMissingDirectory() {
+    private void testCreateMissingDirectory() {
         Assert.assertEquals(true, Files.exists(D_SOURCE_DIRECTORY));
         Assert.assertEquals(true, Files.exists(D_SOURCE_MISSING_DIRECTORY));
         Assert.assertEquals(true, Files.exists(D_TARGET_DIRECTORY));
@@ -142,9 +142,11 @@ public @Test class BackupServiceTest {
             Assert.assertEquals(1, directories.count());
             progress.verify(2, 2);
 
-            backupService.copyMissingDirectories(directories, source, target, progress);
+            backupService.createMissingDirectories(directories, source, target, progress);
 
             Assert.assertEquals(true, Files.exists(D_TARGET_MISSING_DIRECTORY));
+            Assert.assertEquals(2, target.getProperties().getTotalDirectoryCount());
+            Assert.assertEquals(D_TARGET_MISSING_DIRECTORY, target.getDirectories().get(1).getPath());
             progress.verify(1, 1);
         } finally {
             if (Files.exists(D_TARGET_MISSING_DIRECTORY)) {
@@ -155,7 +157,7 @@ public @Test class BackupServiceTest {
         }
     }
 
-    private void testCopyMissingDirectorySameSourceAndTarget() {
+    private void testCreateMissingDirectorySameSourceAndTarget() {
         Directory source = new Directory();
         source.setPath(D_SOURCE_DIRECTORY);
 
@@ -163,20 +165,20 @@ public @Test class BackupServiceTest {
         target.setPath(D_SOURCE_DIRECTORY);
 
         TestProgress progress = new TestProgress();
-        Assertions.assertThatCode(() -> backupService.copyMissingDirectories(new List<>(), source, target, progress))
+        Assertions.assertThatCode(() -> backupService.createMissingDirectories(new List<>(), source, target, progress))
             .withMessage("Source and target directory should not be allowed to be the same.")
             .throwsException(IllegalArgumentException.class);
 
         progress.verifySkip();
     }
 
-    private void testCopyMissingDirectoryNotInSource() {
+    private void testCreateMissingDirectoryNotInSource() {
         Directory source = directoryReader.read(D_SOURCE_DIRECTORY, new Progress());
         Directory target = directoryReader.read(D_TARGET_DIRECTORY, new Progress());
         List<Directory> directories = new List<>(target.getDirectories().get(0));
 
         TestProgress progress = new TestProgress();
-        Assertions.assertThatCode(() -> backupService.copyMissingDirectories(directories, source, target, progress))
+        Assertions.assertThatCode(() -> backupService.createMissingDirectories(directories, source, target, progress))
             .withMessage("Directory not in source directory should not be allowed.")
             .throwsException(IllegalArgumentException.class);
 

@@ -17,7 +17,7 @@ public @Service class BackupService {
     private static final String COLLECT_FILES_DESCRIPTION = "Collect missing files";
     private static final String COPY_FILES_DESCRIPTION = "Copy missing files";
     private static final String COLLECT_DIRECTORIES_DESCRIPTION = "Collect missing directories";
-    private static final String COPY_DIRECTORIES_DESCRIPTION = "Copy missing directories";
+    private static final String COPY_DIRECTORIES_DESCRIPTION = "Create missing directories";
 
     private static volatile @Service BackupService instance;
 
@@ -119,7 +119,7 @@ public @Service class BackupService {
         return missingDirectories;
     }
 
-    public void copyMissingDirectories(
+    public void createMissingDirectories(
         @Mandatory List<Directory> directories,
         @Mandatory Directory source,
         @Mandatory Directory target,
@@ -132,7 +132,7 @@ public @Service class BackupService {
         progress.setValue(0);
 
         for (Directory directory : directories) {
-            copyDirectory(directory, source, target);
+            createDirectory(directory, source, target);
             progress.step();
         }
 
@@ -140,7 +140,7 @@ public @Service class BackupService {
         progress.unnest();
     }
 
-    private void copyDirectory(
+    private void createDirectory(
         @Mandatory Directory directory,
         @Mandatory Directory source,
         @Mandatory Directory target
