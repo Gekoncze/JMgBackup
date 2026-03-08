@@ -19,8 +19,6 @@ public @Test class DirectoryManagerTest {
         System.out.print("Running " + DirectoryManagerTest.class.getSimpleName() + " ... ");
 
         DirectoryManagerTest test = new DirectoryManagerTest();
-        test.testLoadNull();
-        test.testLoad();
         test.testReloadNotModified();
         test.testReloadModified();
         test.testReloadNull();
@@ -29,30 +27,11 @@ public @Test class DirectoryManagerTest {
     }
 
     private final @Service DirectoryManager directoryManager = DirectoryManager.getInstance();
+    private final @Service DirectoryReader directoryReader = DirectoryReader.getInstance();
     private final @Service TestFactory f = TestFactory.getInstance();
 
-    private void testLoadNull() {
-        TestProgress progress = new TestProgress();
-        Directory directory = directoryManager.load(null, progress);
-
-        Assert.assertNull(directory);
-        progress.verifySkip();
-    }
-
-    private void testLoad() {
-        TestProgress progress = new TestProgress();
-        Directory directory = directoryManager.load(PATH, progress);
-
-        Assert.assertNotNull(directory);
-        Assert.assertEquals("one", directory.getPath().getFileName().toString());
-        Assert.assertEquals(0, directory.getDirectories().count());
-        Assert.assertEquals(1, directory.getFiles().count());
-        Assert.assertEquals("file", directory.getFiles().get(0).getPath().getFileName().toString());
-        progress.verify();
-    }
-
     private void testReloadNotModified() {
-        Directory directory = directoryManager.load(PATH, new Progress());
+        Directory directory = directoryReader.read(PATH, new Progress());
         Assert.assertNotNull(directory);
         directory.getFiles().get(0).setChecksum(new Checksum(Algorithm.SHA256, "112233"));
 
@@ -72,7 +51,7 @@ public @Test class DirectoryManagerTest {
     }
 
     private void testReloadModified() {
-        Directory directory = directoryManager.load(PATH, new Progress());
+        Directory directory = directoryReader.read(PATH, new Progress());
         Assert.assertNotNull(directory);
         directory.getFiles().get(0).setChecksum(new Checksum(Algorithm.SHA256, "112233"));
         directory.getFiles().get(0).getProperties().setModified(f.date(2000, 12, 31));

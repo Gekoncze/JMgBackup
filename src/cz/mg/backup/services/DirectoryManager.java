@@ -6,8 +6,6 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 
-import java.nio.file.Path;
-
 public @Service class DirectoryManager {
     private static volatile @Service DirectoryManager instance;
 
@@ -28,17 +26,6 @@ public @Service class DirectoryManager {
     private @Service ChecksumManager checksumManager;
 
     private DirectoryManager() {
-    }
-
-    /**
-     * Loads directory tree from given path.
-     */
-    public @Optional Directory load(@Optional Path path, @Mandatory Progress progress) {
-        if (path != null) {
-            return directoryReader.read(path, progress);
-        } else {
-            return null;
-        }
     }
 
     /**

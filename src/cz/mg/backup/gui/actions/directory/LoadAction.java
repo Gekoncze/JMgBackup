@@ -11,14 +11,14 @@ import cz.mg.backup.gui.entities.Side;
 import cz.mg.backup.gui.entities.State;
 import cz.mg.backup.gui.services.RefreshService;
 import cz.mg.backup.gui.views.directory.DirectoryTreeView;
-import cz.mg.backup.services.DirectoryManager;
+import cz.mg.backup.services.DirectoryReader;
 
 import javax.swing.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public @Component class LoadAction implements Action {
-    private final @Mandatory DirectoryManager directoryManager = DirectoryManager.getInstance();
+    private final @Mandatory DirectoryReader directoryReader = DirectoryReader.getInstance();
     private final @Mandatory RefreshService refreshService = RefreshService.getInstance();
 
     private final @Mandatory MainWindow window;
@@ -66,7 +66,10 @@ public @Component class LoadAction implements Action {
             window,
             getName(),
             progress -> {
-                state.setDirectory(directoryManager.load(path, progress), side);
+                state.setDirectory(
+                    path != null ? directoryReader.read(path, progress) : null,
+                    side
+                );
                 refreshService.refresh(state, progress);
             }
         );
