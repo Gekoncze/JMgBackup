@@ -20,20 +20,27 @@ import java.nio.file.Path;
 
 public @Test class BackupServiceTest {
     private static final @Mandatory Path PARENT_DIRECTORY = Configuration.getRoot(BackupServiceTest.class);
-    private static final @Mandatory Path SOURCE_DIRECTORY = PARENT_DIRECTORY.resolve("source");
-    private static final @Mandatory Path SOURCE_EXISTING_FILE = SOURCE_DIRECTORY.resolve("existing.txt");
-    private static final @Mandatory Path SOURCE_MISSING_FILE = SOURCE_DIRECTORY.resolve("missing.txt");
-    private static final @Mandatory Path TARGET_DIRECTORY = PARENT_DIRECTORY.resolve("target");
-    private static final @Mandatory Path TARGET_EXISTING_FILE = TARGET_DIRECTORY.resolve("existing.txt");
-    private static final @Mandatory Path TARGET_MISSING_FILE = TARGET_DIRECTORY.resolve("missing.txt");
+    private static final @Mandatory Path F_SOURCE_DIRECTORY = PARENT_DIRECTORY.resolve("file").resolve("source");
+    private static final @Mandatory Path F_SOURCE_EXISTING_FILE = F_SOURCE_DIRECTORY.resolve("existing.txt");
+    private static final @Mandatory Path F_SOURCE_MISSING_FILE = F_SOURCE_DIRECTORY.resolve("missing.txt");
+    private static final @Mandatory Path F_TARGET_DIRECTORY = PARENT_DIRECTORY.resolve("file").resolve("target");
+    private static final @Mandatory Path F_TARGET_EXISTING_FILE = F_TARGET_DIRECTORY.resolve("existing.txt");
+    private static final @Mandatory Path F_TARGET_MISSING_FILE = F_TARGET_DIRECTORY.resolve("missing.txt");
+    private static final @Mandatory Path D_SOURCE_DIRECTORY = PARENT_DIRECTORY.resolve("directory").resolve("source");
+    private static final @Mandatory Path D_SOURCE_MISSING_DIRECTORY = D_SOURCE_DIRECTORY.resolve("missing");
+    private static final @Mandatory Path D_TARGET_DIRECTORY = PARENT_DIRECTORY.resolve("directory").resolve("target");
+    private static final @Mandatory Path D_TARGET_MISSING_DIRECTORY = D_TARGET_DIRECTORY.resolve("missing");
 
     public static void main(String[] args) {
         System.out.print("Running " + BackupServiceTest.class.getSimpleName() + " ... ");
 
         BackupServiceTest test = new BackupServiceTest();
-        test.testCopy();
-        test.testSameSourceAndTarget();
-        test.testFileNotInSource();
+        test.testCopyMissingFile();
+        test.testCopyMissingFileSameSourceAndTarget();
+        test.testCopyMissingFileNotInSource();
+        test.testCopyMissingDirectory();
+        test.testCopyMissingDirectorySameSourceAndTarget();
+        test.testCopyMissingDirectoryNotInSource();
 
         System.out.println("OK");
     }
@@ -42,20 +49,20 @@ public @Test class BackupServiceTest {
     private final @Service DirectoryReader directoryReader = DirectoryReader.getInstance();
     private final @Service DirectoryComparator comparator = DirectoryComparator.getInstance();
 
-    private void testCopy() {
-        Assert.assertEquals(true, Files.exists(SOURCE_DIRECTORY));
-        Assert.assertEquals(true, Files.exists(SOURCE_EXISTING_FILE));
-        Assert.assertEquals(true, Files.exists(SOURCE_MISSING_FILE));
-        Assert.assertEquals(true, Files.exists(TARGET_DIRECTORY));
-        Assert.assertEquals(true, Files.exists(TARGET_EXISTING_FILE));
-        Assert.assertEquals(false, Files.exists(TARGET_MISSING_FILE));
-        Assert.assertNotEquals(SOURCE_DIRECTORY, TARGET_DIRECTORY);
-        Assert.assertNotEquals(getSize(SOURCE_EXISTING_FILE), getSize(TARGET_EXISTING_FILE));
+    private void testCopyMissingFile() {
+        Assert.assertEquals(true, Files.exists(F_SOURCE_DIRECTORY));
+        Assert.assertEquals(true, Files.exists(F_SOURCE_EXISTING_FILE));
+        Assert.assertEquals(true, Files.exists(F_SOURCE_MISSING_FILE));
+        Assert.assertEquals(true, Files.exists(F_TARGET_DIRECTORY));
+        Assert.assertEquals(true, Files.exists(F_TARGET_EXISTING_FILE));
+        Assert.assertEquals(false, Files.exists(F_TARGET_MISSING_FILE));
+        Assert.assertNotEquals(F_SOURCE_DIRECTORY, F_TARGET_DIRECTORY);
+        Assert.assertNotEquals(getSize(F_SOURCE_EXISTING_FILE), getSize(F_TARGET_EXISTING_FILE));
 
-        long originalTargetExistingFileSize = getSize(TARGET_EXISTING_FILE);
+        long originalTargetExistingFileSize = getSize(F_TARGET_EXISTING_FILE);
 
-        Directory source = directoryReader.read(SOURCE_DIRECTORY, new Progress());
-        Directory target = directoryReader.read(TARGET_DIRECTORY, new Progress());
+        Directory source = directoryReader.read(F_SOURCE_DIRECTORY, new Progress());
+        Directory target = directoryReader.read(F_TARGET_DIRECTORY, new Progress());
         comparator.compare(source, target, new Progress());
 
         try {
@@ -74,27 +81,27 @@ public @Test class BackupServiceTest {
                 progress
             );
 
-            Assert.assertEquals(true, Files.exists(TARGET_MISSING_FILE));
-            Assert.assertEquals(originalTargetExistingFileSize, getSize(TARGET_EXISTING_FILE));
+            Assert.assertEquals(true, Files.exists(F_TARGET_MISSING_FILE));
+            Assert.assertEquals(originalTargetExistingFileSize, getSize(F_TARGET_EXISTING_FILE));
             Assert.assertEquals(2, target.getProperties().getTotalFileCount());
-            Assert.assertEquals(TARGET_EXISTING_FILE, target.getFiles().get(0).getPath());
-            Assert.assertEquals(TARGET_MISSING_FILE, target.getFiles().get(1).getPath());
+            Assert.assertEquals(F_TARGET_EXISTING_FILE, target.getFiles().get(0).getPath());
+            Assert.assertEquals(F_TARGET_MISSING_FILE, target.getFiles().get(1).getPath());
             progress.verify(1, 1);
         } finally {
-            if (Files.exists(TARGET_MISSING_FILE)) {
-                Assertions.assertThatCode(() -> Files.delete(TARGET_MISSING_FILE))
+            if (Files.exists(F_TARGET_MISSING_FILE)) {
+                Assertions.assertThatCode(() -> Files.delete(F_TARGET_MISSING_FILE))
                     .withMessage("Test cleanup failed!")
                     .doesNotThrowAnyException();
             }
         }
     }
 
-    private void testSameSourceAndTarget() {
+    private void testCopyMissingFileSameSourceAndTarget() {
         Directory source = new Directory();
-        source.setPath(SOURCE_DIRECTORY);
+        source.setPath(F_SOURCE_DIRECTORY);
 
         Directory target = new Directory();
-        target.setPath(SOURCE_DIRECTORY);
+        target.setPath(F_SOURCE_DIRECTORY);
 
         TestProgress progress = new TestProgress();
         Assertions.assertThatCode(() -> backupService.copyMissingFiles(new List<>(), source, target, Algorithm.MD5, progress))
@@ -104,14 +111,73 @@ public @Test class BackupServiceTest {
         progress.verifySkip();
     }
 
-    private void testFileNotInSource() {
-        Directory source = directoryReader.read(SOURCE_DIRECTORY, new Progress());
-        Directory target = directoryReader.read(TARGET_DIRECTORY, new Progress());
+    private void testCopyMissingFileNotInSource() {
+        Directory source = directoryReader.read(F_SOURCE_DIRECTORY, new Progress());
+        Directory target = directoryReader.read(F_TARGET_DIRECTORY, new Progress());
         List<File> files = new List<>(target.getFiles().get(0));
 
         TestProgress progress = new TestProgress();
         Assertions.assertThatCode(() -> backupService.copyMissingFiles(files, source, target, Algorithm.MD5, progress))
             .withMessage("File not in source directory should not be allowed.")
+            .throwsException(IllegalArgumentException.class);
+
+        progress.verify();
+    }
+
+    private void testCopyMissingDirectory() {
+        Assert.assertEquals(true, Files.exists(D_SOURCE_DIRECTORY));
+        Assert.assertEquals(true, Files.exists(D_SOURCE_MISSING_DIRECTORY));
+        Assert.assertEquals(true, Files.exists(D_TARGET_DIRECTORY));
+        Assert.assertEquals(false, Files.exists(D_TARGET_MISSING_DIRECTORY));
+        Assert.assertNotEquals(D_SOURCE_DIRECTORY, D_TARGET_DIRECTORY);
+
+        Directory source = directoryReader.read(D_SOURCE_DIRECTORY, new Progress());
+        Directory target = directoryReader.read(D_TARGET_DIRECTORY, new Progress());
+        comparator.compare(source, target, new Progress());
+
+        try {
+            TestProgress progress = new TestProgress();
+            List<Directory> directories = backupService.collectMissingDirectories(new List<>(source), progress);
+
+            Assert.assertEquals(1, directories.count());
+            progress.verify(2, 2);
+
+            backupService.copyMissingDirectories(directories, source, target, progress);
+
+            Assert.assertEquals(true, Files.exists(D_TARGET_MISSING_DIRECTORY));
+            progress.verify(1, 1);
+        } finally {
+            if (Files.exists(D_TARGET_MISSING_DIRECTORY)) {
+                Assertions.assertThatCode(() -> Files.delete(D_TARGET_MISSING_DIRECTORY))
+                    .withMessage("Test cleanup failed.")
+                    .doesNotThrowAnyException();
+            }
+        }
+    }
+
+    private void testCopyMissingDirectorySameSourceAndTarget() {
+        Directory source = new Directory();
+        source.setPath(D_SOURCE_DIRECTORY);
+
+        Directory target = new Directory();
+        target.setPath(D_SOURCE_DIRECTORY);
+
+        TestProgress progress = new TestProgress();
+        Assertions.assertThatCode(() -> backupService.copyMissingDirectories(new List<>(), source, target, progress))
+            .withMessage("Source and target directory should not be allowed to be the same.")
+            .throwsException(IllegalArgumentException.class);
+
+        progress.verifySkip();
+    }
+
+    private void testCopyMissingDirectoryNotInSource() {
+        Directory source = directoryReader.read(D_SOURCE_DIRECTORY, new Progress());
+        Directory target = directoryReader.read(D_TARGET_DIRECTORY, new Progress());
+        List<Directory> directories = new List<>(target.getDirectories().get(0));
+
+        TestProgress progress = new TestProgress();
+        Assertions.assertThatCode(() -> backupService.copyMissingDirectories(directories, source, target, progress))
+            .withMessage("Directory not in source directory should not be allowed.")
             .throwsException(IllegalArgumentException.class);
 
         progress.verify();

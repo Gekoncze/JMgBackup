@@ -40,9 +40,11 @@ public @Test class DirectoryWriterTest {
                 .withMessage("Missing directory should be created.")
                 .isEqualTo(true);
         } finally {
-            Assertions.assertThatCode(() -> Files.delete(MISSING_DIRECTORY_PATH))
-                .withMessage("Test cleanup failed.")
-                .doesNotThrowAnyException();
+            if (Files.exists(MISSING_DIRECTORY_PATH)) {
+                Assertions.assertThatCode(() -> Files.delete(MISSING_DIRECTORY_PATH))
+                    .withMessage("Test cleanup failed.")
+                    .doesNotThrowAnyException();
+            }
         }
     }
 
@@ -66,17 +68,23 @@ public @Test class DirectoryWriterTest {
                 .withMessage("Missing nested directory should be created.")
                 .isEqualTo(true);
         } finally {
-            Assertions.assertThatCode(() -> Files.delete(NESTED_DIRECTORY_PATH))
-                .withMessage("Test cleanup failed.")
-                .doesNotThrowAnyException();
+            if (Files.exists(NESTED_DIRECTORY_PATH)) {
+                Assertions.assertThatCode(() -> Files.delete(NESTED_DIRECTORY_PATH))
+                    .withMessage("Test cleanup failed.")
+                    .doesNotThrowAnyException();
+            }
 
-            Assertions.assertThatCode(() -> Files.delete(NESTED_DIRECTORY_PATH.getParent()))
-                .withMessage("Test cleanup failed.")
-                .doesNotThrowAnyException();
+            if (Files.exists(NESTED_DIRECTORY_PATH.getParent())) {
+                Assertions.assertThatCode(() -> Files.delete(NESTED_DIRECTORY_PATH.getParent()))
+                    .withMessage("Test cleanup failed.")
+                    .doesNotThrowAnyException();
+            }
 
-            Assertions.assertThatCode(() -> Files.delete(NESTED_DIRECTORY_PATH.getParent().getParent()))
-                .withMessage("Test cleanup failed.")
-                .doesNotThrowAnyException();
+            if (Files.exists(NESTED_DIRECTORY_PATH.getParent().getParent())) {
+                Assertions.assertThatCode(() -> Files.delete(NESTED_DIRECTORY_PATH.getParent().getParent()))
+                    .withMessage("Test cleanup failed.")
+                    .doesNotThrowAnyException();
+            }
         }
     }
 

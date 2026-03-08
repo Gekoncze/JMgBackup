@@ -14,8 +14,10 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public @Service class BackupService {
-    private static final String COLLECT_DESCRIPTION = "Collect missing files";
-    private static final String COPY_DESCRIPTION = "Copy missing files";
+    private static final String COLLECT_FILES_DESCRIPTION = "Collect missing files";
+    private static final String COPY_FILES_DESCRIPTION = "Copy missing files";
+    private static final String COLLECT_DIRECTORIES_DESCRIPTION = "Collect missing directories";
+    private static final String COPY_DIRECTORIES_DESCRIPTION = "Copy missing directories";
 
     private static volatile @Service BackupService instance;
 
@@ -27,6 +29,7 @@ public @Service class BackupService {
                     instance.treeIterator = TreeIterator.getInstance();
                     instance.fileManager = FileManager.getInstance();
                     instance.directoryReloader = DirectoryReloader.getInstance();
+                    instance.directoryWriter = DirectoryWriter.getInstance();
                     instance.pathService = PathService.getInstance();
                 }
             }
@@ -37,6 +40,7 @@ public @Service class BackupService {
     private @Service TreeIterator treeIterator;
     private @Service FileManager fileManager;
     private @Service DirectoryReloader directoryReloader;
+    private @Service DirectoryWriter directoryWriter;
     private @Service PathService pathService;
 
     public @Mandatory List<File> collectMissingFiles(
@@ -53,7 +57,7 @@ public @Service class BackupService {
                 }
             },
             progress,
-            COLLECT_DESCRIPTION
+            COLLECT_FILES_DESCRIPTION
         );
 
         return missingFiles;
@@ -68,7 +72,7 @@ public @Service class BackupService {
     ) {
         validateSourceToTarget(source, target);
 
-        progress.setDescription(COPY_DESCRIPTION);
+        progress.setDescription(COPY_FILES_DESCRIPTION);
         progress.setLimit(files.count());
         progress.setValue(0);
 
@@ -88,15 +92,66 @@ public @Service class BackupService {
         @Mandatory Algorithm algorithm,
         @Mandatory Progress progress
     ) {
-        validateFileInSource(file, source);
+        validateNodeInSource(file, source);
         Path sourceFilePath = file.getPath();
         Path targetFilePath = target.getPath().resolve(pathService.removeLeadingPart(file.getRelativePath()));
         fileManager.copy(sourceFilePath, targetFilePath, algorithm, progress.nest());
         progress.unnest();
     }
 
-    private boolean isMissing(@Mandatory File file) {
-        return file.getError() instanceof MissingException;
+    public @Mandatory List<Directory> collectMissingDirectories(
+        @Mandatory List<Node> nodes,
+        @Mandatory Progress progress
+    ) {
+        List<Directory> missingDirectories = new List<>();
+
+        treeIterator.forEachDirectory(
+            nodes,
+            directory -> {
+                if (isMissing(directory)) {
+                    missingDirectories.addLast(directory);
+                }
+            },
+            progress,
+            COLLECT_DIRECTORIES_DESCRIPTION
+        );
+
+        return missingDirectories;
+    }
+
+    public void copyMissingDirectories(
+        @Mandatory List<Directory> directories,
+        @Mandatory Directory source,
+        @Mandatory Directory target,
+        @Mandatory Progress progress
+    ) {
+        validateSourceToTarget(source, target);
+
+        progress.setDescription(COPY_DIRECTORIES_DESCRIPTION);
+        progress.setLimit(directories.count());
+        progress.setValue(0);
+
+        for (Directory directory : directories) {
+            copyDirectory(directory, source, target);
+            progress.step();
+        }
+
+        directoryReloader.reload(target, progress.nest());
+        progress.unnest();
+    }
+
+    private void copyDirectory(
+        @Mandatory Directory directory,
+        @Mandatory Directory source,
+        @Mandatory Directory target
+    ) {
+        validateNodeInSource(directory, source);
+        Path targetDirectoryPath = target.getPath().resolve(pathService.removeLeadingPart(directory.getRelativePath()));
+        directoryWriter.createDirectories(targetDirectoryPath);
+    }
+
+    private boolean isMissing(@Mandatory Node node) {
+        return node.getError() instanceof MissingException;
     }
 
     private void validateSourceToTarget(@Mandatory Directory source, @Mandatory Directory target) {
@@ -105,8 +160,8 @@ public @Service class BackupService {
         }
     }
 
-    private void validateFileInSource(@Mandatory File file, @Mandatory Directory source) {
-        if (!file.getRelativePath().startsWith(source.getRelativePath())) {
+    private void validateNodeInSource(@Mandatory Node node, @Mandatory Directory source) {
+        if (!node.getRelativePath().startsWith(source.getRelativePath())) {
             throw new IllegalArgumentException("Source file is not in source directory.");
         }
     }
