@@ -1,5 +1,5 @@
 ### NOW ###
-    ...
+    create missing empty directories action
 
 ### SOON ###
     add duplicate detector
@@ -13,9 +13,6 @@
         we could easily implement this using custom hash function and comparator + hash map
 
 ### LATER ###
-    consider create missing empty directories action
-        could be part of existing action too
-
     add context menu for tree entries
         add option to reload / refresh specific file or directory
         add option to show error details

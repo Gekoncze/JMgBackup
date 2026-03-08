@@ -7,7 +7,6 @@ import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Checksum;
 import cz.mg.backup.exceptions.FileSystemException;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -20,6 +19,7 @@ public @Service class FileManager {
             synchronized (Service.class) {
                 if (instance == null) {
                     instance = new FileManager();
+                    instance.directoryWriter = DirectoryWriter.getInstance();
                     instance.checksumReader = ChecksumReader.getInstance();
                     instance.fileCopy = FileCopy.getInstance();
                 }
@@ -28,6 +28,7 @@ public @Service class FileManager {
         return instance;
     }
 
+    private @Service DirectoryWriter directoryWriter;
     private @Service ChecksumReader checksumReader;
     private @Service FileCopy fileCopy;
 
@@ -41,8 +42,8 @@ public @Service class FileManager {
         @Mandatory Progress progress
     ) {
         validateParameters(source, target);
-        createMissingDirectories(target);
         Checksum sourceChecksum = checksumReader.read(source, algorithm, progress);
+        directoryWriter.createDirectories(target.getParent());
         fileCopy.copy(source, target, progress);
         Checksum targetChecksum = checksumReader.read(target, algorithm, progress);
         validateChecksums(sourceChecksum, targetChecksum);
@@ -55,16 +56,6 @@ public @Service class FileManager {
 
         if (Files.exists(target)) {
             throw new IllegalArgumentException("Expected missing file for target path '" + target + "'.");
-        }
-    }
-
-    private void createMissingDirectories(@Mandatory Path path) {
-        try {
-            if (path.getParent() != null) {
-                Files.createDirectories(path.getParent());
-            }
-        } catch (IOException e) {
-            throw new FileSystemException("Could not create missing directories for '" + path + "'.");
         }
     }
 
