@@ -26,7 +26,7 @@ public @Service class BackupService {
                     instance = new BackupService();
                     instance.treeIterator = TreeIterator.getInstance();
                     instance.fileManager = FileManager.getInstance();
-                    instance.directoryManager = DirectoryManager.getInstance();
+                    instance.directoryReloader = DirectoryReloader.getInstance();
                     instance.pathService = PathService.getInstance();
                 }
             }
@@ -36,7 +36,7 @@ public @Service class BackupService {
 
     private @Service TreeIterator treeIterator;
     private @Service FileManager fileManager;
-    private @Service DirectoryManager directoryManager;
+    private @Service DirectoryReloader directoryReloader;
     private @Service PathService pathService;
 
     public @Mandatory List<File> collectMissingFiles(
@@ -77,7 +77,7 @@ public @Service class BackupService {
             progress.step();
         }
 
-        directoryManager.reload(target, progress.nest());
+        directoryReloader.reload(target, progress.nest());
         progress.unnest();
     }
 

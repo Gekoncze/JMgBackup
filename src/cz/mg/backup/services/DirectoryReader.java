@@ -37,7 +37,7 @@ public @Service class DirectoryReader {
     }
 
     /**
-     * Reads directory tree with files from given path.
+     * Reads directory tree from given path.
      * Symbolic links are skipped, except for given path.
      * Directory properties are collected.
      * Files and directories are sorted alphabetically.

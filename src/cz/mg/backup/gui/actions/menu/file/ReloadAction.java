@@ -11,13 +11,13 @@ import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.entities.State;
 import cz.mg.backup.gui.icons.Icons;
 import cz.mg.backup.gui.services.RefreshService;
-import cz.mg.backup.services.DirectoryManager;
+import cz.mg.backup.services.DirectoryReloader;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 
 public @Component class ReloadAction implements Action {
-    private final @Mandatory DirectoryManager directoryManager = DirectoryManager.getInstance();
+    private final @Mandatory DirectoryReloader directoryReloader = DirectoryReloader.getInstance();
     private final @Mandatory RefreshService refreshService = RefreshService.getInstance();
 
     private final @Mandatory MainWindow window;
@@ -59,8 +59,8 @@ public @Component class ReloadAction implements Action {
             window,
             getName(),
             progress -> {
-                directoryManager.reload(state.getLeft(), progress);
-                directoryManager.reload(state.getRight(), progress);
+                directoryReloader.reload(state.getLeft(), progress);
+                directoryReloader.reload(state.getRight(), progress);
                 refreshService.refresh(state, progress);
             }
         );

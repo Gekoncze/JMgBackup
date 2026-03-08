@@ -12,13 +12,13 @@ import cz.mg.test.Assert;
 
 import java.nio.file.Path;
 
-public @Test class DirectoryManagerTest {
+public @Test class DirectoryReloaderTest {
     private static final @Mandatory Path PATH = Configuration.getRoot(DirectoryReaderTest.class).resolve("one");
 
     public static void main(String[] args) {
-        System.out.print("Running " + DirectoryManagerTest.class.getSimpleName() + " ... ");
+        System.out.print("Running " + DirectoryReloaderTest.class.getSimpleName() + " ... ");
 
-        DirectoryManagerTest test = new DirectoryManagerTest();
+        DirectoryReloaderTest test = new DirectoryReloaderTest();
         test.testReloadNotModified();
         test.testReloadModified();
         test.testReloadNull();
@@ -26,7 +26,7 @@ public @Test class DirectoryManagerTest {
         System.out.println("OK");
     }
 
-    private final @Service DirectoryManager directoryManager = DirectoryManager.getInstance();
+    private final @Service DirectoryReloader directoryReloader = DirectoryReloader.getInstance();
     private final @Service DirectoryReader directoryReader = DirectoryReader.getInstance();
     private final @Service TestFactory f = TestFactory.getInstance();
 
@@ -36,7 +36,7 @@ public @Test class DirectoryManagerTest {
         directory.getFiles().get(0).setChecksum(new Checksum(Algorithm.SHA256, "112233"));
 
         TestProgress progress = new TestProgress();
-        directoryManager.reload(directory, progress);
+        directoryReloader.reload(directory, progress);
 
         Assert.assertEquals("one", directory.getPath().getFileName().toString());
         Assert.assertEquals(0, directory.getDirectories().count());
@@ -57,7 +57,7 @@ public @Test class DirectoryManagerTest {
         directory.getFiles().get(0).getProperties().setModified(f.date(2000, 12, 31));
 
         TestProgress progress = new TestProgress();
-        directoryManager.reload(directory, progress);
+        directoryReloader.reload(directory, progress);
 
         Assert.assertEquals("one", directory.getPath().getFileName().toString());
         Assert.assertEquals(0, directory.getDirectories().count());
@@ -69,7 +69,7 @@ public @Test class DirectoryManagerTest {
 
     private void testReloadNull() {
         TestProgress progress = new TestProgress();
-        directoryManager.reload(null, progress);
+        directoryReloader.reload(null, progress);
 
         progress.verifySkip();
     }

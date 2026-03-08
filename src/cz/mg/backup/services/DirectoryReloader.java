@@ -6,14 +6,14 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 
-public @Service class DirectoryManager {
-    private static volatile @Service DirectoryManager instance;
+public @Service class DirectoryReloader {
+    private static volatile @Service DirectoryReloader instance;
 
-    public static @Service DirectoryManager getInstance() {
+    public static @Service DirectoryReloader getInstance() {
         if (instance == null) {
             synchronized (Service.class) {
                 if (instance == null) {
-                    instance = new DirectoryManager();
+                    instance = new DirectoryReloader();
                     instance.directoryReader = DirectoryReader.getInstance();
                     instance.checksumManager = ChecksumManager.getInstance();
                 }
@@ -25,7 +25,7 @@ public @Service class DirectoryManager {
     private @Service DirectoryReader directoryReader;
     private @Service ChecksumManager checksumManager;
 
-    private DirectoryManager() {
+    private DirectoryReloader() {
     }
 
     /**

@@ -10,9 +10,9 @@ public class AllTests {
         ChecksumManagerTest.main(args);
         ChecksumReaderTest.main(args);
         DirectoryComparatorTest.main(args);
-        DirectoryManagerTest.main(args);
         DirectoryPropertiesCollectorTest.main(args);
         DirectoryReaderTest.main(args);
+        DirectoryReloaderTest.main(args);
         DirectorySearchTest.main(args);
         DirectorySortTest.main(args);
         FileComparatorTest.main(args);
