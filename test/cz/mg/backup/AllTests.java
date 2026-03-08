@@ -6,6 +6,7 @@ import cz.mg.backup.services.*;
 public class AllTests {
     public static void main(String[] args) {
         // cz.mg.backup.services
+        BackupServiceTest.main(args);
         ChecksumManagerTest.main(args);
         ChecksumReaderTest.main(args);
         DirectoryComparatorTest.main(args);
@@ -14,7 +15,6 @@ public class AllTests {
         DirectoryReaderTest.main(args);
         DirectorySearchTest.main(args);
         DirectorySortTest.main(args);
-        FileBackupTest.main(args);
         FileComparatorTest.main(args);
         FileCopyTest.main(args);
         FileManagerTest.main(args);

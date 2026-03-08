@@ -15,13 +15,13 @@ import cz.mg.backup.gui.dialogs.ProgressDialog;
 import cz.mg.backup.gui.entities.State;
 import cz.mg.backup.gui.services.RefreshService;
 import cz.mg.backup.gui.views.directory.DirectoryTreeView;
-import cz.mg.backup.services.FileBackup;
+import cz.mg.backup.services.BackupService;
 import cz.mg.collections.list.List;
 
 import javax.swing.*;
 
 public @Component class CopyMissingFilesAction implements Action {
-    private final @Mandatory FileBackup fileBackup = FileBackup.getInstance();
+    private final @Mandatory BackupService backupService = BackupService.getInstance();
     private final @Mandatory RefreshService refreshService = RefreshService.getInstance();
 
     private final @Mandatory MainWindow window;
@@ -90,7 +90,7 @@ public @Component class CopyMissingFilesAction implements Action {
         return ProgressDialog.compute(
             window,
             "Collect missing files",
-            progress -> fileBackup.collectMissingFiles(nodes, progress)
+            progress -> backupService.collectMissingFiles(nodes, progress)
         ).getResult();
     }
 
@@ -105,7 +105,7 @@ public @Component class CopyMissingFilesAction implements Action {
             window,
             getName(),
             progress -> {
-                fileBackup.copyMissingFiles(files, source, target, algorithm, progress);
+                backupService.copyMissingFiles(files, source, target, algorithm, progress);
                 refreshService.refresh(state, progress);
             }
         );

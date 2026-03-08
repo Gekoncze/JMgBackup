@@ -13,17 +13,17 @@ import cz.mg.collections.list.List;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public @Service class FileBackup {
+public @Service class BackupService {
     private static final String COLLECT_DESCRIPTION = "Collect missing files";
     private static final String COPY_DESCRIPTION = "Copy missing files";
 
-    private static volatile @Service FileBackup instance;
+    private static volatile @Service BackupService instance;
 
-    public static @Service FileBackup getInstance() {
+    public static @Service BackupService getInstance() {
         if (instance == null) {
             synchronized (Service.class) {
                 if (instance == null) {
-                    instance = new FileBackup();
+                    instance = new BackupService();
                     instance.treeIterator = TreeIterator.getInstance();
                     instance.fileManager = FileManager.getInstance();
                     instance.directoryManager = DirectoryManager.getInstance();

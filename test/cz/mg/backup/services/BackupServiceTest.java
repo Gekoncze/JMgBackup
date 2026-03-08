@@ -8,7 +8,6 @@ import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
-import cz.mg.backup.entities.Node;
 import cz.mg.backup.services.comparator.DirectoryComparator;
 import cz.mg.backup.test.TestProgress;
 import cz.mg.collections.list.List;
@@ -19,8 +18,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public @Test class FileBackupTest {
-    private static final @Mandatory Path PARENT_DIRECTORY = Configuration.getRoot(FileBackupTest.class);
+public @Test class BackupServiceTest {
+    private static final @Mandatory Path PARENT_DIRECTORY = Configuration.getRoot(BackupServiceTest.class);
     private static final @Mandatory Path SOURCE_DIRECTORY = PARENT_DIRECTORY.resolve("source");
     private static final @Mandatory Path SOURCE_EXISTING_FILE = SOURCE_DIRECTORY.resolve("existing.txt");
     private static final @Mandatory Path SOURCE_MISSING_FILE = SOURCE_DIRECTORY.resolve("missing.txt");
@@ -29,9 +28,9 @@ public @Test class FileBackupTest {
     private static final @Mandatory Path TARGET_MISSING_FILE = TARGET_DIRECTORY.resolve("missing.txt");
 
     public static void main(String[] args) {
-        System.out.print("Running " + FileBackupTest.class.getSimpleName() + " ... ");
+        System.out.print("Running " + BackupServiceTest.class.getSimpleName() + " ... ");
 
-        FileBackupTest test = new FileBackupTest();
+        BackupServiceTest test = new BackupServiceTest();
         test.testCopy();
         test.testSameSourceAndTarget();
         test.testFileNotInSource();
@@ -39,7 +38,7 @@ public @Test class FileBackupTest {
         System.out.println("OK");
     }
 
-    private final @Service FileBackup fileBackup = FileBackup.getInstance();
+    private final @Service BackupService backupService = BackupService.getInstance();
     private final @Service DirectoryReader directoryReader = DirectoryReader.getInstance();
     private final @Service DirectoryComparator comparator = DirectoryComparator.getInstance();
 
@@ -61,13 +60,13 @@ public @Test class FileBackupTest {
 
         try {
             TestProgress progress = new TestProgress();
-            List<File> files = fileBackup.collectMissingFiles(new List<>(source), progress);
+            List<File> files = backupService.collectMissingFiles(new List<>(source), progress);
 
             Assert.assertEquals(1, files.count());
             progress.verify(2, 2);
 
             progress = new TestProgress();
-            fileBackup.copyMissingFiles(
+            backupService.copyMissingFiles(
                 files,
                 source,
                 target,
@@ -98,7 +97,7 @@ public @Test class FileBackupTest {
         target.setPath(SOURCE_DIRECTORY);
 
         TestProgress progress = new TestProgress();
-        Assertions.assertThatCode(() -> fileBackup.copyMissingFiles(new List<>(), source, target, Algorithm.MD5, progress))
+        Assertions.assertThatCode(() -> backupService.copyMissingFiles(new List<>(), source, target, Algorithm.MD5, progress))
             .withMessage("Source and target directory should not be allowed to be the same.")
             .throwsException(IllegalArgumentException.class);
 
@@ -111,7 +110,7 @@ public @Test class FileBackupTest {
         List<File> files = new List<>(target.getFiles().get(0));
 
         TestProgress progress = new TestProgress();
-        Assertions.assertThatCode(() -> fileBackup.copyMissingFiles(files, source, target, Algorithm.MD5, progress))
+        Assertions.assertThatCode(() -> backupService.copyMissingFiles(files, source, target, Algorithm.MD5, progress))
             .withMessage("File not in source directory should not be allowed.")
             .throwsException(IllegalArgumentException.class);
 
