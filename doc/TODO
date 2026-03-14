@@ -1,7 +1,4 @@
 ### NOW ###
-    ...
-
-### SOON ###
     add duplicate detector
         show different icon for duplicates ?
         allow user to configure duplicate detection to specify key properties ?
@@ -11,6 +8,16 @@
             maybe this could be a separate compare selected files action
             could be within same directory tree or between compared directory trees
         we could easily implement this using custom hash function and comparator + hash map
+        add context menu to show duplicate suspects in dialog
+
+### SOON ###
+    add relocate moved files action
+        for each selected file:
+            * make sure that both file contents are equal (byte by byte)
+                * may need to introduce file comparator
+                * may need to rename existing file comparator to file metadata comparator
+                * may need to rename existing directory comparator to directory metadata comparator
+            * move file using native filesystem move operation
 
 ### LATER ###
     add context menu for tree entries
@@ -27,6 +34,14 @@
         add test for directory tree (restore expanded, collapsed and selected nodes)
 
 ### CONSIDERATIONS ###
+    consider adding settings to not automatically compare directories
+        in case comparison is not up to date, show information banner ???
+        consider adding settings to completely disable directory compare
+
+    consider adding settings to not automatically detect duplicates
+        in case duplicates are not up to date, show information banner ???
+        consider adding settings to completely disable duplicate detection
+
     consider showing disk usage somewhere near top (if possible)
         could then show warning when copy operation may fail because of not enough space in target device
         would need to detect device for path and read its properties somehow
