@@ -1,20 +1,21 @@
 ### NOW ###
-    add duplicate detector
-        show different icon for duplicates ?
-        allow user to configure duplicate detection to specify key properties ?
-        duplicates are within same work tree
-            but there could be also moved files that when copied would cause duplicates
-        might need to also implement data comparison for precise detection between found suspects
-            maybe this could be a separate compare selected files action
-            could be within same directory tree or between compared directory trees
-        we could easily implement this using custom hash function and comparator + hash map
-        add context menu to show duplicate suspects in dialog
+    ...
 
 ### SOON ###
+    finalize duplicate detector
+        add more unit tests for duplicate detector
+            also add assertion for exceptions content
+        run duplicate detector after compare
+        show different icon for duplicates and moved files in directory tree
+        add context menu to show duplicate suspects in dialog
+        add dialog and/or menu to configure duplicate detection
+
     add relocate moved files action
         for each selected file:
-            * make sure that both file contents are equal (byte by byte)
+            * make sure that target file won't collide with existing file
+            * make sure that both file contents are equal
                 * may need to introduce file comparator
+                    implement standalone data comparison per bytes for precise detection between found suspects
                 * may need to rename existing file comparator to file metadata comparator
                 * may need to rename existing directory comparator to directory metadata comparator
             * move file using native filesystem move operation
@@ -34,6 +35,9 @@
         add test for directory tree (restore expanded, collapsed and selected nodes)
 
 ### CONSIDERATIONS ###
+    consider considering last modified date when recomputing checksum
+        would require storing timestamp to checksum
+
     consider adding settings to not automatically compare directories
         in case comparison is not up to date, show information banner ???
         consider adding settings to completely disable directory compare

@@ -2,9 +2,17 @@ package cz.mg.backup;
 
 import cz.mg.backup.gui.services.RefreshServiceTest;
 import cz.mg.backup.services.*;
+import cz.mg.backup.services.detector.ConverterTest;
+import cz.mg.backup.services.detector.DuplicateDetectorTest;
+import cz.mg.backup.services.detector.KeyComparatorTest;
 
 public class AllTests {
     public static void main(String[] args) {
+        // cz.mg.backup.services.detector
+        ConverterTest.main(args);
+        DuplicateDetectorTest.main(args);
+        KeyComparatorTest.main(args);
+
         // cz.mg.backup.services
         BackupServiceTest.main(args);
         ChecksumManagerTest.main(args);
