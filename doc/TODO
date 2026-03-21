@@ -10,6 +10,10 @@
         add context menu to show duplicate suspects in dialog
         add dialog and/or menu to configure duplicate detection
 
+    copy missing files enhancements
+        show size in bytes instead of steps
+        show currently copied file
+
     add relocate moved files action
         for each selected file:
             * make sure that target file won't collide with existing file
