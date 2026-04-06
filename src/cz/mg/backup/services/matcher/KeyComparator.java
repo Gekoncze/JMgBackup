@@ -1,4 +1,4 @@
-package cz.mg.backup.services.detector;
+package cz.mg.backup.services.matcher;
 
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.functions.EqualsFunction;

@@ -1,4 +1,4 @@
-package cz.mg.backup.services.detector;
+package cz.mg.backup.services.matcher;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
@@ -10,7 +10,7 @@ import cz.mg.backup.services.TreeIterator;
 import cz.mg.collections.list.List;
 import cz.mg.collections.map.Map;
 
-import static cz.mg.backup.services.detector.DuplicateDetector.PHASES;
+import static cz.mg.backup.services.matcher.DuplicateDetector.PHASES;
 
 /**
  * Class to group files by keys.
