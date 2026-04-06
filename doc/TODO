@@ -3,6 +3,9 @@
 
 ### SOON ###
     finalize duplicate detector
+        decouple
+            rename to file matcher (or similar)
+            extract duplicate detector and move detector
         add more unit tests for duplicate detector
             also add assertion for exceptions content
         run duplicate detector after compare
