@@ -6,6 +6,9 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Algorithm;
 import cz.mg.backup.entities.File;
 
+/**
+ * Class to convert file metadata to key.
+ */
 public @Component class Converter {
     private final boolean compareName;
     private final boolean compareType;

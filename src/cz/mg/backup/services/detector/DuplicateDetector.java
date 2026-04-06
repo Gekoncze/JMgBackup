@@ -18,7 +18,7 @@ import java.util.Objects;
 
 /**
  * Class to find files that may be duplicates or files moved in the other directory.
- * For precise duplicate detection, it is necessary to do byte to byte comparison on found files.
+ * For precise duplicate detection, it is necessary to do byte to byte comparison on files found by this class.
  */
 public @Service class DuplicateDetector {
     private static final String DESCRIPTION = "Find duplicates";
@@ -51,15 +51,15 @@ public @Service class DuplicateDetector {
         @Mandatory Converter converter,
         @Mandatory Progress progress
     ) {
-        Map<Key, List<File>> leftMap = processFiles(left, converter, progress, 1);
-        Map<Key, List<File>> rightMap = processFiles(right, converter, progress, 2);
+        Map<Key, List<File>> leftMap = groupFiles(left, converter, progress, 1);
+        Map<Key, List<File>> rightMap = groupFiles(right, converter, progress, 2);
         findDuplicates(leftMap, initProgress(left, progress, 3));
         findDuplicates(rightMap, initProgress(right, progress, 4));
         findMoves(leftMap, rightMap, initProgress(left, progress, 5));
         findMoves(rightMap, leftMap, initProgress(right, progress, 6));
     }
 
-    private @Mandatory Map<Key, List<File>> processFiles(
+    private @Mandatory Map<Key, List<File>> groupFiles(
         @Optional Directory directory,
         @Mandatory Converter converter,
         @Mandatory Progress progress,
@@ -69,7 +69,7 @@ public @Service class DuplicateDetector {
 
         iterator.forEachFile(
             directory,
-            file -> processFile(file, converter, map),
+            file -> groupFile(file, converter, map),
             progress,
             DESCRIPTION + " " + phase + " / " + PHASES
         );
@@ -77,7 +77,7 @@ public @Service class DuplicateDetector {
         return map;
     }
 
-    private void processFile(
+    private void groupFile(
         @Mandatory File file,
         @Mandatory Converter converter,
         @Mandatory Map<Key, List<File>> map
@@ -110,15 +110,13 @@ public @Service class DuplicateDetector {
         @Mandatory Progress progress
     ) {
         for (ReadablePair<Key, List<File>> pair : sourceMap) {
+            // currently only finds moves for non-duplicated files
             if (pair.getValue().count() == 1) {
                 Key key = pair.getKey();
                 File file = pair.getValue().getFirst();
                 if (file.getError() == null) {
-                    File suspect = findMove(key, targetMap);
-                    if (suspect != null && !Objects.equals(
-                        pathService.removeLeadingPart(file.getRelativePath()),
-                        pathService.removeLeadingPart(suspect.getRelativePath())
-                    )) {
+                    File suspect = findMatch(key, targetMap);
+                    if (suspect != null && moved(file, suspect)) {
                         file.setError(new MoveException(suspect));
                     }
                 }
@@ -127,12 +125,20 @@ public @Service class DuplicateDetector {
         }
     }
 
-    private @Optional File findMove(@Mandatory Key key, @Mandatory Map<Key, List<File>> map) {
+    private @Optional File findMatch(@Mandatory Key key, @Mandatory Map<Key, List<File>> map) {
         List<File> suspects = map.getOptional(key);
+        // currently only finds moves for non-duplicated files
         if (suspects != null && suspects.count() == 1) {
             return suspects.getFirst();
         }
         return null;
+    }
+
+    private boolean moved(@Mandatory File source, @Mandatory File target) {
+        return !Objects.equals(
+            pathService.removeLeadingPart(source.getRelativePath()),
+            pathService.removeLeadingPart(target.getRelativePath())
+        );
     }
 
     private @Mandatory Map<Key, List<File>> createMap() {
