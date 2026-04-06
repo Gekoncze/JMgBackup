@@ -10,21 +10,19 @@ import cz.mg.backup.services.TreeIterator;
 import cz.mg.collections.list.List;
 import cz.mg.collections.map.Map;
 
-import static cz.mg.backup.services.matcher.FileMatcher.PHASES;
-
 /**
  * Class to group files by keys.
  */
-public class Grouper {
+public class FileGrouper {
     private static final String DESCRIPTION = "Group files";
 
-    private static volatile @Service Grouper instance;
+    private static volatile @Service FileGrouper instance;
 
-    public static @Service Grouper getInstance() {
+    public static @Service FileGrouper getInstance() {
         if (instance == null) {
             synchronized (Service.class) {
                 if (instance == null) {
-                    instance = new Grouper();
+                    instance = new FileGrouper();
                     instance.iterator = TreeIterator.getInstance();
                 }
             }
@@ -34,7 +32,7 @@ public class Grouper {
 
     private @Service TreeIterator iterator;
 
-    private Grouper() {
+    private FileGrouper() {
     }
 
     /**
@@ -43,8 +41,7 @@ public class Grouper {
     public @Mandatory Map<Key, List<File>> groupFiles(
         @Optional Directory directory,
         @Mandatory Converter converter,
-        @Mandatory Progress progress,
-        int phase
+        @Mandatory Progress progress
     ) {
         Map<Key, List<File>> map = createMap();
 
@@ -52,7 +49,7 @@ public class Grouper {
             directory,
             file -> groupFile(file, converter, map),
             progress,
-            DESCRIPTION + " " + phase + " / " + PHASES
+            DESCRIPTION
         );
 
         return map;

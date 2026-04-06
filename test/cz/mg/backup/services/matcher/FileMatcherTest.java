@@ -50,7 +50,7 @@ public class FileMatcherTest {
         Converter converter = new Converter(true, true, true, true);
 
         TestProgress progress = new TestProgress();
-        detector.findDuplicates(left, right, converter, progress);
+        detector.match(left, right, converter, progress);
 
         Assert.assertNull(left.getError());
         Assert.assertNull(left.getDirectories().get(0).getError());
@@ -91,7 +91,7 @@ public class FileMatcherTest {
         Converter converter = new Converter(true, true, true, true);
 
         TestProgress progress = new TestProgress();
-        detector.findDuplicates(left, right, converter, progress);
+        detector.match(left, right, converter, progress);
 
         Assert.assertNull(left.getError());
         Assert.assertNull(left.getDirectories().get(0).getError());
