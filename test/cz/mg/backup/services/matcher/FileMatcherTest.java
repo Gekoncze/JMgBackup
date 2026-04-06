@@ -13,18 +13,18 @@ import cz.mg.test.Assert;
 
 import static cz.mg.backup.entities.Algorithm.SHA256;
 
-public class DuplicateDetectorTest {
+public class FileMatcherTest {
     public static void main(String[] args) {
-        System.out.print("Running " + DuplicateDetectorTest.class.getSimpleName() + " ... ");
+        System.out.print("Running " + FileMatcherTest.class.getSimpleName() + " ... ");
 
-        DuplicateDetectorTest test = new DuplicateDetectorTest();
+        FileMatcherTest test = new FileMatcherTest();
         test.testFindDuplicates();
         test.testFindMoves();
 
         System.out.println("OK");
     }
 
-    private final @Mandatory DuplicateDetector detector = DuplicateDetector.getInstance();
+    private final @Mandatory FileMatcher detector = FileMatcher.getInstance();
     private final @Mandatory TestFactory f = TestFactory.getInstance();
 
     private void testFindDuplicates() {

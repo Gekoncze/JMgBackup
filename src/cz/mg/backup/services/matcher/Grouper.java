@@ -10,7 +10,7 @@ import cz.mg.backup.services.TreeIterator;
 import cz.mg.collections.list.List;
 import cz.mg.collections.map.Map;
 
-import static cz.mg.backup.services.matcher.DuplicateDetector.PHASES;
+import static cz.mg.backup.services.matcher.FileMatcher.PHASES;
 
 /**
  * Class to group files by keys.

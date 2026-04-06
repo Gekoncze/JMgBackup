@@ -19,17 +19,17 @@ import java.util.Objects;
  * Class to find files that may be duplicates or files moved in the other directory.
  * For precise duplicate detection, it is necessary to do byte to byte comparison on files found by this class.
  */
-public @Service class DuplicateDetector {
+public @Service class FileMatcher {
     private static final String DESCRIPTION = "Find duplicates";
     static final int PHASES = 6;
 
-    private static volatile @Service DuplicateDetector instance;
+    private static volatile @Service FileMatcher instance;
 
-    public static @Service DuplicateDetector getInstance() {
+    public static @Service FileMatcher getInstance() {
         if (instance == null) {
             synchronized (Service.class) {
                 if (instance == null) {
-                    instance = new DuplicateDetector();
+                    instance = new FileMatcher();
                     instance.grouper = Grouper.getInstance();
                     instance.pathService = PathService.getInstance();
                 }
@@ -41,7 +41,7 @@ public @Service class DuplicateDetector {
     private @Service Grouper grouper;
     private @Service PathService pathService;
 
-    private DuplicateDetector() {
+    private FileMatcher() {
     }
 
     public void findDuplicates(

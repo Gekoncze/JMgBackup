@@ -3,14 +3,14 @@ package cz.mg.backup;
 import cz.mg.backup.gui.services.RefreshServiceTest;
 import cz.mg.backup.services.*;
 import cz.mg.backup.services.matcher.ConverterTest;
-import cz.mg.backup.services.matcher.DuplicateDetectorTest;
+import cz.mg.backup.services.matcher.FileMatcherTest;
 import cz.mg.backup.services.matcher.KeyComparatorTest;
 
 public class AllTests {
     public static void main(String[] args) {
         // cz.mg.backup.services.matcher
         ConverterTest.main(args);
-        DuplicateDetectorTest.main(args);
+        FileMatcherTest.main(args);
         KeyComparatorTest.main(args);
 
         // cz.mg.backup.services
