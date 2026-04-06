@@ -9,7 +9,6 @@ import cz.mg.backup.entities.File;
 import cz.mg.backup.exceptions.DuplicateException;
 import cz.mg.backup.exceptions.MoveException;
 import cz.mg.backup.services.PathService;
-import cz.mg.backup.services.TreeIterator;
 import cz.mg.collections.list.List;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.ReadablePair;
@@ -22,7 +21,7 @@ import java.util.Objects;
  */
 public @Service class DuplicateDetector {
     private static final String DESCRIPTION = "Find duplicates";
-    private static final int PHASES = 6;
+    static final int PHASES = 6;
 
     private static volatile @Service DuplicateDetector instance;
 
@@ -31,7 +30,7 @@ public @Service class DuplicateDetector {
             synchronized (Service.class) {
                 if (instance == null) {
                     instance = new DuplicateDetector();
-                    instance.iterator = TreeIterator.getInstance();
+                    instance.grouper = Grouper.getInstance();
                     instance.pathService = PathService.getInstance();
                 }
             }
@@ -39,7 +38,7 @@ public @Service class DuplicateDetector {
         return instance;
     }
 
-    private @Service TreeIterator iterator;
+    private @Service Grouper grouper;
     private @Service PathService pathService;
 
     private DuplicateDetector() {
@@ -51,40 +50,12 @@ public @Service class DuplicateDetector {
         @Mandatory Converter converter,
         @Mandatory Progress progress
     ) {
-        Map<Key, List<File>> leftMap = groupFiles(left, converter, progress, 1);
-        Map<Key, List<File>> rightMap = groupFiles(right, converter, progress, 2);
+        Map<Key, List<File>> leftMap = grouper.groupFiles(left, converter, progress, 1);
+        Map<Key, List<File>> rightMap = grouper.groupFiles(right, converter, progress, 2);
         findDuplicates(leftMap, initProgress(left, progress, 3));
         findDuplicates(rightMap, initProgress(right, progress, 4));
         findMoves(leftMap, rightMap, initProgress(left, progress, 5));
         findMoves(rightMap, leftMap, initProgress(right, progress, 6));
-    }
-
-    private @Mandatory Map<Key, List<File>> groupFiles(
-        @Optional Directory directory,
-        @Mandatory Converter converter,
-        @Mandatory Progress progress,
-        int phase
-    ) {
-        Map<Key, List<File>> map = createMap();
-
-        iterator.forEachFile(
-            directory,
-            file -> groupFile(file, converter, map),
-            progress,
-            DESCRIPTION + " " + phase + " / " + PHASES
-        );
-
-        return map;
-    }
-
-    private void groupFile(
-        @Mandatory File file,
-        @Mandatory Converter converter,
-        @Mandatory Map<Key, List<File>> map
-    ) {
-        Key key = converter.convert(file);
-        List<File> suspects = map.getOrCreate(key, List::new);
-        suspects.addLast(file);
     }
 
     private void findDuplicates(@Mandatory Map<Key, List<File>> map, @Mandatory Progress progress) {
@@ -139,12 +110,6 @@ public @Service class DuplicateDetector {
             pathService.removeLeadingPart(source.getRelativePath()),
             pathService.removeLeadingPart(target.getRelativePath())
         );
-    }
-
-    private @Mandatory Map<Key, List<File>> createMap() {
-        KeyComparator comparator = new KeyComparator();
-        Map<Key, List<File>> map = new Map<>(comparator, comparator);
-        return map;
     }
 
     private @Mandatory Progress initProgress(
