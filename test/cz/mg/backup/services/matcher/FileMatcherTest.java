@@ -20,11 +20,12 @@ public class FileMatcherTest {
         FileMatcherTest test = new FileMatcherTest();
         test.testFindDuplicates();
         test.testFindMoves();
+        test.testPrecedence();
 
         System.out.println("OK");
     }
 
-    private final @Mandatory FileMatcher detector = FileMatcher.getInstance();
+    private final @Mandatory FileMatcher matcher = FileMatcher.getInstance();
     private final @Mandatory TestFactory f = TestFactory.getInstance();
 
     private void testFindDuplicates() {
@@ -50,7 +51,7 @@ public class FileMatcherTest {
         Converter converter = new Converter(true, true, true, true);
 
         TestProgress progress = new TestProgress();
-        detector.match(left, right, converter, progress);
+        matcher.match(left, right, converter, progress);
 
         Assert.assertNull(left.getError());
         Assert.assertNull(left.getDirectories().get(0).getError());
@@ -67,6 +68,8 @@ public class FileMatcherTest {
         Assert.assertInstanceOf(DuplicateException.class, right.getDirectories().get(0).getFiles().get(1).getError());
         Assert.assertInstanceOf(DuplicateException.class, right.getFiles().get(0).getError());
         Assert.assertNull(right.getFiles().get(1).getError());
+
+        progress.verify();
     }
 
     private void testFindMoves() {
@@ -91,7 +94,7 @@ public class FileMatcherTest {
         Converter converter = new Converter(true, true, true, true);
 
         TestProgress progress = new TestProgress();
-        detector.match(left, right, converter, progress);
+        matcher.match(left, right, converter, progress);
 
         Assert.assertNull(left.getError());
         Assert.assertNull(left.getDirectories().get(0).getError());
@@ -107,6 +110,45 @@ public class FileMatcherTest {
         Assert.assertNull(right.getDirectories().get(0).getFiles().get(1).getError());
         Assert.assertInstanceOf(MoveException.class, right.getFiles().get(0).getError());
         Assert.assertNull(right.getFiles().get(1).getError());
+
+        progress.verify();
+    }
+
+    private void testPrecedence() {
+        Directory left = f.directory("dir",
+            f.directory("Photos",
+                create("Aki.png", 250L, SHA256, "12AB"),
+                create("Bunny.png", 320L, SHA256, "2222")
+            ),
+            create("Pon.png", 1000L, SHA256, "FFFF"),
+            create("Aki.png", 250L, SHA256, "12AB")
+        );
+        Directory right = f.directory("dir",
+            f.directory("Photos",
+                create("Aki.png", 250L, SHA256, "12AB"),
+                create("Funny.png", 325L, SHA256, "3232"),
+                create("Pon.png", 1000L, SHA256, "FFFF")
+            )
+        );
+        Converter converter = new Converter(true, true, true, true);
+
+        TestProgress progress = new TestProgress();
+        matcher.match(left, right, converter, progress);
+
+        Assert.assertNull(left.getError());
+        Assert.assertNull(left.getDirectories().get(0).getError());
+        Assert.assertInstanceOf(DuplicateException.class, left.getDirectories().get(0).getFiles().get(0).getError());
+        Assert.assertNull(left.getDirectories().get(0).getFiles().get(1).getError());
+        Assert.assertInstanceOf(MoveException.class, left.getFiles().get(0).getError());
+        Assert.assertInstanceOf(DuplicateException.class, left.getFiles().get(1).getError());
+
+        Assert.assertNull(right.getError());
+        Assert.assertNull(right.getDirectories().get(0).getError());
+        Assert.assertNull(right.getDirectories().get(0).getFiles().get(0).getError());
+        Assert.assertNull(right.getDirectories().get(0).getFiles().get(1).getError());
+        Assert.assertInstanceOf(MoveException.class, right.getDirectories().get(0).getFiles().get(2).getError());
+
+        progress.verify();
     }
 
     private @Mandatory File create(
