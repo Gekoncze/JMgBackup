@@ -3,7 +3,6 @@
 
 ### SOON ###
     finalize duplicate detector
-        add unit tests for file grouper
         add unit tests for duplicate detector
         add unit tests for move detector
         run duplicate detector after compare
