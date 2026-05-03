@@ -7,6 +7,7 @@ import cz.mg.backup.services.matcher.DuplicateDetectorTest;
 import cz.mg.backup.services.matcher.FileGrouperTest;
 import cz.mg.backup.services.matcher.FileMatcherTest;
 import cz.mg.backup.services.matcher.KeyComparatorTest;
+import cz.mg.backup.services.matcher.MoveDetectorTest;
 
 public class AllTests {
     public static void main(String[] args) {
@@ -16,6 +17,7 @@ public class AllTests {
         FileGrouperTest.main(args);
         FileMatcherTest.main(args);
         KeyComparatorTest.main(args);
+        MoveDetectorTest.main(args);
 
         // cz.mg.backup.services
         BackupServiceTest.main(args);
