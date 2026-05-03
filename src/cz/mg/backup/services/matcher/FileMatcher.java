@@ -45,8 +45,8 @@ public @Service class FileMatcher {
     ) {
         Map<Key, List<File>> leftMap = fileGrouper.groupFiles(left, converter, progress);
         Map<Key, List<File>> rightMap = fileGrouper.groupFiles(right, converter, progress);
-        duplicateDetector.findDuplicates(left, leftMap, progress);
-        duplicateDetector.findDuplicates(right, rightMap, progress);
+        duplicateDetector.findDuplicates(leftMap, progress);
+        duplicateDetector.findDuplicates(rightMap, progress);
         moveDetector.findMoves(leftMap, rightMap, progress);
         moveDetector.findMoves(rightMap, leftMap, progress);
     }

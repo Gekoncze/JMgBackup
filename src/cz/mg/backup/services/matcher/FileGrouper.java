@@ -61,8 +61,8 @@ public class FileGrouper {
         @Mandatory Map<Key, List<File>> map
     ) {
         Key key = converter.convert(file);
-        List<File> suspects = map.getOrCreate(key, List::new);
-        suspects.addLast(file);
+        List<File> group = map.getOrCreate(key, List::new);
+        group.addLast(file);
     }
 
     private @Mandatory Map<Key, List<File>> createMap() {

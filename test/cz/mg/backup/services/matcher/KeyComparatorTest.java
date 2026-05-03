@@ -30,7 +30,17 @@ public class KeyComparatorTest {
 
         Assert.assertEquals(false, comparator.equals(
             new Key("foo", 7L, Algorithm.MD5, "ABCD"),
-            new Key("foo", null, Algorithm.MD5, "ABCD")
+            new Key("bar", 7L, Algorithm.MD5, "ABCD")
+        ));
+
+        Assert.assertEquals(false, comparator.equals(
+            new Key("foo", 7L, Algorithm.MD5, "ABCD"),
+            new Key("foo", 8L, Algorithm.MD5, "ABCD")
+        ));
+
+        Assert.assertEquals(false, comparator.equals(
+            new Key("foo", 7L, Algorithm.MD5, "ABCD"),
+            new Key("foo", 7L, Algorithm.SHA1, "ABCD")
         ));
 
         Assert.assertEquals(false, comparator.equals(
@@ -52,7 +62,17 @@ public class KeyComparatorTest {
 
         Assert.assertNotEquals(
             comparator.hash(new Key("foo", 7L, Algorithm.MD5, "ABCD")),
-            comparator.hash(new Key("foo", null, Algorithm.MD5, "ABCD"))
+            comparator.hash(new Key("bar", 7L, Algorithm.MD5, "ABCD"))
+        );
+
+        Assert.assertNotEquals(
+            comparator.hash(new Key("foo", 7L, Algorithm.MD5, "ABCD")),
+            comparator.hash(new Key("foo", 8L, Algorithm.MD5, "ABCD"))
+        );
+
+        Assert.assertNotEquals(
+            comparator.hash(new Key("foo", 7L, Algorithm.MD5, "ABCD")),
+            comparator.hash(new Key("foo", 7L, Algorithm.SHA1, "ABCD"))
         );
 
         Assert.assertNotEquals(
