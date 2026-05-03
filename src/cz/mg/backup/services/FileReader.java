@@ -41,7 +41,7 @@ public @Service class FileReader {
         try {
             file.setProperties(propertiesReader.read(file.getPath()));
         } catch (RuntimeException e) {
-            file.setError(e);
+            file.setException(e);
         }
     }
 }

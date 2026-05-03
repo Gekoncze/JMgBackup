@@ -68,12 +68,12 @@ public @Service class DirectoryReader {
                 try {
                     readChildRecursively(directory, nestedPath, progress);
                 } catch (Exception e) {
-                    directory.setError(e);
+                    directory.setException(e);
                 }
                 progress.step();
             }
         } catch (Exception e) {
-            directory.setError(e);
+            directory.setException(e);
         }
 
         propertiesCollector.collect(directory);

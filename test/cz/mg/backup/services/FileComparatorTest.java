@@ -18,7 +18,7 @@ public @Test class FileComparatorTest {
 
         FileComparatorTest test = new FileComparatorTest();
         test.testCompare();
-        test.testCompareClearsCompareErrors();
+        test.testCompareClearsCompareExceptions();
 
         System.out.println("OK");
     }
@@ -70,7 +70,7 @@ public @Test class FileComparatorTest {
         );
     }
 
-    private void testCompareClearsCompareErrors() {
+    private void testCompareClearsCompareExceptions() {
         testCompare(
             f.file("foo", new CompareException("test")),
             f.file("foo", new CompareException("test")),
@@ -119,25 +119,25 @@ public @Test class FileComparatorTest {
     private void testCompare(
         @Mandatory File first,
         @Mandatory File second,
-        @Optional Class<? extends Exception> expectedError
+        @Optional Class<? extends Exception> expectedException
     ) {
         service.compare(first, second);
-        Assert.assertEquals(expectedError, getErrorClass(first));
-        Assert.assertEquals(expectedError, getErrorClass(second));
+        Assert.assertEquals(expectedException, getExceptionClass(first));
+        Assert.assertEquals(expectedException, getExceptionClass(second));
     }
 
     private void testCompare(
         @Mandatory File first,
         @Mandatory File second,
-        @Optional Class<? extends Exception> firstExpectedError,
-        @Optional Class<? extends Exception> secondExpectedError
+        @Optional Class<? extends Exception> firstExpectedException,
+        @Optional Class<? extends Exception> secondExpectedException
     ) {
         service.compare(first, second);
-        Assert.assertEquals(firstExpectedError, getErrorClass(first));
-        Assert.assertEquals(secondExpectedError, getErrorClass(second));
+        Assert.assertEquals(firstExpectedException, getExceptionClass(first));
+        Assert.assertEquals(secondExpectedException, getExceptionClass(second));
     }
 
-    private @Optional Class<? extends Exception> getErrorClass(@Mandatory File file) {
-        return file.getError() == null ? null : file.getError().getClass();
+    private @Optional Class<? extends Exception> getExceptionClass(@Mandatory File file) {
+        return file.getException() == null ? null : file.getException().getClass();
     }
 }

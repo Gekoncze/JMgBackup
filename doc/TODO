@@ -3,6 +3,8 @@
 
 ### SOON ###
     finalize duplicate detector
+        clear duplicate and move exceptions before file matcher starts ???
+            similar was for comparator !!!
         run duplicate detector after compare
         show different icon for duplicates and moved files in directory tree
         add context menu to show duplicate suspects in dialog

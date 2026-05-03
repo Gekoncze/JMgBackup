@@ -26,7 +26,7 @@ public @Test class FileReaderTest {
         File file = reader.read(path);
         Assert.assertEquals(path, file.getPath());
         Assert.assertEquals(path.getFileName(), file.getRelativePath());
-        Assert.assertNull(file.getError());
+        Assert.assertNull(file.getException());
         Assert.assertNotNull(file.getProperties());
         Assert.assertEquals(218128, file.getProperties().getSize());
         Assert.assertEquals(null, file.getChecksum());
@@ -37,7 +37,7 @@ public @Test class FileReaderTest {
         File file = reader.read(path);
         Assert.assertEquals(path, file.getPath());
         Assert.assertEquals(path.getFileName(), file.getRelativePath());
-        Assert.assertNotNull(file.getError());
+        Assert.assertNotNull(file.getException());
         Assert.assertNotNull(file.getProperties());
         Assert.assertEquals(0, file.getProperties().getSize());
         Assert.assertEquals(null, file.getChecksum());

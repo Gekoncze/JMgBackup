@@ -48,9 +48,9 @@ public @Service class TestFactory {
         return file;
     }
 
-    public @Mandatory File file(@Mandatory String name, @Optional Exception error) {
+    public @Mandatory File file(@Mandatory String name, @Optional Exception exception) {
         File file = file(name);
-        file.setError(error);
+        file.setException(exception);
         return file;
     }
 

@@ -43,7 +43,7 @@ public @Service class DirectoryComparator extends NodeComparator {
 
     /**
      * Compares given directory trees and stores compare exceptions in respective files and directories.
-     * If one directory tree is null, then the other directory tree will have its compare errors cleared.
+     * If one directory tree is null, then the other directory tree will have its compare exceptions cleared.
      */
     public void compare(
         @Optional Directory first,
@@ -63,10 +63,10 @@ public @Service class DirectoryComparator extends NodeComparator {
     }
 
     /**
-     * Clears compare errors in given directory tree.
+     * Clears compare exceptions in given directory tree.
      */
     private void clear(@Mandatory Directory directory, @Mandatory Progress progress) {
-        treeIterator.forEachNode(directory, node -> clearCompareError(node), progress, DESCRIPTION);
+        treeIterator.forEachNode(directory, node -> clearCompareException(node), progress, DESCRIPTION);
     }
 
     private void compareDirectories(
@@ -106,47 +106,47 @@ public @Service class DirectoryComparator extends NodeComparator {
         @Optional Directory second,
         @Mandatory Progress progress
     ) {
-        clearCompareError(first);
-        clearCompareError(second);
+        clearCompareException(first);
+        clearCompareException(second);
 
         if (first != null && second == null) {
-            setCompareError(first, new MissingException("Missing corresponding directory."));
+            setCompareException(first, new MissingException("Missing corresponding directory."));
             progress.step();
         }
 
         if (first == null && second != null) {
-            setCompareError(second, new MissingException("Missing corresponding directory."));
+            setCompareException(second, new MissingException("Missing corresponding directory."));
             progress.step();
         }
 
         if (first != null && second != null) {
             if (!Objects.equals(first.getPath().getFileName(), second.getPath().getFileName())) {
-                setCompareError(first, new MismatchException("Directory name differs."));
-                setCompareError(second, new MismatchException("Directory name differs."));
+                setCompareException(first, new MismatchException("Directory name differs."));
+                setCompareException(second, new MismatchException("Directory name differs."));
             }
             progress.step(2);
         }
 
         compareDirectories(first, second, progress);
         compareFiles(first, second, progress);
-        identifyNestedError(first);
-        identifyNestedError(second);
+        identifyNestedException(first);
+        identifyNestedException(second);
     }
 
-    private void identifyNestedError(@Optional Directory directory) {
-        if (directory != null && directory.getError() == null && hasNestedError(directory)) {
-            directory.setError(new NestedException("Nested file or directory has an error."));
+    private void identifyNestedException(@Optional Directory directory) {
+        if (directory != null && directory.getException() == null && hasNestedException(directory)) {
+            directory.setException(new NestedException("Nested file or directory has an exception."));
         }
     }
 
-    private boolean hasNestedError(@Mandatory Directory directory) {
+    private boolean hasNestedException(@Mandatory Directory directory) {
         for (Directory child : directory.getDirectories()) {
-            if (child.getError() != null) {
+            if (child.getException() != null) {
                 return true;
             }
         }
         for (File child : directory.getFiles()) {
-            if (child.getError() != null) {
+            if (child.getException() != null) {
                 return true;
             }
         }
@@ -186,17 +186,17 @@ public @Service class DirectoryComparator extends NodeComparator {
     }
 
     private void comparePairedFiles(@Optional File first, @Optional File second, @Mandatory Progress progress) {
-        clearCompareError(first);
-        clearCompareError(second);
+        clearCompareException(first);
+        clearCompareException(second);
 
         if (first != null && second != null) {
             fileComparator.compare(first, second);
             progress.step(2);
         } else if (first != null) {
-            setCompareError(first, new MissingException("Missing corresponding file."));
+            setCompareException(first, new MissingException("Missing corresponding file."));
             progress.step();
         } else if (second != null) {
-            setCompareError(second, new MissingException("Missing corresponding file."));
+            setCompareException(second, new MissingException("Missing corresponding file."));
             progress.step();
         }
     }

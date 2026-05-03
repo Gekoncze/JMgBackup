@@ -11,7 +11,7 @@ import cz.mg.collections.pair.ReadablePair;
 
 /**
  * Class to find duplicates in grouped files.
- * Found duplicates are marked with an error containing suspected files.
+ * Found duplicates are marked with an exception containing suspected files.
  */
 public @Service class DuplicateDetector {
     private static final @Mandatory String DESCRIPTION = "Find duplicates";
@@ -40,10 +40,10 @@ public @Service class DuplicateDetector {
         for (ReadablePair<Key, List<File>> pair : map) {
             List<File> suspects = pair.getValue();
             if (suspects.count() > 1) {
-                DuplicateException error = new DuplicateException(suspects);
+                DuplicateException exception = new DuplicateException(suspects);
                 for (File file : pair.getValue()) {
-                    if (file.getError() == null) {
-                        file.setError(error);
+                    if (file.getException() == null) {
+                        file.setException(exception);
                     }
                 }
             }

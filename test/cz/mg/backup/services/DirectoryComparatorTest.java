@@ -79,8 +79,8 @@ public @Test class DirectoryComparatorTest {
     }
 
     private void assertNoErrors(@Mandatory Directory directory) {
-        if (directory.getError() != null) {
-            throw new AssertException("Unexpected error.", directory.getError());
+        if (directory.getException() != null) {
+            throw new AssertException("Unexpected error.", directory.getException());
         }
 
         for (Directory child : directory.getDirectories()) {
@@ -93,8 +93,8 @@ public @Test class DirectoryComparatorTest {
     }
 
     private void assertNoError(@Mandatory File file) {
-        if (file.getError() != null) {
-            throw new AssertException("Unexpected error.", file.getError());
+        if (file.getException() != null) {
+            throw new AssertException("Unexpected error.", file.getException());
         }
     }
 
@@ -112,9 +112,9 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         comparator.compare(firstL1, secondL1, progress);
 
-        Assert.assertNull(firstL1.getError());
-        Assert.assertNotNull(secondL2.getError());
-        Assert.assertNotNull(secondL1.getError());
+        Assert.assertNull(firstL1.getException());
+        Assert.assertNotNull(secondL2.getException());
+        Assert.assertNotNull(secondL1.getException());
         progress.verify(4L, 4L);
     }
 
@@ -126,9 +126,9 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         comparator.compare(firstL1, secondL1, progress);
 
-        Assert.assertNotNull(firstL2.getError());
-        Assert.assertNotNull(firstL1.getError());
-        Assert.assertNull(secondL1.getError());
+        Assert.assertNotNull(firstL2.getException());
+        Assert.assertNotNull(firstL1.getException());
+        Assert.assertNull(secondL1.getException());
         progress.verify(4L, 4L);
     }
 
@@ -141,10 +141,10 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         comparator.compare(firstL1, secondL1, progress);
 
-        Assert.assertNotNull(firstL2.getError());
-        Assert.assertNotNull(firstL1.getError());
-        Assert.assertNotNull(secondL2.getError());
-        Assert.assertNotNull(secondL1.getError());
+        Assert.assertNotNull(firstL2.getException());
+        Assert.assertNotNull(firstL1.getException());
+        Assert.assertNotNull(secondL2.getException());
+        Assert.assertNotNull(secondL1.getException());
         progress.verify(6L, 6L);
     }
 
@@ -162,9 +162,9 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         comparator.compare(firstL1, secondL1, progress);
 
-        Assert.assertNull(firstL1.getError());
-        Assert.assertNotNull(secondL2.getError());
-        Assert.assertNotNull(secondL1.getError());
+        Assert.assertNull(firstL1.getException());
+        Assert.assertNotNull(secondL2.getException());
+        Assert.assertNotNull(secondL1.getException());
         progress.verify(4L, 4L);
     }
 
@@ -176,9 +176,9 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         comparator.compare(firstL1, secondL1, progress);
 
-        Assert.assertNotNull(firstL2.getError());
-        Assert.assertNotNull(firstL1.getError());
-        Assert.assertNull(secondL1.getError());
+        Assert.assertNotNull(firstL2.getException());
+        Assert.assertNotNull(firstL1.getException());
+        Assert.assertNull(secondL1.getException());
         progress.verify(4L, 4L);
     }
 
@@ -191,10 +191,10 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         comparator.compare(firstL1, secondL1, progress);
 
-        Assert.assertNotNull(firstL2.getError());
-        Assert.assertNotNull(firstL1.getError());
-        Assert.assertNotNull(secondL2.getError());
-        Assert.assertNotNull(secondL1.getError());
+        Assert.assertNotNull(firstL2.getException());
+        Assert.assertNotNull(firstL1.getException());
+        Assert.assertNotNull(secondL2.getException());
+        Assert.assertNotNull(secondL1.getException());
         progress.verify(6L, 6L);
     }
 
@@ -207,10 +207,10 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         comparator.compare(firstDirectory, secondDirectory, progress);
 
-        Assert.assertNotNull(firstDirectory.getError());
-        Assert.assertNotNull(firstFile.getError());
-        Assert.assertNotNull(secondDirectory.getError());
-        Assert.assertNotNull(secondFile.getError());
+        Assert.assertNotNull(firstDirectory.getException());
+        Assert.assertNotNull(firstFile.getException());
+        Assert.assertNotNull(secondDirectory.getException());
+        Assert.assertNotNull(secondFile.getException());
         progress.verify(6L, 6L);
     }
 
@@ -229,90 +229,90 @@ public @Test class DirectoryComparatorTest {
         TestProgress progress = new TestProgress();
         comparator.compare(firstL1, secondL1, progress);
 
-        Assert.assertNotNull(firstL1.getError());
-        Assert.assertNull(firstL2a.getError());
-        Assert.assertNotNull(firstL2.getError());
-        Assert.assertNull(firstL2b.getError());
-        Assert.assertNotNull(firstL3.getError());
+        Assert.assertNotNull(firstL1.getException());
+        Assert.assertNull(firstL2a.getException());
+        Assert.assertNotNull(firstL2.getException());
+        Assert.assertNull(firstL2b.getException());
+        Assert.assertNotNull(firstL3.getException());
 
-        Assert.assertNotNull(secondL1.getError());
-        Assert.assertNull(secondL2a.getError());
-        Assert.assertNotNull(secondL2.getError());
-        Assert.assertNull(secondL2b.getError());
-        Assert.assertNotNull(secondL3.getError());
+        Assert.assertNotNull(secondL1.getException());
+        Assert.assertNull(secondL2a.getException());
+        Assert.assertNotNull(secondL2.getException());
+        Assert.assertNull(secondL2b.getException());
+        Assert.assertNotNull(secondL3.getException());
 
         progress.verify(18L, 18L);
     }
 
     private void testOverwriteError() {
         Directory first = f.directory("first");
-        first.setError(new CompareException("test"));
+        first.setException(new CompareException("test"));
 
         Directory second = f.directory("second");
-        second.setError(new CompareException("test"));
+        second.setException(new CompareException("test"));
 
         TestProgress progress = new TestProgress();
         comparator.compare(first, second, progress);
 
-        Assert.assertNotNull(first.getError());
-        Assert.assertNotNull(second.getError());
-        Assert.assertEquals(MismatchException.class, first.getError().getClass());
-        Assert.assertEquals(MismatchException.class, second.getError().getClass());
+        Assert.assertNotNull(first.getException());
+        Assert.assertNotNull(second.getException());
+        Assert.assertEquals(MismatchException.class, first.getException().getClass());
+        Assert.assertEquals(MismatchException.class, second.getException().getClass());
         progress.verify();
     }
 
     private void testDoNotOverwriteError() {
         Directory first = f.directory("first");
-        first.setError(new FileSystemException("test"));
+        first.setException(new FileSystemException("test"));
 
         Directory second = f.directory("second");
-        second.setError(new FileSystemException("test"));
+        second.setException(new FileSystemException("test"));
 
         TestProgress progress = new TestProgress();
         comparator.compare(first, second, progress);
 
-        Assert.assertNotNull(first.getError());
-        Assert.assertNotNull(second.getError());
-        Assert.assertEquals(FileSystemException.class, first.getError().getClass());
-        Assert.assertEquals(FileSystemException.class, second.getError().getClass());
+        Assert.assertNotNull(first.getException());
+        Assert.assertNotNull(second.getException());
+        Assert.assertEquals(FileSystemException.class, first.getException().getClass());
+        Assert.assertEquals(FileSystemException.class, second.getException().getClass());
         progress.verify();
     }
 
     private void testCompareNullFirst() {
         File file = f.file("file");
-        file.setError(new MismatchException("test"));
+        file.setException(new MismatchException("test"));
 
         Directory subdirectory = f.directory("subdirectory");
-        subdirectory.setError(new MissingException("test"));
+        subdirectory.setException(new MissingException("test"));
 
         Directory directory = f.directory("foo", file, subdirectory);
-        directory.setError(new CompareException("test"));
+        directory.setException(new CompareException("test"));
 
         TestProgress progress = new TestProgress();
         comparator.compare(directory, null, progress);
 
-        Assert.assertNull(directory.getError());
-        Assert.assertNull(subdirectory.getError());
-        Assert.assertNull(file.getError());
+        Assert.assertNull(directory.getException());
+        Assert.assertNull(subdirectory.getException());
+        Assert.assertNull(file.getException());
         progress.verify(3L, 3L);
     }
 
     private void testCompareNullSecond() {
         File file = f.file("file");
-        file.setError(new MismatchException("test"));
+        file.setException(new MismatchException("test"));
 
         Directory subdirectory = f.directory("subdirectory");
-        subdirectory.setError(new MissingException("test"));
+        subdirectory.setException(new MissingException("test"));
 
         Directory directory = f.directory("foo", file, subdirectory);
-        directory.setError(new CompareException("test"));
+        directory.setException(new CompareException("test"));
 
         TestProgress progress = new TestProgress();
         comparator.compare(null, directory, progress);
 
-        Assert.assertNull(directory.getError());
-        Assert.assertNull(subdirectory.getError());
-        Assert.assertNull(file.getError());
+        Assert.assertNull(directory.getException());
+        Assert.assertNull(subdirectory.getException());
+        Assert.assertNull(file.getException());
         progress.verify(3L, 3L);
     }
 

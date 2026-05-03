@@ -11,7 +11,7 @@ import java.nio.file.Path;
 public @Entity class Node {
     private Path path;
     private Path relativePath;
-    private Exception error;
+    private Exception exception;
 
     public Node() {
     }
@@ -35,11 +35,11 @@ public @Entity class Node {
     }
 
     @Optional @Part
-    public Exception getError() {
-        return error;
+    public Exception getException() {
+        return exception;
     }
 
-    public void setError(Exception error) {
-        this.error = error;
+    public void setException(Exception exception) {
+        this.exception = exception;
     }
 }

@@ -26,8 +26,8 @@ public @Test class MoveDetectorTest {
         test.testMove();
         test.testMoveButDuplicateSource();
         test.testMoveButDuplicateTarget();
-        test.testExistingErrorSource();
-        test.testExistingErrorTarget();
+        test.testExistingExceptionSource();
+        test.testExistingExceptionTarget();
 
         System.out.println("OK");
     }
@@ -57,7 +57,7 @@ public @Test class MoveDetectorTest {
 
         detector.findMoves(sourceMap, createMap(), progress);
 
-        Assert.assertNull(source.getError());
+        Assert.assertNull(source.getException());
         progress.verify(1L, 1L);
     }
 
@@ -73,7 +73,7 @@ public @Test class MoveDetectorTest {
 
         detector.findMoves(createMap(), targetMap, progress);
 
-        Assert.assertNull(target.getError());
+        Assert.assertNull(target.getException());
         progress.verify(0L, 0L);
     }
 
@@ -96,8 +96,8 @@ public @Test class MoveDetectorTest {
 
         detector.findMoves(sourceMap, targetMap, progress);
 
-        Assert.assertNull(source.getError());
-        Assert.assertNull(target.getError());
+        Assert.assertNull(source.getException());
+        Assert.assertNull(target.getException());
         progress.verify(1L, 1L);
     }
 
@@ -120,8 +120,8 @@ public @Test class MoveDetectorTest {
 
         detector.findMoves(sourceMap, targetMap, progress);
 
-        Assert.assertNull(source.getError());
-        Assert.assertNull(target.getError());
+        Assert.assertNull(source.getException());
+        Assert.assertNull(target.getException());
         progress.verify(1L, 1L);
     }
 
@@ -144,15 +144,15 @@ public @Test class MoveDetectorTest {
 
         detector.findMoves(sourceMap, targetMap, progress);
 
-        Exception sourceError = source.getError();
-        Assert.assertNotNull(sourceError);
-        Assert.assertInstanceOf(MoveException.class, sourceError);
-        Assert.assertSame(((MoveException)sourceError).getSuspect(), target);
+        Exception sourceException = source.getException();
+        Assert.assertNotNull(sourceException);
+        Assert.assertInstanceOf(MoveException.class, sourceException);
+        Assert.assertSame(((MoveException)sourceException).getSuspect(), target);
 
-        Exception targetError = target.getError();
-        Assert.assertNotNull(targetError);
-        Assert.assertInstanceOf(MoveException.class, targetError);
-        Assert.assertSame(((MoveException)targetError).getSuspect(), source);
+        Exception targetException = target.getException();
+        Assert.assertNotNull(targetException);
+        Assert.assertInstanceOf(MoveException.class, targetException);
+        Assert.assertSame(((MoveException)targetException).getSuspect(), source);
 
         progress.verify(1L, 1L);
     }
@@ -176,8 +176,8 @@ public @Test class MoveDetectorTest {
 
         detector.findMoves(sourceMap, targetMap, progress);
 
-        Assert.assertNull(source.getError());
-        Assert.assertNull(target.getError());
+        Assert.assertNull(source.getException());
+        Assert.assertNull(target.getException());
         progress.verify(1L, 1L);
     }
 
@@ -200,15 +200,15 @@ public @Test class MoveDetectorTest {
 
         detector.findMoves(sourceMap, targetMap, progress);
 
-        Assert.assertNull(source.getError());
-        Assert.assertNull(target.getError());
+        Assert.assertNull(source.getException());
+        Assert.assertNull(target.getException());
         progress.verify(1L, 1L);
     }
 
-    private void testExistingErrorSource() {
+    private void testExistingExceptionSource() {
         TestProgress progress = new TestProgress();
         File source = f.file("root/foo/file");
-        source.setError(new IllegalStateException());
+        source.setException(new IllegalStateException());
         Map<Key, List<File>> sourceMap = createMap(
             new Pair<>(
                 new Key("file", 1L, Algorithm.MD5, "HASH"),
@@ -225,12 +225,12 @@ public @Test class MoveDetectorTest {
 
         detector.findMoves(sourceMap, targetMap, progress);
 
-        Assert.assertInstanceOf(IllegalStateException.class, source.getError());
-        Assert.assertInstanceOf(MoveException.class, target.getError());
+        Assert.assertInstanceOf(IllegalStateException.class, source.getException());
+        Assert.assertInstanceOf(MoveException.class, target.getException());
         progress.verify(1L, 1L);
     }
 
-    private void testExistingErrorTarget() {
+    private void testExistingExceptionTarget() {
         TestProgress progress = new TestProgress();
         File source = f.file("root/foo/file");
         Map<Key, List<File>> sourceMap = createMap(
@@ -240,7 +240,7 @@ public @Test class MoveDetectorTest {
             )
         );
         File target = f.file("root/bar/file");
-        target.setError(new IllegalStateException());
+        target.setException(new IllegalStateException());
         Map<Key, List<File>> targetMap = createMap(
             new Pair<>(
                 new Key("file", 1L, Algorithm.MD5, "HASH"),
@@ -250,8 +250,8 @@ public @Test class MoveDetectorTest {
 
         detector.findMoves(sourceMap, targetMap, progress);
 
-        Assert.assertInstanceOf(MoveException.class, source.getError());
-        Assert.assertInstanceOf(IllegalStateException.class, target.getError());
+        Assert.assertInstanceOf(MoveException.class, source.getException());
+        Assert.assertInstanceOf(IllegalStateException.class, target.getException());
         progress.verify(1L, 1L);
     }
 

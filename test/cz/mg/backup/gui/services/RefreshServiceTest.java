@@ -38,8 +38,8 @@ public @Test class RefreshServiceTest {
 
         Assert.assertSame(left, state.getLeft());
         Assert.assertSame(right, state.getRight());
-        Assert.assertNotNull(file.getError());
-        Assert.assertEquals(MissingException.class, file.getError().getClass());
+        Assert.assertNotNull(file.getException());
+        Assert.assertEquals(MissingException.class, file.getException().getClass());
         progress.verify();
     }
 

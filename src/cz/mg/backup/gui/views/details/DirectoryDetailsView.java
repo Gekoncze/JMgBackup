@@ -13,7 +13,7 @@ public @Component class DirectoryDetailsView extends Panel {
     public DirectoryDetailsView(@Mandatory Directory directory) {
         addFields(directory);
         addProperties(directory);
-        addError(directory);
+        addException(directory);
     }
 
     private void addFields(@Mandatory Directory directory) {
@@ -34,9 +34,9 @@ public @Component class DirectoryDetailsView extends Panel {
         addVertical(new TextLabel("Size: " + format(directory.getProperties().getTotalSize()) + " bytes"));
     }
 
-    private void addError(@Mandatory Directory directory) {
-        if (directory.getError() != null) {
-            addVertical(new TextLabel(directory.getError().getClass().getSimpleName() + ": " + directory.getError().getMessage()));
+    private void addException(@Mandatory Directory directory) {
+        if (directory.getException() != null) {
+            addVertical(new TextLabel(directory.getException().getClass().getSimpleName() + ": " + directory.getException().getMessage()));
         }
     }
 }

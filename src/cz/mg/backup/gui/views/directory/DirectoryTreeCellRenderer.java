@@ -62,12 +62,12 @@ import java.awt.*;
     }
 
     private @Mandatory Icon getDirectoryIcon(@Mandatory Directory directory) {
-        boolean hasError = directory.getError() != null;
-        boolean hasInnerError = directory.getError() instanceof NestedException;
+        boolean hasException = directory.getException() != null;
+        boolean hasInnerException = directory.getException() instanceof NestedException;
 
-        if (hasInnerError) {
+        if (hasInnerException) {
             return Icons.DIRECTORY_ERROR_NESTED_ICON;
-        } else if (hasError) {
+        } else if (hasException) {
             return Icons.DIRECTORY_ERROR_ICON;
         } else {
             return Icons.DIRECTORY_ICON;
@@ -75,6 +75,6 @@ import java.awt.*;
     }
 
     private @Mandatory Icon getFileIcon(@Mandatory File file) {
-        return file.getError() == null ? Icons.FILE_ICON : Icons.FILE_ERROR_ICON;
+        return file.getException() == null ? Icons.FILE_ICON : Icons.FILE_ERROR_ICON;
     }
 }

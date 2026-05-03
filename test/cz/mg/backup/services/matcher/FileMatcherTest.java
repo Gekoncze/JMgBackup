@@ -53,21 +53,21 @@ public class FileMatcherTest {
         TestProgress progress = new TestProgress();
         matcher.match(left, right, converter, progress);
 
-        Assert.assertNull(left.getError());
-        Assert.assertNull(left.getDirectories().get(0).getError());
-        Assert.assertInstanceOf(DuplicateException.class, left.getDirectories().get(0).getFiles().get(0).getError());
-        Assert.assertNull(left.getDirectories().get(0).getFiles().get(1).getError());
-        Assert.assertNull(left.getDirectories().get(1).getError());
-        Assert.assertNull(left.getDirectories().get(1).getFiles().get(0).getError());
-        Assert.assertInstanceOf(DuplicateException.class, left.getDirectories().get(1).getFiles().get(1).getError());
-        Assert.assertInstanceOf(DuplicateException.class, left.getFiles().get(0).getError());
+        Assert.assertNull(left.getException());
+        Assert.assertNull(left.getDirectories().get(0).getException());
+        Assert.assertInstanceOf(DuplicateException.class, left.getDirectories().get(0).getFiles().get(0).getException());
+        Assert.assertNull(left.getDirectories().get(0).getFiles().get(1).getException());
+        Assert.assertNull(left.getDirectories().get(1).getException());
+        Assert.assertNull(left.getDirectories().get(1).getFiles().get(0).getException());
+        Assert.assertInstanceOf(DuplicateException.class, left.getDirectories().get(1).getFiles().get(1).getException());
+        Assert.assertInstanceOf(DuplicateException.class, left.getFiles().get(0).getException());
 
-        Assert.assertNull(right.getError());
-        Assert.assertNull(right.getDirectories().get(0).getError());
-        Assert.assertNull(right.getDirectories().get(0).getFiles().get(0).getError());
-        Assert.assertInstanceOf(DuplicateException.class, right.getDirectories().get(0).getFiles().get(1).getError());
-        Assert.assertInstanceOf(DuplicateException.class, right.getFiles().get(0).getError());
-        Assert.assertNull(right.getFiles().get(1).getError());
+        Assert.assertNull(right.getException());
+        Assert.assertNull(right.getDirectories().get(0).getException());
+        Assert.assertNull(right.getDirectories().get(0).getFiles().get(0).getException());
+        Assert.assertInstanceOf(DuplicateException.class, right.getDirectories().get(0).getFiles().get(1).getException());
+        Assert.assertInstanceOf(DuplicateException.class, right.getFiles().get(0).getException());
+        Assert.assertNull(right.getFiles().get(1).getException());
 
         progress.verify();
     }
@@ -96,20 +96,20 @@ public class FileMatcherTest {
         TestProgress progress = new TestProgress();
         matcher.match(left, right, converter, progress);
 
-        Assert.assertNull(left.getError());
-        Assert.assertNull(left.getDirectories().get(0).getError());
-        Assert.assertNull(left.getDirectories().get(0).getFiles().get(0).getError());
-        Assert.assertNull(left.getDirectories().get(0).getFiles().get(1).getError());
-        Assert.assertNull(left.getDirectories().get(1).getError());
-        Assert.assertNull(left.getDirectories().get(1).getFiles().get(0).getError());
-        Assert.assertInstanceOf(MoveException.class, left.getDirectories().get(1).getFiles().get(1).getError());
+        Assert.assertNull(left.getException());
+        Assert.assertNull(left.getDirectories().get(0).getException());
+        Assert.assertNull(left.getDirectories().get(0).getFiles().get(0).getException());
+        Assert.assertNull(left.getDirectories().get(0).getFiles().get(1).getException());
+        Assert.assertNull(left.getDirectories().get(1).getException());
+        Assert.assertNull(left.getDirectories().get(1).getFiles().get(0).getException());
+        Assert.assertInstanceOf(MoveException.class, left.getDirectories().get(1).getFiles().get(1).getException());
 
-        Assert.assertNull(right.getError());
-        Assert.assertNull(right.getDirectories().get(0).getError());
-        Assert.assertNull(right.getDirectories().get(0).getFiles().get(0).getError());
-        Assert.assertNull(right.getDirectories().get(0).getFiles().get(1).getError());
-        Assert.assertInstanceOf(MoveException.class, right.getFiles().get(0).getError());
-        Assert.assertNull(right.getFiles().get(1).getError());
+        Assert.assertNull(right.getException());
+        Assert.assertNull(right.getDirectories().get(0).getException());
+        Assert.assertNull(right.getDirectories().get(0).getFiles().get(0).getException());
+        Assert.assertNull(right.getDirectories().get(0).getFiles().get(1).getException());
+        Assert.assertInstanceOf(MoveException.class, right.getFiles().get(0).getException());
+        Assert.assertNull(right.getFiles().get(1).getException());
 
         progress.verify();
     }
@@ -135,18 +135,18 @@ public class FileMatcherTest {
         TestProgress progress = new TestProgress();
         matcher.match(left, right, converter, progress);
 
-        Assert.assertNull(left.getError());
-        Assert.assertNull(left.getDirectories().get(0).getError());
-        Assert.assertInstanceOf(DuplicateException.class, left.getDirectories().get(0).getFiles().get(0).getError());
-        Assert.assertNull(left.getDirectories().get(0).getFiles().get(1).getError());
-        Assert.assertInstanceOf(MoveException.class, left.getFiles().get(0).getError());
-        Assert.assertInstanceOf(DuplicateException.class, left.getFiles().get(1).getError());
+        Assert.assertNull(left.getException());
+        Assert.assertNull(left.getDirectories().get(0).getException());
+        Assert.assertInstanceOf(DuplicateException.class, left.getDirectories().get(0).getFiles().get(0).getException());
+        Assert.assertNull(left.getDirectories().get(0).getFiles().get(1).getException());
+        Assert.assertInstanceOf(MoveException.class, left.getFiles().get(0).getException());
+        Assert.assertInstanceOf(DuplicateException.class, left.getFiles().get(1).getException());
 
-        Assert.assertNull(right.getError());
-        Assert.assertNull(right.getDirectories().get(0).getError());
-        Assert.assertNull(right.getDirectories().get(0).getFiles().get(0).getError());
-        Assert.assertNull(right.getDirectories().get(0).getFiles().get(1).getError());
-        Assert.assertInstanceOf(MoveException.class, right.getDirectories().get(0).getFiles().get(2).getError());
+        Assert.assertNull(right.getException());
+        Assert.assertNull(right.getDirectories().get(0).getException());
+        Assert.assertNull(right.getDirectories().get(0).getFiles().get(0).getException());
+        Assert.assertNull(right.getDirectories().get(0).getFiles().get(1).getException());
+        Assert.assertInstanceOf(MoveException.class, right.getDirectories().get(0).getFiles().get(2).getException());
 
         progress.verify();
     }

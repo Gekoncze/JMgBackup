@@ -29,16 +29,16 @@ public @Service class FileComparator extends NodeComparator {
      * Compares given files and stores compare exceptions in them.
      */
     public void compare(@Mandatory File first, @Mandatory File second) {
-        clearCompareError(first);
-        clearCompareError(second);
+        clearCompareException(first);
+        clearCompareException(second);
 
         if (!Objects.equals(first.getProperties().getSize(), second.getProperties().getSize())) {
             CompareException exception = new MismatchException(
                 "Expected size " + first.getProperties().getSize() + ", " +
                     "but got " + second.getProperties().getSize() + "."
             );
-            setCompareError(first, exception);
-            setCompareError(second, exception);
+            setCompareException(first, exception);
+            setCompareException(second, exception);
         }
 
         if (first.getChecksum() != null && second.getChecksum() != null) {
@@ -47,23 +47,23 @@ public @Service class FileComparator extends NodeComparator {
                     "Expected algorithm " + first.getChecksum().getAlgorithm() + ", " +
                         "but got " + second.getChecksum().getAlgorithm() + "."
                 );
-                setCompareError(first, exception);
-                setCompareError(second, exception);
+                setCompareException(first, exception);
+                setCompareException(second, exception);
             } else if (!Objects.equals(first.getChecksum().getHash(), second.getChecksum().getHash())) {
                 CompareException exception = new MismatchException(
                     "Expected hash " + first.getChecksum().getHash() + ", " +
                         "but got " + second.getChecksum().getHash() + "."
                 );
-                setCompareError(first, exception);
-                setCompareError(second, exception);
+                setCompareException(first, exception);
+                setCompareException(second, exception);
             }
         } else if (first.getChecksum() != null || second.getChecksum() != null) {
             if (first.getChecksum() == null) {
-                setCompareError(first, new MismatchException("Checksum not computed."));
+                setCompareException(first, new MismatchException("Checksum not computed."));
             }
 
             if (second.getChecksum() == null) {
-                setCompareError(second, new MismatchException("Checksum not computed."));
+                setCompareException(second, new MismatchException("Checksum not computed."));
             }
         }
     }

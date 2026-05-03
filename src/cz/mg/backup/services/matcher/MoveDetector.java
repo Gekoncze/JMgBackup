@@ -14,7 +14,7 @@ import java.util.Objects;
 
 /**
  * Class to find files moved in another directory tree.
- * Found moved files are marked with an error containing suspected file.
+ * Found moved files are marked with an exception containing suspected file.
  */
 public @Service class MoveDetector {
     private static final @Mandatory String DESCRIPTION = "Find moved files";
@@ -63,12 +63,12 @@ public @Service class MoveDetector {
                 File target = targetFiles.getFirst();
 
                 if (moved(source, target)) {
-                    if (source.getError() == null) {
-                        source.setError(new MoveException(target));
+                    if (source.getException() == null) {
+                        source.setException(new MoveException(target));
                     }
 
-                    if (target.getError() == null) {
-                        target.setError(new MoveException(source));
+                    if (target.getException() == null) {
+                        target.setException(new MoveException(source));
                     }
                 }
             }

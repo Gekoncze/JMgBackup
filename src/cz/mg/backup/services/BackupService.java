@@ -151,7 +151,7 @@ public @Service class BackupService {
     }
 
     private boolean isMissing(@Mandatory Node node) {
-        return node.getError() instanceof MissingException;
+        return node.getException() instanceof MissingException;
     }
 
     private void validateSourceToTarget(@Mandatory Directory source, @Mandatory Directory target) {

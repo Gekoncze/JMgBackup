@@ -9,20 +9,20 @@ import cz.mg.backup.exceptions.CompareException;
 
 public @Base @Service class NodeComparator {
     /**
-     * Sets given error to given node in case it does not have any error set yet.
+     * Sets given exception to given node in case it does not have any exception set yet.
      */
-    protected void setCompareError(@Mandatory Node node, @Mandatory Exception error) {
-        if (node.getError() == null) {
-            node.setError(error);
+    protected void setCompareException(@Mandatory Node node, @Mandatory Exception exception) {
+        if (node.getException() == null) {
+            node.setException(exception);
         }
     }
 
     /**
-     * Removes compare error from given node in case it is compare exception.
+     * Removes compare exception from given node in case it is compare exception.
      */
-    protected void clearCompareError(@Optional Node node) {
-        if (node != null && node.getError() != null && node.getError() instanceof CompareException) {
-            node.setError(null);
+    protected void clearCompareException(@Optional Node node) {
+        if (node != null && node.getException() != null && node.getException() instanceof CompareException) {
+            node.setException(null);
         }
     }
 }

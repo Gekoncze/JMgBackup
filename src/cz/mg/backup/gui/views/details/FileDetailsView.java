@@ -14,7 +14,7 @@ public @Component class FileDetailsView extends Panel {
         addFields(file);
         addProperties(file);
         addChecksum(file);
-        addError(file);
+        addException(file);
     }
 
     private void addFields(@Mandatory File file) {
@@ -35,9 +35,9 @@ public @Component class FileDetailsView extends Panel {
         }
     }
 
-    private void addError(@Mandatory File file) {
-        if (file.getError() != null) {
-            addVertical(new TextLabel(file.getError().getClass().getSimpleName() + ": " + file.getError().getMessage()));
+    private void addException(@Mandatory File file) {
+        if (file.getException() != null) {
+            addVertical(new TextLabel(file.getException().getClass().getSimpleName() + ": " + file.getException().getMessage()));
         }
     }
 }
