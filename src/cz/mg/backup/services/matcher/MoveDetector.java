@@ -45,7 +45,7 @@ public @Service class MoveDetector {
     ) {
         progress.setDescription(DESCRIPTION);
         progress.setLimit(sourceMap.count());
-        progress.setLimit(0L);
+        progress.setValue(0L);
 
         for (ReadablePair<Key, List<File>> pair : sourceMap) {
             // currently only finds moves for non-duplicated files
