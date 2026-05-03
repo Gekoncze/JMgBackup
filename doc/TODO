@@ -3,7 +3,6 @@
 
 ### SOON ###
     finalize duplicate detector
-        add unit tests for duplicate detector
         add unit tests for move detector
         run duplicate detector after compare
         show different icon for duplicates and moved files in directory tree

@@ -9,6 +9,7 @@ import cz.mg.backup.test.TestProgress;
 import cz.mg.collections.list.List;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
+import cz.mg.functions.EqualsFunctions;
 import cz.mg.test.Assert;
 import cz.mg.test.Assertions;
 
@@ -22,6 +23,7 @@ public class DuplicateDetectorTest {
         test.testUniqueFiles();
         test.testMatchingFiles();
         test.testMixedFiles();
+        test.testExistingError();
 
         System.out.println("OK");
     }
@@ -96,8 +98,24 @@ public class DuplicateDetectorTest {
 
         detector.findDuplicates(map, progress);
 
-        Assert.assertInstanceOf(DuplicateException.class, file1.getError());
-        Assert.assertInstanceOf(DuplicateException.class, file2.getError());
+        Exception error1 = file1.getError();
+        Assert.assertNotNull(error1);
+        Assert.assertInstanceOf(DuplicateException.class, error1);
+        Assertions.assertThatCollection(((DuplicateException) error1).getSuspects())
+                .withMessage("Duplicate files should be listed in exception.")
+                .inAnyOrder()
+                .withEqualsFunction(EqualsFunctions.REFERENCE())
+                .isEqualTo(new List<>(file1, file2));
+
+        Exception error2 = file2.getError();
+        Assert.assertNotNull(error2);
+        Assert.assertInstanceOf(DuplicateException.class, error2);
+        Assertions.assertThatCollection(((DuplicateException) error2).getSuspects())
+            .withMessage("Duplicate files should be listed in exception.")
+            .inAnyOrder()
+            .withEqualsFunction(EqualsFunctions.REFERENCE())
+            .isEqualTo(new List<>(file1, file2));
+
         progress.verify(1L, 1L);
     }
 
@@ -121,9 +139,48 @@ public class DuplicateDetectorTest {
 
         detector.findDuplicates(map, progress);
 
-        Assert.assertInstanceOf(DuplicateException.class, file1.getError());
+        Exception error1 = file1.getError();
+        Assert.assertNotNull(error1);
+        Assert.assertInstanceOf(DuplicateException.class, error1);
+        Assertions.assertThatCollection(((DuplicateException) error1).getSuspects())
+            .withMessage("Duplicate files should be listed in exception.")
+            .inAnyOrder()
+            .withEqualsFunction(EqualsFunctions.REFERENCE())
+            .isEqualTo(new List<>(file1, file3));
+
         Assert.assertNull(file2.getError());
-        Assert.assertInstanceOf(DuplicateException.class, file3.getError());
+
+        Exception error3 = file3.getError();
+        Assert.assertNotNull(error3);
+        Assert.assertInstanceOf(DuplicateException.class, error3);
+        Assertions.assertThatCollection(((DuplicateException) error3).getSuspects())
+            .withMessage("Duplicate files should be listed in exception.")
+            .inAnyOrder()
+            .withEqualsFunction(EqualsFunctions.REFERENCE())
+            .isEqualTo(new List<>(file1, file3));
+
         progress.verify(2L, 2L);
+    }
+
+    private void testExistingError() {
+        TestProgress progress = new TestProgress();
+
+        File file1 = f.file("file");
+        file1.setError(new IllegalStateException());
+        File file2 = f.file("file");
+        file2.setError(new IllegalStateException());
+
+        Map<Key, List<File>> map = new Map<>(
+            new Pair<>(
+                new Key("file", 1L, Algorithm.SHA256, "HASH"),
+                new List<>(file1, file2)
+            )
+        );
+
+        detector.findDuplicates(map, progress);
+
+        Assert.assertInstanceOf(IllegalStateException.class, file1.getError());
+        Assert.assertInstanceOf(IllegalStateException.class, file2.getError());
+        progress.verify(1L, 1L);
     }
 }
