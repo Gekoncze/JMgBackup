@@ -48,6 +48,5 @@ public @Service class FileMatcher {
         duplicateDetector.findDuplicates(leftMap, progress);
         duplicateDetector.findDuplicates(rightMap, progress);
         moveDetector.findMoves(leftMap, rightMap, progress);
-        moveDetector.findMoves(rightMap, leftMap, progress);
     }
 }

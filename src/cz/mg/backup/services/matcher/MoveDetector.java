@@ -2,7 +2,6 @@ package cz.mg.backup.services.matcher;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
-import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.exceptions.MoveException;
@@ -48,31 +47,39 @@ public @Service class MoveDetector {
         progress.setValue(0L);
 
         for (ReadablePair<Key, List<File>> pair : sourceMap) {
+            Key key = pair.getKey();
+            List<File> sourceFiles = pair.getValue();
+            List<File> targetFiles = targetMap.getOptional(key);
+
             // currently only finds moves for non-duplicated files
-            if (pair.getValue().count() == 1) {
-                Key key = pair.getKey();
-                File file = pair.getValue().getFirst();
-                if (file.getError() == null) {
-                    File suspect = findMatch(key, targetMap);
-                    if (suspect != null && moved(file, suspect)) {
-                        file.setError(new MoveException(suspect));
+            // this requirement could be loosen if needed
+            if (
+                sourceFiles != null &&
+                targetFiles != null &&
+                sourceFiles.count() == 1 &&
+                targetFiles.count() == 1
+            ) {
+                File source = sourceFiles.getFirst();
+                File target = targetFiles.getFirst();
+
+                if (moved(source, target)) {
+                    if (source.getError() == null) {
+                        source.setError(new MoveException(target));
+                    }
+
+                    if (target.getError() == null) {
+                        target.setError(new MoveException(source));
                     }
                 }
             }
+
             progress.step();
         }
     }
 
-    private @Optional File findMatch(@Mandatory Key key, @Mandatory Map<Key, List<File>> map) {
-        List<File> suspects = map.getOptional(key);
-        // currently only finds moves for non-duplicated files
-        if (suspects != null && suspects.count() == 1) {
-            return suspects.getFirst();
-        }
-        return null;
-    }
-
     private boolean moved(@Mandatory File source, @Mandatory File target) {
+        // root name may differ, so removing it for comparison
+        // could be more strict here, but then would need to be consistent across app
         return !Objects.equals(
             pathService.removeLeadingPart(source.getRelativePath()),
             pathService.removeLeadingPart(target.getRelativePath())
