@@ -6,8 +6,10 @@ import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.exceptions.NestedException;
+import cz.mg.backup.gui.icons.IconPack;
 import cz.mg.backup.gui.icons.Icons;
 import cz.mg.backup.gui.views.directory.wrapper.AbstractTreeNode;
+import cz.mg.backup.utilities.Categories;
 import cz.mg.panel.Panel;
 import cz.mg.panel.settings.Alignment;
 import cz.mg.panel.settings.Fill;
@@ -62,19 +64,13 @@ import java.awt.*;
     }
 
     private @Mandatory Icon getDirectoryIcon(@Mandatory Directory directory) {
-        boolean hasException = directory.getException() != null;
-        boolean hasInnerException = directory.getException() instanceof NestedException;
-
-        if (hasInnerException) {
-            return Icons.DIRECTORY_ERROR_NESTED;
-        } else if (hasException) {
-            return Icons.DIRECTORY_ERROR;
-        } else {
-            return Icons.DIRECTORY;
-        }
+        IconPack iconPack = directory.getException() instanceof NestedException
+            ? Icons.DIRECTORY_NESTED_PACK
+            : Icons.DIRECTORY_PACK;
+        return iconPack.get(Categories.get(directory));
     }
 
     private @Mandatory Icon getFileIcon(@Mandatory File file) {
-        return file.getException() == null ? Icons.FILE : Icons.FILE_ERROR;
+        return Icons.FILE_PACK.get(Categories.get(file));
     }
 }

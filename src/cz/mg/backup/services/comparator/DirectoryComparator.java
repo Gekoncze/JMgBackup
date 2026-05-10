@@ -6,10 +6,12 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.Directory;
 import cz.mg.backup.entities.File;
+import cz.mg.backup.exceptions.Category;
 import cz.mg.backup.exceptions.MismatchException;
 import cz.mg.backup.exceptions.MissingException;
 import cz.mg.backup.exceptions.NestedException;
 import cz.mg.backup.services.TreeIterator;
+import cz.mg.backup.utilities.Categories;
 import cz.mg.collections.map.Map;
 import cz.mg.collections.pair.Pair;
 import cz.mg.collections.pair.ReadablePair;
@@ -134,23 +136,12 @@ public @Service class DirectoryComparator extends NodeComparator {
     }
 
     private void identifyNestedException(@Optional Directory directory) {
-        if (directory != null && directory.getException() == null && hasNestedException(directory)) {
-            directory.setException(new NestedException("Nested file or directory has an exception."));
-        }
-    }
-
-    private boolean hasNestedException(@Mandatory Directory directory) {
-        for (Directory child : directory.getDirectories()) {
-            if (child.getException() != null) {
-                return true;
+        if (directory != null && directory.getException() == null) {
+            Category category = Categories.getInner(directory);
+            if (category != null) {
+                directory.setException(new NestedException(category, "Nested file or directory has an exception."));
             }
         }
-        for (File child : directory.getFiles()) {
-            if (child.getException() != null) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void compareFiles(

@@ -1,14 +1,9 @@
 ### NOW ###
-    how to handle exception severities
-        add more icons for various categories
-            black for unexpected errors (usually file system exceptions)
-            red will stay for critical errors (missing files and directories)
-            orange will be for warning (duplicates and moves)
-            blue possibly for information exceptions (if needed)
-        implement icons for various severities
-            need to handle nested exceptions correctly
+    ...
 
 ### SOON ###
+    add unit test for Categories class
+
     could it happen that cancel exception could be caught and not propagated during some complex operation?
         we may need to exclude it from being caught
 

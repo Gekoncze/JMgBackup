@@ -3,21 +3,21 @@ package cz.mg.backup.gui.icons;
 import cz.mg.annotations.classes.Static;
 
 import javax.swing.*;
-import java.awt.*;
 
 public @Static class Icons {
     private static final IconReader READER = IconReader.getInstance();
     private static final IconCompositor COMPOSITOR = IconCompositor.getInstance();
 
-    // node icons
-    public static final ImageIcon DIRECTORY = READER.read("node/directory.png", Icons.class);
-    public static final ImageIcon FILE = READER.read("node/file.png", Icons.class);
+    // base node icons
+    private static final ImageIcon DIRECTORY = READER.read("node/directory.png", Icons.class);
+    private static final ImageIcon FILE = READER.read("node/file.png", Icons.class);
     private static final ImageIcon EXCEPTION = READER.read("node/exception.png", Icons.class);
     private static final ImageIcon NESTED = READER.read("node/nested.png", Icons.class);
 
-    public static final Icon DIRECTORY_ERROR = COMPOSITOR.combine(DIRECTORY, EXCEPTION, Color.RED, 13, 13);
-    public static final Icon DIRECTORY_ERROR_NESTED = COMPOSITOR.combine(DIRECTORY, NESTED, Color.RED, 13, 13);
-    public static final Icon FILE_ERROR = COMPOSITOR.combine(FILE, EXCEPTION, Color.RED, 13, 13);
+    // node icons
+    public static final IconPack FILE_PACK = new IconPack(COMPOSITOR, FILE, EXCEPTION);
+    public static final IconPack DIRECTORY_PACK = new IconPack(COMPOSITOR, DIRECTORY, EXCEPTION);
+    public static final IconPack DIRECTORY_NESTED_PACK = new IconPack(COMPOSITOR, DIRECTORY, NESTED);
 
     // standard icons 16 px
     public static final Icon STANDARD_EXIT_16 = READER.read("lucide/log-out-16.png", Icons.class);

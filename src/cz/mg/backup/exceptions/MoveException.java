@@ -4,7 +4,7 @@ import cz.mg.annotations.classes.Error;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.entities.File;
 
-public @Error class MoveException extends RuntimeException {
+public @Error class MoveException extends RuntimeException implements CategorizedException {
     private final @Mandatory File suspect;
 
     public MoveException(@Mandatory File suspect) {
@@ -14,5 +14,10 @@ public @Error class MoveException extends RuntimeException {
 
     public @Mandatory File getSuspect() {
         return suspect;
+    }
+
+    @Override
+    public Category getCategory() {
+        return Category.WARNING;
     }
 }
