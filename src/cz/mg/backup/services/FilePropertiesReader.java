@@ -35,7 +35,7 @@ public @Service class FilePropertiesReader {
             fileProperties.setModified(attributes.lastModifiedTime().toInstant());
             return fileProperties;
         } catch (Exception e) {
-            throw new FileSystemException(e);
+            throw new FileSystemException("Could not read file properties.", e);
         }
     }
 }
