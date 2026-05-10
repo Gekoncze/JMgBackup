@@ -41,7 +41,7 @@ public @Service class IconCompositor {
         sg.drawImage(secondaryIcon.getImage(), 0, 0, null);
         sg.setComposite(AlphaComposite.SrcAtop);
         sg.setColor(color);
-        sg.drawRect(0, 0, secondaryIcon.getIconWidth(), secondaryIcon.getIconHeight());
+        sg.fillRect(0, 0, secondaryIcon.getIconWidth(), secondaryIcon.getIconHeight());
         sg.dispose();
 
         BufferedImage mainCanvas = new BufferedImage(
