@@ -1,5 +1,7 @@
 package cz.mg.backup;
 
+import cz.mg.backup.gui.icons.IconCompositorTest;
+import cz.mg.backup.gui.icons.IconReaderTest;
 import cz.mg.backup.gui.services.RefreshServiceTest;
 import cz.mg.backup.services.*;
 import cz.mg.backup.services.matcher.ConverterTest;
@@ -38,6 +40,10 @@ public class AllTests {
         HashConverterTest.main(args);
         PathServiceTest.main(args);
         TreeIteratorTest.main(args);
+
+        // cz.mg.backup.gui.icons
+        IconCompositorTest.main(args);
+        IconReaderTest.main(args);
 
         // cz.mg.backup.gui.services
         RefreshServiceTest.main(args);
