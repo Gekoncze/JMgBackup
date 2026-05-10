@@ -66,15 +66,15 @@ import java.awt.*;
         boolean hasInnerException = directory.getException() instanceof NestedException;
 
         if (hasInnerException) {
-            return Icons.DIRECTORY_ERROR_NESTED_ICON;
+            return Icons.DIRECTORY_ERROR_NESTED;
         } else if (hasException) {
-            return Icons.DIRECTORY_ERROR_ICON;
+            return Icons.DIRECTORY_ERROR;
         } else {
-            return Icons.DIRECTORY_ICON;
+            return Icons.DIRECTORY;
         }
     }
 
     private @Mandatory Icon getFileIcon(@Mandatory File file) {
-        return file.getException() == null ? Icons.FILE_ICON : Icons.FILE_ERROR_ICON;
+        return file.getException() == null ? Icons.FILE : Icons.FILE_ERROR;
     }
 }
