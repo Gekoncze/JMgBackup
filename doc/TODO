@@ -1,9 +1,6 @@
 ### NOW ###
     how to handle exception severities
-        could use interfaces or enum
-        for enum would need to add base exception for node exceptions
-            consider moving node exceptions in separate package
-        add more icons for various severities
+        add more icons for various categories
             black for unexpected errors (usually file system exceptions)
             red will stay for critical errors (missing files and directories)
             orange will be for warning (duplicates and moves)
@@ -12,6 +9,9 @@
             need to handle nested exceptions correctly
 
 ### SOON ###
+    could it happen that cancel exception could be caught and not propagated during some complex operation?
+        we may need to exclude it from being caught
+
     move detector result might be always hidden by missing file detection
         consider either removing it or overriding missing file exception
 

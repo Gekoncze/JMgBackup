@@ -26,7 +26,7 @@ public @Service class IconReader {
     private IconReader() {
     }
 
-    public @Mandatory Icon read(@Mandatory String name) {
+    public @Mandatory ImageIcon read(@Mandatory String name) {
         try {
             return new ImageIcon(
                 ImageIO.read(
