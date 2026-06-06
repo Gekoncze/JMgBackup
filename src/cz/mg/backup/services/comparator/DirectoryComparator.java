@@ -53,7 +53,7 @@ public @Service class DirectoryComparator extends NodeComparator {
         @Mandatory Progress progress
     ) {
         if (first != null && second != null) {
-            progress.initialize(DESCRIPTION, null, estimate(first, second));
+            progress.initialize(DESCRIPTION, null, estimate(first, second), null);
             comparePairedDirectories(first, second, progress);
         } else if (first != null) {
             clear(first, progress);

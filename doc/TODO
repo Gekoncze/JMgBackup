@@ -1,5 +1,9 @@
 ### NOW ###
-    ...
+    progress enhancements
+        show size in bytes instead of steps
+            ChecksumReader
+            FileCopy
+        update progress dialog to show units
 
 ### SOON ###
     move detector result might be always hidden by missing file detection
@@ -12,10 +16,6 @@
         run duplicate detector after compare
         add context menu to show duplicate suspects in dialog
         add dialog and/or menu to configure duplicate detection
-
-    copy missing files enhancements
-        show size in bytes instead of steps
-        show currently copied file
 
     add relocate moved files action
         for each selected file:

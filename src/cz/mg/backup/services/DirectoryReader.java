@@ -43,7 +43,7 @@ public @Service class DirectoryReader {
      * Files and directories are sorted alphabetically.
      */
     public @Mandatory Directory read(@Mandatory Path path, @Mandatory Progress progress) {
-        progress.initialize(DESCRIPTION, path, 0L);
+        progress.initialize(DESCRIPTION, path, 0L, null);
         return readDirectoryRecursively(
             path,
             path.getFileName() != null ? path.getFileName() : Path.of(""),

@@ -24,6 +24,7 @@ public @Component class Progress {
     private volatile @Optional Path path;
     private volatile long value;
     private volatile long limit;
+    private volatile @Optional Unit unit;
     private volatile @Optional Progress next;
 
     public Progress() {
@@ -59,6 +60,14 @@ public @Component class Progress {
 
     public void setLimit(long limit) {
         this.limit = limit;
+    }
+
+    public @Optional Unit getUnit() {
+        return unit;
+    }
+
+    public void setUnit(@Optional Unit unit) {
+        this.unit = unit;
     }
 
     public @Optional Progress getNext() {
@@ -104,10 +113,16 @@ public @Component class Progress {
         }
     }
 
-    public void initialize(@Mandatory String description, @Optional Path path, long limit) {
+    public void initialize(
+        @Mandatory String description,
+        @Optional Path path,
+        long limit,
+        @Optional Unit unit
+    ) {
         setDescription(description);
         setPath(path);
         setLimit(limit);
+        setUnit(unit);
         setValue(0L);
         setNext(null);
     }

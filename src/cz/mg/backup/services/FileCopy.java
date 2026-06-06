@@ -40,7 +40,7 @@ public @Service class FileCopy {
             FileChannel targetChannel = FileChannel.open(target, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW)
         ) {
             long size = getFileSize(source);
-            progress.initialize(DESCRIPTION, source, estimate(size));
+            progress.initialize(DESCRIPTION, source, estimate(size), null); // TODO - use byte unit
 
             long position = 0;
             while (position < size) {

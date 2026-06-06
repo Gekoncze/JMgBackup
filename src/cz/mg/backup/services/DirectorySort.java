@@ -32,7 +32,7 @@ public @Service class DirectorySort {
     }
 
     public void sort(@Mandatory Directory directory, @Mandatory Progress progress) {
-        progress.initialize(DESCRIPTION, directory.getPath(), estimate(directory));
+        progress.initialize(DESCRIPTION, directory.getPath(), estimate(directory), null);
         listSort.sort(directory.getDirectories(), (n1, n2) -> order(n1, n2, progress), Direction.ASCENDING);
         listSort.sort(directory.getFiles(), (n1, n2) -> order(n1, n2, progress), Direction.ASCENDING);
     }

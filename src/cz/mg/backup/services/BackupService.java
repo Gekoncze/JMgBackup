@@ -72,7 +72,7 @@ public @Service class BackupService {
     ) {
         validateSourceToTarget(source, target);
 
-        progress.initialize(COPY_FILES_DESCRIPTION, null, files.count());
+        progress.initialize(COPY_FILES_DESCRIPTION, null, files.count(), null);
 
         for (File file : files) {
             copyFile(file, source, target, algorithm, progress);
@@ -125,7 +125,7 @@ public @Service class BackupService {
     ) {
         validateSourceToTarget(source, target);
 
-        progress.initialize(COPY_DIRECTORIES_DESCRIPTION, null, directories.count());
+        progress.initialize(COPY_DIRECTORIES_DESCRIPTION, null, directories.count(), null);
 
         for (Directory directory : directories) {
             createDirectory(directory, source, target);

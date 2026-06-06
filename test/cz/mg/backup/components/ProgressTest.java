@@ -30,12 +30,13 @@ public @Test class ProgressTest {
         progress.setNext(new Progress());
 
         Path path = Path.of("foo/bar.txt");
-        progress.initialize("New description", path, 11L);
+        progress.initialize("New description", path, 11L, Unit.BYTE);
 
         Assert.assertEquals("New description", progress.getDescription());
         Assert.assertEquals(path, progress.getPath());
         Assert.assertEquals(11L, progress.getLimit());
         Assert.assertEquals(0, progress.getValue());
+        Assert.assertEquals(Unit.BYTE, progress.getUnit());
         Assert.assertEquals(null, progress.getNext());
     }
 

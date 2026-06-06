@@ -44,7 +44,7 @@ public @Service class ChecksumReader {
         @Mandatory Progress progress
     ) {
         try {
-            progress.initialize(DESCRIPTION, path, estimate(path));
+            progress.initialize(DESCRIPTION, path, estimate(path), null); // TODO - use byte unit
 
             MessageDigest messageDigest = MessageDigest.getInstance(algorithm.getCode());
 

@@ -42,7 +42,7 @@ public @Service class MoveDetector {
         @Mandatory Map<Key, List<File>> targetMap,
         @Mandatory Progress progress
     ) {
-        progress.initialize(DESCRIPTION, null, sourceMap.count());
+        progress.initialize(DESCRIPTION, null, sourceMap.count(), null);
 
         for (ReadablePair<Key, List<File>> pair : sourceMap) {
             Key key = pair.getKey();
