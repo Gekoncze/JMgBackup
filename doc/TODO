@@ -2,9 +2,6 @@
     ...
 
 ### SOON ###
-    could it happen that cancel exception could be caught and not propagated during some complex operation?
-        we may need to exclude it from being caught
-
     move detector result might be always hidden by missing file detection
         consider either removing it or overriding missing file exception
         also, I think we already compare root node name, so we might as well not skip its check in move detection
