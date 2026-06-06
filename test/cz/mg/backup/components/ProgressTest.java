@@ -14,6 +14,7 @@ public @Test class ProgressTest {
 
         ProgressTest test = new ProgressTest();
         test.testInitialize();
+        test.testDescribe();
         test.testStep();
         test.testNest();
         test.testUnnest();
@@ -42,6 +43,22 @@ public @Test class ProgressTest {
         Assert.assertEquals(22L, progress.getLimit());
         Assert.assertEquals(0, progress.getValue());
         Assert.assertEquals(null, progress.getNext());
+    }
+
+    private void testDescribe() {
+        Progress progress = new Progress();
+
+        progress.describe("Test", null);
+        Assert.assertEquals("Test", progress.getDescription());
+
+        progress.describe("Test", Path.of("foo/bar.txt"));
+        Assert.assertEquals("Test: bar.txt", progress.getDescription());
+
+        progress.describe("Test", Path.of("foo"));
+        Assert.assertEquals("Test: foo", progress.getDescription());
+
+        progress.describe("Test", Path.of(""));
+        Assert.assertEquals("Test: ", progress.getDescription());
     }
 
     private void testStep()

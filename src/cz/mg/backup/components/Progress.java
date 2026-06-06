@@ -98,14 +98,14 @@ public @Component class Progress {
 
     public void initialize(@Mandatory String description, @Optional Path path, long limit)
     {
-        setDescription(describe(description, path));
+        describe(description, path);
         setLimit(limit);
         setValue(0L);
         setNext(null);
     }
 
-    private String describe(@Mandatory String description, @Optional Path path)
+    public void describe(@Mandatory String description, @Optional Path path)
     {
-        return description + (path == null ? "" : ": " + path.getFileName());
+        setDescription(description + (path == null ? "" : ": " + path.getFileName()));
     }
 }
