@@ -53,9 +53,7 @@ public @Service class DirectoryComparator extends NodeComparator {
         @Mandatory Progress progress
     ) {
         if (first != null && second != null) {
-            progress.setDescription(DESCRIPTION);
-            progress.setLimit(estimateCompare(first, second));
-            progress.setValue(0L);
+            progress.initialize(DESCRIPTION, null, estimate(first, second));
             comparePairedDirectories(first, second, progress);
         } else if (first != null) {
             clear(first, progress);
@@ -192,7 +190,7 @@ public @Service class DirectoryComparator extends NodeComparator {
         }
     }
 
-    private long estimateCompare(@Mandatory Directory first, @Mandatory Directory second) {
+    private long estimate(@Mandatory Directory first, @Mandatory Directory second) {
         long firstTotal = first != null ? first.getProperties().getTotalCount() : 0L;
         long secondTotal = second != null ? second.getProperties().getTotalCount() : 0L;
         return 2L * (firstTotal + secondTotal) + 2L;

@@ -98,9 +98,7 @@ public @Service class TreeIterator {
         boolean files,
         boolean directories
     ) {
-        progress.setDescription(description);
-        progress.setLimit(estimate(nodes, files, directories));
-        progress.setValue(0L);
+        progress.initialize(description, null, estimate(nodes, files, directories));
 
         Set<Path> visited = new Set<>();
 

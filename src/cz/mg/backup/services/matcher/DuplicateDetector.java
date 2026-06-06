@@ -33,9 +33,7 @@ public @Service class DuplicateDetector {
     }
 
     public void findDuplicates(@Mandatory Map<Key, List<File>> map, @Mandatory Progress progress) {
-        progress.setDescription(DESCRIPTION);
-        progress.setLimit(map.count());
-        progress.setValue(0L);
+        progress.initialize(DESCRIPTION, null, map.count());
 
         for (ReadablePair<Key, List<File>> pair : map) {
             List<File> suspects = pair.getValue();

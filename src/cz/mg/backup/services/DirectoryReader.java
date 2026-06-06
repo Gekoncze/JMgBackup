@@ -43,9 +43,7 @@ public @Service class DirectoryReader {
      * Files and directories are sorted alphabetically.
      */
     public @Mandatory Directory read(@Mandatory Path path, @Mandatory Progress progress) {
-        progress.setDescription(DESCRIPTION + " " + path);
-        progress.setLimit(0L);
-        progress.setValue(0L);
+        progress.initialize(DESCRIPTION, path, 0L);
         return readDirectoryRecursively(
             path,
             path.getFileName() != null ? path.getFileName() : Path.of(""),
@@ -64,7 +62,7 @@ public @Service class DirectoryReader {
 
         try (DirectoryStream<Path> nestedPaths = Files.newDirectoryStream(directory.getPath())) {
             for (Path nestedPath : nestedPaths) {
-                progress.setDescription(DESCRIPTION + " " + nestedPath);
+                progress.describe(DESCRIPTION, nestedPath);
                 try {
                     readChildRecursively(directory, nestedPath, progress);
                 } catch (Exception e) {

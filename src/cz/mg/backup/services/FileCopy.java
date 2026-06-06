@@ -40,9 +40,7 @@ public @Service class FileCopy {
             FileChannel targetChannel = FileChannel.open(target, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW)
         ) {
             long size = getFileSize(source);
-            progress.setDescription(DESCRIPTION);
-            progress.setLimit(Math.max(1L, size / BUFFER_SIZE) + 1L);
-            progress.setValue(0L);
+            progress.initialize(DESCRIPTION, source, estimate(size));
 
             long position = 0;
             while (position < size) {
@@ -79,5 +77,10 @@ public @Service class FileCopy {
         } catch (IOException e) {
             throw new FileSystemException("Could not get file size.");
         }
+    }
+
+    private long estimate(long size)
+    {
+        return Math.max(1L, size / BUFFER_SIZE) + 1L;
     }
 }

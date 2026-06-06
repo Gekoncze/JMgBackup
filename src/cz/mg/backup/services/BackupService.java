@@ -72,9 +72,7 @@ public @Service class BackupService {
     ) {
         validateSourceToTarget(source, target);
 
-        progress.setDescription(COPY_FILES_DESCRIPTION);
-        progress.setLimit(files.count());
-        progress.setValue(0);
+        progress.initialize(COPY_FILES_DESCRIPTION, null, files.count());
 
         for (File file : files) {
             copyFile(file, source, target, algorithm, progress);
@@ -127,9 +125,7 @@ public @Service class BackupService {
     ) {
         validateSourceToTarget(source, target);
 
-        progress.setDescription(COPY_DIRECTORIES_DESCRIPTION);
-        progress.setLimit(directories.count());
-        progress.setValue(0);
+        progress.initialize(COPY_DIRECTORIES_DESCRIPTION, null, directories.count());
 
         for (Directory directory : directories) {
             createDirectory(directory, source, target);

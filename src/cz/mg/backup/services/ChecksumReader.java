@@ -16,6 +16,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 
 public @Service class ChecksumReader {
+    private static final String DESCRIPTION = "Compute checksum";
     private static final int BUFFER_SIZE = 1048576 * 2;
 
     private static volatile @Service ChecksumReader instance;
@@ -43,9 +44,7 @@ public @Service class ChecksumReader {
         @Mandatory Progress progress
     ) {
         try {
-            progress.setDescription(path.getFileName().toString());
-            progress.setLimit(estimate(path));
-            progress.setValue(0L);
+            progress.initialize(DESCRIPTION, path, estimate(path));
 
             MessageDigest messageDigest = MessageDigest.getInstance(algorithm.getCode());
 
