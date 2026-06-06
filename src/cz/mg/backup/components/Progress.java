@@ -4,7 +4,6 @@ import cz.mg.annotations.classes.Component;
 
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
-import cz.mg.backup.entities.Node;
 import cz.mg.backup.exceptions.CancelException;
 
 import java.nio.file.Path;
@@ -88,15 +87,15 @@ public @Component class Progress {
 
     public void step() {
         value++;
-        checkStatus();
+        validate();
     }
 
     public void step(long size) {
         value += size;
-        checkStatus();
+        validate();
     }
 
-    public void checkStatus() {
+    public void validate() {
         Task<?> task = Task.getCurrentTask();
         if (task != null) {
             if (task.getStatus() == Status.CANCELLED) {
@@ -105,8 +104,7 @@ public @Component class Progress {
         }
     }
 
-    public void initialize(@Mandatory String description, @Optional Path path, long limit)
-    {
+    public void initialize(@Mandatory String description, @Optional Path path, long limit) {
         setDescription(description);
         setPath(path);
         setLimit(limit);

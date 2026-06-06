@@ -17,8 +17,7 @@ public @Component class UserMouseDoubleClickListener implements UserListener, Mo
 
     @Override
     public void mouseClicked(@Mandatory MouseEvent event) {
-        if (event.getButton() == button && event.getClickCount() == 2)
-        {
+        if (event.getButton() == button && event.getClickCount() == 2) {
             handleExceptions(() -> handler.run());
         }
     }

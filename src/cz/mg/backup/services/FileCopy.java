@@ -79,8 +79,7 @@ public @Service class FileCopy {
         }
     }
 
-    private long estimate(long size)
-    {
+    private long estimate(long size) {
         return Math.max(1L, size / BUFFER_SIZE) + 1L;
     }
 }

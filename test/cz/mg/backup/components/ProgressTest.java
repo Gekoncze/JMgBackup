@@ -39,8 +39,7 @@ public @Test class ProgressTest {
         Assert.assertEquals(null, progress.getNext());
     }
 
-    private void testStep()
-    {
+    private void testStep() {
         Progress progress = new Progress();
         Assert.assertEquals(0L, progress.getValue());
         progress.step();
@@ -78,13 +77,13 @@ public @Test class ProgressTest {
             Task<?> t = Objects.requireNonNull(Task.getCurrentTask());
             Progress progress = t.getProgress();
 
-            Assertions.assertThatCode(() -> progress.checkStatus())
+            Assertions.assertThatCode(() -> progress.validate())
                     .withMessage("Check status should not throw exception when task is not cancelled.")
                     .doesNotThrowAnyException();
 
             t.cancel();
 
-            Assertions.assertThatCode(() -> progress.checkStatus())
+            Assertions.assertThatCode(() -> progress.validate())
                 .withMessage("Check status should throw cancel exception when task is cancelled.")
                 .throwsException(CancelException.class);
 

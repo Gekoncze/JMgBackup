@@ -47,8 +47,7 @@ public @Component class ProgressBar extends Panel {
         return this;
     }
 
-    private @Mandatory String describe(@Mandatory Progress progress)
-    {
+    private @Mandatory String describe(@Mandatory Progress progress) {
         Path path = progress.getPath();
         return progress.getDescription() + (path == null ? "" : ": " + path.getFileName());
     }

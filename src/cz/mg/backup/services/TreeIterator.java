@@ -145,12 +145,9 @@ public @Service class TreeIterator {
 
     private boolean visit(@Mandatory Node node, @Mandatory Set<Path> visited) {
         Path path = node.getPath();
-        if (visited.contains(path))
-        {
+        if (visited.contains(path)) {
             return false;
-        }
-        else
-        {
+        } else {
             visited.set(path);
             return true;
         }
