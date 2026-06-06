@@ -17,7 +17,7 @@ public @Error class MoveException extends RuntimeException implements Categorize
     }
 
     @Override
-    public Category getCategory() {
+    public @Mandatory Category getCategory() {
         return Category.WARNING;
     }
 }

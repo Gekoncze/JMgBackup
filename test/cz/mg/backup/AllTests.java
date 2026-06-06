@@ -11,6 +11,7 @@ import cz.mg.backup.services.matcher.FileGrouperTest;
 import cz.mg.backup.services.matcher.FileMatcherTest;
 import cz.mg.backup.services.matcher.KeyComparatorTest;
 import cz.mg.backup.services.matcher.MoveDetectorTest;
+import cz.mg.backup.utilities.CategoriesTest;
 
 public class AllTests {
     public static void main(String[] args) {
@@ -44,6 +45,9 @@ public class AllTests {
         HashConverterTest.main(args);
         PathServiceTest.main(args);
         TreeIteratorTest.main(args);
+
+        // cz.mg.backup.utilities
+        CategoriesTest.main(args);
 
         // cz.mg.backup.gui.icons
         IconCompositorTest.main(args);

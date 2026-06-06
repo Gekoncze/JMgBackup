@@ -66,10 +66,15 @@ public @Service class TestFactory {
     }
 
     public @Mandatory Directory directory(@Mandatory String name, Node... nodes) {
+        return directory(name, null, nodes);
+    }
+
+    public @Mandatory Directory directory(@Mandatory String name, @Optional Exception exception, Node... nodes) {
         Path path = Path.of(name);
         Directory directory = new Directory();
         directory.setPath(path);
         directory.setRelativePath(path);
+        directory.setException(exception);
         for (Node node : nodes) {
             if (node instanceof File file) {
                 directory.getFiles().addLast(file);

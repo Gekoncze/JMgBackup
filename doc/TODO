@@ -2,8 +2,6 @@
     ...
 
 ### SOON ###
-    add unit test for Categories class
-
     could it happen that cancel exception could be caught and not propagated during some complex operation?
         we may need to exclude it from being caught
 

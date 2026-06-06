@@ -9,7 +9,7 @@ public @Error class MissingException extends CompareException implements Categor
     }
 
     @Override
-    public Category getCategory() {
+    public @Mandatory Category getCategory() {
         return Category.PROBLEM;
     }
 }

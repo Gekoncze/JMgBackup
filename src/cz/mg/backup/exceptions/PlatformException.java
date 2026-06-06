@@ -9,7 +9,7 @@ public @Error class PlatformException extends RuntimeException implements Catego
     }
 
     @Override
-    public Category getCategory() {
+    public @Mandatory Category getCategory() {
         return Category.ERROR;
     }
 }

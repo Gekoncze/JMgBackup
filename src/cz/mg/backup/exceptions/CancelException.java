@@ -1,6 +1,7 @@
 package cz.mg.backup.exceptions;
 
 import cz.mg.annotations.classes.Error;
+import cz.mg.annotations.requirement.Mandatory;
 
 public @Error class CancelException extends RuntimeException implements CategorizedException {
     public CancelException() {
@@ -8,7 +9,7 @@ public @Error class CancelException extends RuntimeException implements Categori
     }
 
     @Override
-    public Category getCategory() {
+    public @Mandatory Category getCategory() {
         return Category.ERROR;
     }
 }

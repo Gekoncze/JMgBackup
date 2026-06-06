@@ -9,7 +9,7 @@ public @Error class MismatchException extends CompareException implements Catego
     }
 
     @Override
-    public Category getCategory() {
+    public @Mandatory Category getCategory() {
         return Category.PROBLEM;
     }
 }

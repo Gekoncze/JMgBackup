@@ -9,7 +9,7 @@ public @Error class CompareException extends RuntimeException implements Categor
     }
 
     @Override
-    public Category getCategory() {
+    public @Mandatory Category getCategory() {
         return Category.PROBLEM;
     }
 }

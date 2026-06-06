@@ -18,7 +18,7 @@ public @Error class DuplicateException extends RuntimeException implements Categ
     }
 
     @Override
-    public Category getCategory() {
+    public @Mandatory Category getCategory() {
         return Category.WARNING;
     }
 }

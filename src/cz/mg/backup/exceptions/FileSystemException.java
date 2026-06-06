@@ -13,7 +13,7 @@ public @Error class FileSystemException extends RuntimeException implements Cate
     }
 
     @Override
-    public Category getCategory() {
+    public @Mandatory Category getCategory() {
         return Category.ERROR;
     }
 }
