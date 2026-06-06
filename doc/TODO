@@ -2,6 +2,10 @@
     ...
 
 ### SOON ###
+    improve progress descriptions
+        use newly introduced initialize method in Progress
+        use on places such as FileCopy, ChecksumReader etc...
+
     add unit test for Categories class
 
     could it happen that cancel exception could be caught and not propagated during some complex operation?
