@@ -7,6 +7,8 @@ import cz.mg.annotations.requirement.Optional;
 import cz.mg.backup.entities.Node;
 import cz.mg.backup.exceptions.CancelException;
 
+import java.nio.file.Path;
+
 /**
  * Class to track progress of a task with a description.
  * Limit represents the expected number of steps.
@@ -94,16 +96,16 @@ public @Component class Progress {
         }
     }
 
-    public void initialize(@Mandatory String description, @Optional Node node, long limit)
+    public void initialize(@Mandatory String description, @Optional Path path, long limit)
     {
-        setDescription(describe(description, node));
+        setDescription(describe(description, path));
         setLimit(limit);
         setValue(0L);
         setNext(null);
     }
 
-    private String describe(@Mandatory String description, @Optional Node node)
+    private String describe(@Mandatory String description, @Optional Path path)
     {
-        return description + (node == null ? "" : ": " + node.getPath().getFileName());
+        return description + (path == null ? "" : ": " + path.getFileName());
     }
 }

@@ -1,12 +1,11 @@
 package cz.mg.backup.components;
 
 import cz.mg.annotations.classes.Test;
-import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.exceptions.CancelException;
-import cz.mg.backup.test.TestFactory;
 import cz.mg.test.Assert;
 import cz.mg.test.Assertions;
 
+import java.nio.file.Path;
 import java.util.Objects;
 
 public @Test class ProgressTest {
@@ -23,8 +22,6 @@ public @Test class ProgressTest {
         System.out.println("OK");
     }
 
-    private final @Mandatory TestFactory f = TestFactory.getInstance();
-
     private void testInitialize() {
         Progress progress = new Progress();
         progress.setDescription("Old description");
@@ -32,7 +29,7 @@ public @Test class ProgressTest {
         progress.setValue(7L);
         progress.setNext(new Progress());
 
-        progress.initialize("New description", f.file("foo/bar.txt"), 11L);
+        progress.initialize("New description", Path.of("foo/bar.txt"), 11L);
 
         Assert.assertEquals("New description: bar.txt", progress.getDescription());
         Assert.assertEquals(11L, progress.getLimit());
