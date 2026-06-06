@@ -1,5 +1,6 @@
 package cz.mg.backup;
 
+import cz.mg.backup.components.ProgressTest;
 import cz.mg.backup.gui.icons.IconCompositorTest;
 import cz.mg.backup.gui.icons.IconReaderTest;
 import cz.mg.backup.gui.services.RefreshServiceTest;
@@ -13,6 +14,9 @@ import cz.mg.backup.services.matcher.MoveDetectorTest;
 
 public class AllTests {
     public static void main(String[] args) {
+        // cz.mg.backup.components
+        ProgressTest.main(args);
+
         // cz.mg.backup.services.matcher
         ConverterTest.main(args);
         DuplicateDetectorTest.main(args);

@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Component;
 
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.entities.Node;
 import cz.mg.backup.exceptions.CancelException;
 
 /**
@@ -91,5 +92,18 @@ public @Component class Progress {
                 throw new CancelException();
             }
         }
+    }
+
+    public void initialize(@Mandatory String description, @Optional Node node, long limit)
+    {
+        setDescription(describe(description, node));
+        setLimit(limit);
+        setValue(0L);
+        setNext(null);
+    }
+
+    private String describe(@Mandatory String description, @Optional Node node)
+    {
+        return description + (node == null ? "" : ": " + node.getPath().getFileName());
     }
 }
