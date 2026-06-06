@@ -62,7 +62,7 @@ public @Service class DirectoryReader {
 
         try (DirectoryStream<Path> nestedPaths = Files.newDirectoryStream(directory.getPath())) {
             for (Path nestedPath : nestedPaths) {
-                progress.describe(DESCRIPTION, nestedPath);
+                progress.setPath(nestedPath);
                 try {
                     readChildRecursively(directory, nestedPath, progress);
                 } catch (Exception e) {

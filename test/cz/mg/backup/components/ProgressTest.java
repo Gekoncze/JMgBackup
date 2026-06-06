@@ -14,7 +14,6 @@ public @Test class ProgressTest {
 
         ProgressTest test = new ProgressTest();
         test.testInitialize();
-        test.testDescribe();
         test.testStep();
         test.testNest();
         test.testUnnest();
@@ -30,35 +29,14 @@ public @Test class ProgressTest {
         progress.setValue(7L);
         progress.setNext(new Progress());
 
-        progress.initialize("New description", Path.of("foo/bar.txt"), 11L);
+        Path path = Path.of("foo/bar.txt");
+        progress.initialize("New description", path, 11L);
 
-        Assert.assertEquals("New description: bar.txt", progress.getDescription());
+        Assert.assertEquals("New description", progress.getDescription());
+        Assert.assertEquals(path, progress.getPath());
         Assert.assertEquals(11L, progress.getLimit());
         Assert.assertEquals(0, progress.getValue());
         Assert.assertEquals(null, progress.getNext());
-
-        progress.initialize("Final description", null, 22L);
-
-        Assert.assertEquals("Final description", progress.getDescription());
-        Assert.assertEquals(22L, progress.getLimit());
-        Assert.assertEquals(0, progress.getValue());
-        Assert.assertEquals(null, progress.getNext());
-    }
-
-    private void testDescribe() {
-        Progress progress = new Progress();
-
-        progress.describe("Test", null);
-        Assert.assertEquals("Test", progress.getDescription());
-
-        progress.describe("Test", Path.of("foo/bar.txt"));
-        Assert.assertEquals("Test: bar.txt", progress.getDescription());
-
-        progress.describe("Test", Path.of("foo"));
-        Assert.assertEquals("Test: foo", progress.getDescription());
-
-        progress.describe("Test", Path.of(""));
-        Assert.assertEquals("Test: ", progress.getDescription());
     }
 
     private void testStep()

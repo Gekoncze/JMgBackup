@@ -8,6 +8,7 @@ import cz.mg.panel.settings.Alignment;
 import cz.mg.panel.settings.Fill;
 
 import javax.swing.*;
+import java.nio.file.Path;
 
 public @Component class ProgressBar extends Panel {
     private static final int PADDING = 8;
@@ -41,8 +42,14 @@ public @Component class ProgressBar extends Panel {
         progressBar.setString(progressBarText);
         progressBar.setStringPainted(percent != null);
 
-        descriptionLabel.setText(progress.getDescription());
+        descriptionLabel.setText(describe(progress));
 
         return this;
+    }
+
+    private @Mandatory String describe(@Mandatory Progress progress)
+    {
+        Path path = progress.getPath();
+        return progress.getDescription() + (path == null ? "" : ": " + path.getFileName());
     }
 }

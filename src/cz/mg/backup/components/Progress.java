@@ -22,6 +22,7 @@ import java.nio.file.Path;
  */
 public @Component class Progress {
     private volatile @Mandatory String description = "Initialization...";
+    private volatile @Optional Path path;
     private volatile long value;
     private volatile long limit;
     private volatile @Optional Progress next;
@@ -35,6 +36,14 @@ public @Component class Progress {
 
     public void setDescription(@Mandatory String description) {
         this.description = description;
+    }
+
+    public @Optional Path getPath() {
+        return path;
+    }
+
+    public void setPath(@Optional Path path) {
+        this.path = path;
     }
 
     public long getValue() {
@@ -98,14 +107,10 @@ public @Component class Progress {
 
     public void initialize(@Mandatory String description, @Optional Path path, long limit)
     {
-        describe(description, path);
+        setDescription(description);
+        setPath(path);
         setLimit(limit);
         setValue(0L);
         setNext(null);
-    }
-
-    public void describe(@Mandatory String description, @Optional Path path)
-    {
-        setDescription(description + (path == null ? "" : ": " + path.getFileName()));
     }
 }
