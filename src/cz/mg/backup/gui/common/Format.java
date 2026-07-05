@@ -2,6 +2,7 @@ package cz.mg.backup.gui.common;
 
 import cz.mg.annotations.classes.Static;
 import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.backup.components.Progress;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -20,5 +21,14 @@ public @Static class Format {
 
     public static @Mandatory String format(@Mandatory Instant date) {
         return DATE_FORMAT.format(date.atZone(ZoneId.systemDefault()));
+    }
+
+    public static @Mandatory String format(@Mandatory Progress progress) {
+        String unit = progress.getUnit() != null ? " " + progress.getUnit().getShortForm() : "";
+        String value = Format.format(progress.getValue());
+        String limit = Format.format(progress.getLimit());
+        return progress.percent() == null
+            ? value + unit
+            : value + " / " + limit + unit;
     }
 }

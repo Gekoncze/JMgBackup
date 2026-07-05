@@ -4,7 +4,6 @@
             ChecksumReader
             FileCopy
         update progress dialog to show units
-        extract formatter from progress bar and add test for it
 
 ### SOON ###
     move detector result might be always hidden by missing file detection

@@ -3,6 +3,7 @@ package cz.mg.backup.gui.components;
 import cz.mg.annotations.classes.Component;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
+import cz.mg.backup.gui.common.Format;
 import cz.mg.panel.Panel;
 import cz.mg.panel.settings.Alignment;
 import cz.mg.panel.settings.Fill;
@@ -31,15 +32,11 @@ public @Component class ProgressBar extends Panel {
     public @Mandatory ProgressBar update(@Mandatory Progress progress) {
         Double percent = progress.percent();
 
-        String progressBarText = percent == null
-            ? "" + progress.getValue()
-            : progress.getValue() + " / " + progress.getLimit();
-
         progressBar.setIndeterminate(percent == null);
         progressBar.setMinimum(0);
         progressBar.setMaximum(100);
         progressBar.setValue(percent == null ? 0 : ((int) (double) percent));
-        progressBar.setString(progressBarText);
+        progressBar.setString(Format.format(progress));
         progressBar.setStringPainted(percent != null);
 
         descriptionLabel.setText(describe(progress));

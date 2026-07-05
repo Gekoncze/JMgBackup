@@ -2,6 +2,10 @@ package cz.mg.backup.gui.common;
 
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.classes.Test;
+import cz.mg.annotations.requirement.Mandatory;
+import cz.mg.annotations.requirement.Optional;
+import cz.mg.backup.components.Progress;
+import cz.mg.backup.components.Unit;
 import cz.mg.backup.test.TestFactory;
 import cz.mg.test.Assert;
 
@@ -13,6 +17,7 @@ public @Test class FormatTest {
         test.testFormatInt();
         test.testFormatLong();
         test.testFormatDate();
+        test.testFormatProgress();
 
         System.out.println("OK");
     }
@@ -44,5 +49,26 @@ public @Test class FormatTest {
             "01. 02. 2026, 13:21",
             Format.format(f.date(2026, 2, 1, 13, 21))
         );
+    }
+
+    private void testFormatProgress() {
+        Assert.assertEquals("0", Format.format(createProgress(0, 0, null)));
+        Assert.assertEquals("0 B", Format.format(createProgress(0, 0, Unit.BYTE)));
+        Assert.assertEquals("3", Format.format(createProgress(3, 0, null)));
+        Assert.assertEquals("3 B", Format.format(createProgress(3, 0, Unit.BYTE)));
+        Assert.assertEquals("0 / 2", Format.format(createProgress(0, 2, null)));
+        Assert.assertEquals("0 / 2 B", Format.format(createProgress(0, 2, Unit.BYTE)));
+        Assert.assertEquals("7 / 14", Format.format(createProgress(7, 14, null)));
+        Assert.assertEquals("7 / 14 B", Format.format(createProgress(7, 14, Unit.BYTE)));
+        Assert.assertEquals("2 001 / 2 001", Format.format(createProgress(2001, 2001, null)));
+        Assert.assertEquals("2 001 / 2 001 B", Format.format(createProgress(2001, 2001, Unit.BYTE)));
+    }
+
+    private @Mandatory Progress createProgress(long value, long limit, @Optional Unit unit) {
+        Progress progress = new Progress();
+        progress.setValue(value);
+        progress.setLimit(limit);
+        progress.setUnit(unit);
+        return progress;
     }
 }
