@@ -2,10 +2,6 @@
     ...
 
 ### SOON ###
-    move detector result might be always hidden by missing file detection
-        consider either removing it or overriding missing file exception
-        also, I think we already compare root node name, so we might as well not skip its check in move detection
-
     finalize duplicate detector
         clear duplicate and move exceptions before file matcher starts ???
             similar was for comparator !!!

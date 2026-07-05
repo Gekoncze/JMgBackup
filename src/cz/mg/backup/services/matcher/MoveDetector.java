@@ -4,6 +4,7 @@ import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
 import cz.mg.backup.entities.File;
+import cz.mg.backup.exceptions.MissingException;
 import cz.mg.backup.exceptions.MoveException;
 import cz.mg.backup.services.PathService;
 import cz.mg.collections.list.List;
@@ -61,11 +62,11 @@ public @Service class MoveDetector {
                 File target = targetFiles.getFirst();
 
                 if (moved(source, target)) {
-                    if (source.getException() == null) {
+                    if (source.getException() == null || source.getException() instanceof MissingException) {
                         source.setException(new MoveException(target));
                     }
 
-                    if (target.getException() == null) {
+                    if (target.getException() == null || target.getException() instanceof MissingException) {
                         target.setException(new MoveException(source));
                     }
                 }
@@ -76,11 +77,9 @@ public @Service class MoveDetector {
     }
 
     private boolean moved(@Mandatory File source, @Mandatory File target) {
-        // root name may differ, so removing it for comparison
-        // could be more strict here, but then would need to be consistent across app
         return !Objects.equals(
-            pathService.removeLeadingPart(source.getRelativePath()),
-            pathService.removeLeadingPart(target.getRelativePath())
+            source.getRelativePath(),
+            target.getRelativePath()
         );
     }
 }
