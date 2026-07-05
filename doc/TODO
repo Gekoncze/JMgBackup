@@ -1,9 +1,5 @@
 ### NOW ###
-    progress enhancements
-        show size in bytes instead of steps
-            ChecksumReader
-            FileCopy
-        update progress dialog to show units
+    ...
 
 ### SOON ###
     move detector result might be always hidden by missing file detection
@@ -42,6 +38,9 @@
         add test for directory tree (restore expanded, collapsed and selected nodes)
 
 ### CONSIDERATIONS ###
+    consider showing kB, MB, GB, TB, PB in progress bar
+    consider showing estimated speed for unit progress in progress bar
+
     consider considering last modified date when recomputing checksum
         would require storing timestamp to checksum
 

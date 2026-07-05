@@ -3,6 +3,7 @@ package cz.mg.backup.services;
 import cz.mg.annotations.classes.Service;
 import cz.mg.annotations.requirement.Mandatory;
 import cz.mg.backup.components.Progress;
+import cz.mg.backup.components.Unit;
 import cz.mg.backup.exceptions.FileSystemException;
 
 import java.io.IOException;
@@ -40,13 +41,13 @@ public @Service class FileCopy {
             FileChannel targetChannel = FileChannel.open(target, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW)
         ) {
             long size = getFileSize(source);
-            progress.initialize(DESCRIPTION, source, estimate(size), null); // TODO - use byte unit
+            progress.initialize(DESCRIPTION, source, size, Unit.BYTE);
 
             long position = 0;
             while (position < size) {
                 long transferred = sourceChannel.transferTo(position, BUFFER_SIZE, targetChannel);
                 position += transferred;
-                progress.step();
+                progress.step(transferred);
                 if (transferred == 0) break;
             }
         } catch (IOException e) {
@@ -77,9 +78,5 @@ public @Service class FileCopy {
         } catch (IOException e) {
             throw new FileSystemException("Could not get file size.");
         }
-    }
-
-    private long estimate(long size) {
-        return Math.max(1L, size / BUFFER_SIZE) + 1L;
     }
 }
