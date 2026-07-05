@@ -26,6 +26,6 @@ public @Test class ChecksumReaderTest {
 
         Assert.assertEquals(Algorithm.SHA256, checksum.getAlgorithm());
         Assert.assertEquals(Common.FLYING_AKI_HASH, checksum.getHash());
-        progress.verify(1L, 1L);
+        progress.verify(218_128L, 218_128L);
     }
 }

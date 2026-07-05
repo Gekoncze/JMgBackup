@@ -55,7 +55,6 @@ public @Service class FileCopy {
         }
 
         copyAttributes(source, target);
-        progress.step();
     }
 
     private void copyAttributes(@Mandatory Path source, @Mandatory Path target) {

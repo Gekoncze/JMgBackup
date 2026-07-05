@@ -48,7 +48,7 @@ public @Test class FileCopyTest {
             Assert.assertEquals(original.getProperties().getSize(), copy.getProperties().getSize());
             Assert.assertEquals(original.getProperties().getModified(), copy.getProperties().getModified());
             Assert.assertEquals(read(SOURCE_PATH), read(COPY_PATH));
-            progress.verify(2L, 2L);
+            progress.verify(64L, 64L);
 
             Assertions.assertThatCode(() -> fileCopy.copy(SOURCE_PATH, COPY_PATH, progress))
                 .withMessage("Should not be able to overwrite existing file.")

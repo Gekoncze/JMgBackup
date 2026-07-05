@@ -55,8 +55,9 @@ public @Service class ChecksumReader {
                 )
             ) {
                 byte[] buffer = new byte[BUFFER_SIZE];
-                while (stream.read(buffer) > 0) {
-                    progress.step(BUFFER_SIZE);
+                long count = 0;
+                while ((count = stream.read(buffer)) > 0) {
+                    progress.step(count);
                 }
             }
 
